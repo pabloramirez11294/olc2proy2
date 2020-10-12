@@ -1,0 +1,109 @@
+<br>
+<div class="botones">
+  <div class="row justify-content-md-center">
+    <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+      <div class="btn-group mr-2" role="group" aria-label="First group">
+        <button type="button" class="btn btn-success" (click)="limpiar()">Limpiar</button>
+
+      </div>
+      <div class="btn-group mr-2" role="group" aria-label="First group">
+        <button type="button" class="btn btn-success" (click)="traducir()">Traducir</button>
+
+      </div>
+
+      <div class="btn-group" role="group" aria-label="Third group">
+        <button type="button" class="btn btn-success" (click)="ejecutar()">Ejecutar</button>
+      </div>
+      &nbsp;&nbsp;
+      <div class="btn-group" role="group" aria-label="Third group">
+        <button type="button" class="btn btn-success" (click)="btnAST()">AST</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-12 col-md-6 p-4">
+      <div class="containers">
+        <ngx-codemirror [options]="{
+          lineNumbers: true,
+          theme: 'abcdef',
+          mode: 'javascript',
+          lineWrapping : true,
+          indentWithTabs: true,
+          styleActiveLine: true
+        }" [(ngModel)]="editor" [disabled]="false"
+        [autoFocus]="true"></ngx-codemirror>
+      </div>
+    </div>
+
+    <div class="col-17 col-md-5 p-4">
+      <textarea class="consola" [(ngModel)]="consola"></textarea>
+    </div>
+  </div>
+</div>
+
+
+
+
+<div class="container-fluid">
+  <div class="row">
+
+<div class="col-12 col-md-6 p-4">
+  <h3>Tabla de Símbolos: {{tipo_ts}}</h3>
+  <table class="table table-borderless table-dark">
+      <thead>
+        <tr>
+          <th scope="col">ID</th>
+          <th scope="col">Valor</th>
+          <th scope="col">Tipo</th>
+          <th scope="col">Ambito</th>
+          <th scope="col">Linea</th>
+          <th scope="col">Columna</th>
+        </tr>
+      </thead>
+      <tbody *ngFor="let sim of simbolos">
+        <tr>
+          <th scope="row"> {{sim[0]}}</th>
+          <td> {{sim[1]}}</td>
+          <td> {{sim[2]}}</td>
+          <td> {{sim[3]}}</td>
+          <td> {{sim[4]}}</td>
+          <td> {{sim[5]}}</td>
+        </tr>
+       
+    </table>
+</div>
+
+
+<div class="col-18 col-md-6 p-4">
+  <h3>Tabla de Errores</h3>
+  <table class="table table-borderless table-dark">
+      <thead>
+        <tr>
+          <th scope="col">Tipo</th>
+          <th scope="col">Descripción</th>
+          <th scope="col">Línea</th>
+          <th scope="col">Columna</th>
+        </tr>
+      </thead>
+      <tbody *ngFor="let err of repErrores">
+        <tr>
+          <th scope="row"> {{err[0]}}</th>
+          <td> {{err[1]}}</td>
+          <td> {{err[2]}}</td>
+          <td> {{err[3]}}</td>
+        </tr>
+       
+    </table>
+</div>
+</div>
+
+<div style="text-align:center">
+  <h1>AST  </h1>
+  <span class="ast" style="text-align:center">
+  </span>
+</div>
+</div>
+
