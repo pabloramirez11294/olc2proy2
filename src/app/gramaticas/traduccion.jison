@@ -30,7 +30,6 @@ string2  (\'[^']*\')
 "let"                  return 'LET'
 "const"                 return 'CONST'
 "console.log"           return 'CONSOLE'
-"graficar_ts"           return 'GRAFICARTS'
 //sentenicas de control y ciclos
 "if"                    return 'IF'
 "else"                  return 'ELSE'
@@ -46,9 +45,14 @@ string2  (\'[^']*\')
 "do"                    return 'DO'
 "null"                  return 'NULL'
 "length"                return 'LENGTH'
-"push"                return 'PUSH'
-"pop"                return 'POP'
-"of"                return 'OF'
+"CharAt"                return 'CHARAT'
+"ToLowerCase"           return 'TOLOWERCASE'
+"ToUpperCase"           return 'TOUPPERCASE'
+"Concat"                return 'CONCAT'
+"of"                    return 'OF'
+"in"                    return 'IN'
+"new"                   return 'NEW'
+"array"                 return 'ARRAY'
 
 
 "++"                    return '++'
@@ -160,8 +164,6 @@ Instrucciones
 Funciones
         : 'FUNCTION' ID '(' Parametros ')' ':' Tipo InstruccionesSent
         | 'FUNCTION' ID '(' ')' ':' Tipo InstruccionesSent  
-        | 'FUNCTION' ID '(' Parametros ')'  InstruccionesSent
-        | 'FUNCTION' ID '(' ')'  InstruccionesSent  
 ;
 
 Parametros
@@ -183,10 +185,10 @@ OpcionParam
 
 Instruc
         : 'CONSOLE' '(' Expre ')' ';'
-        |  'GRAFICARTS' '('  ')' ';'
         | Sentencia_if 
         | 'FOR' '(' Declaracion Exp ';' Actualizacion ')' InstruccionesSent
         | 'FOR' '(' DeclaForOF 'OF' Exp ')' InstruccionesSent
+        | 'FOR' '(' DeclaForOF 'IN' Exp ')' InstruccionesSent
         | 'WHILE' '(' Exp ')' InstruccionesSent 
         | 'DO'  InstruccionesSent 'WHILE' '(' Exp ')' ';'
         | 'BREAK' ';' 
@@ -273,28 +275,24 @@ Actualizacion
 
 
 Declaracion
-            : 'LET' ListaDeclaracion ';'        
+            : 'LET' OpcionDeclaracion ';'        
             | ID '=' Exp ';'        
-            | 'CONST' ListaDeclaracionConst ';' 
+            | 'CONST' OpcionDeclaracionConst ';' 
 ;
 
-ListaDeclaracion
-                : ListaDeclaracion ',' OpcionDeclaracion { $1.push($3); }
-                | OpcionDeclaracion { $$ = [$1]; }
-;
 
 OpcionDeclaracion
                 : ID ':' Tipo '=' Exp
                 | ID ':' Tipo
-                | ID '=' Exp
-                | ID
                 | ID ':' Tipo Dim '=' Exp            
                 | ID ':' Tipo Dim  
+                | ID ':' Tipo Dim '=' 'NEW' 'ARRAY' '(' Exp ')'
 ;
 OpcionDeclaracionConst
                 : ID ':' Tipo '=' Exp
-                | ID '=' Exp
                 | ID ':' Tipo Dim '=' Exp 
+                | ID ':' Tipo Dim '=' 'NEW' 'ARRAY' '(' Exp ')'
+
 ;
 
 Dim
@@ -360,8 +358,7 @@ Tipo
 Exp
     : Exp '+' Exp       
     | Exp '-' Exp
-    | Exp '**' Exp
-    
+    | Exp '**' Exp  
     | Exp '%' Exp
     | Exp '*' Exp     
     | Exp '/' Exp        
@@ -423,6 +420,10 @@ F
     }
     | NULL 
     | Exp '.' LENGTH
+    | Exp '.' 'CHARAT' '(' Exp ')'
+    | Exp '.' 'TOLOWERCASE' '(' ')'
+    | Exp '.' 'TOUPPERCASE' '(' ')'
+    | Exp '.' 'CONCAT' '(' Exp ')'
     | TypesExp
 ;
 
