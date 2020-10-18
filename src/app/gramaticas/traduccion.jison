@@ -1,39 +1,10 @@
  
 %{
-    const { ArithmeticOption,Aritmetico} = require('../Expresiones/Aritmetico');
-    const {Relacional, RelationalOption} = require('../Expresiones/Relacional');
-    const {Logica, LogicaOpcion} = require('../Expresiones/Logica');
-    const {Literal} = require('../Expresiones/Literal');
-    const {Variable} = require('../Expresiones/Variable');
-    const {Unario,OperadorOpcion} = require('../Expresiones/Unario');
-    const {Ternario} = require('../Expresiones/Ternario');
-    const {AsigArreglo} = require('../Expresiones/AsigArreglo');
-    const {Return} = require('../Instruccion/Return');
-    const {Console} = require('../Instruccion/Console');
     const {errores,Error_} = require('../Reportes/Errores');
-    const { Type } = require("../Modelos/Retorno");
-    const {If} = require('../Instruccion/If');
-    const {Switch} = require('../Instruccion/Switch');
-    const {Declaracion} = require('../Instruccion/Declaracion');
-    const {ListDeclaracion} = require('../Instruccion/ListDeclaracion');
-    const {Break,Continue,TipoEscape} = require('../Instruccion/BreakContinue');
-    const {While,DoWhile} = require('../Instruccion/While');
-    const {For} = require('../Instruccion/For');
-    const {Instrucciones} = require('../Instruccion/Instrucciones');
-    const {InstrucUnaria} = require('../Instruccion/InstrucUnaria');
-    const {Funcion} = require('../Instruccion/Funcion');
-    const {Llamada} = require('../Instruccion/Llamada');
-    const {DecArreglo} = require('../Instruccion/DecArreglo');
-    const {Arreglo} = require('../Estructuras/Arreglo');
-    const {Acceso} = require('../Estructuras/Acceso');
-    const {AccesoAsig} = require('../Estructuras/AccesoAsig');
-    const {Length} = require('../Estructuras/Length');
-    const {Simbolo} = require('../Entornos/Environment');
-    const {Graficarts} = require('../Reportes/Graficarts');
 %}
 
 %lex
-%options case-sensitive
+%options case-insensitive
 entero [0-9]+
 number {entero}("."{entero})?
 string  (\"[^"]*\")
@@ -75,6 +46,9 @@ string2  (\'[^']*\')
 "do"                    return 'DO'
 "null"                  return 'NULL'
 "length"                return 'LENGTH'
+"push"                return 'PUSH'
+"pop"                return 'POP'
+"of"                return 'OF'
 
 
 "++"                    return '++'
@@ -122,7 +96,7 @@ string2  (\'[^']*\')
 %left '**' 
 %left '!'
 %left Umenos
-%left '.'
+%left '.' 
 //%left MENOS
 %start Init
 
@@ -146,11 +120,27 @@ Contenido
 ;
 Cont
     : Instruc { $$ = $1; }
+    | Funciones { $$ = $1; }
+    | Types { $$ = $1; }
     | error 
         { 
             //console.error('Este es un error sintáctico: ' + yytext + ', en la linea: ' + this._$.first_line + ', en la columna: ' + this._$.first_column); 
             $$= new Error_(this._$.first_line , this._$.first_column, 'Sintáctico',yytext,'');
         }
+;
+
+Types
+    : 'TYPE' ID '=' '{' ListTypes '}' ';'
+;
+
+ListTypes
+        : ListTypes ID ':' Tipo Fin
+        |
+;
+Fin
+    : ','
+    | ';'
+    |
 ;
 
 
@@ -169,21 +159,9 @@ Instrucciones
 
 Funciones
         : 'FUNCTION' ID '(' Parametros ')' ':' Tipo InstruccionesSent
-        {
-            $$ = new Funcion($2,$4,$7,$8,@1.first_line, @1.first_column);
-        }
         | 'FUNCTION' ID '(' ')' ':' Tipo InstruccionesSent  
-        {
-            $$ = new Funcion($2, [],$6,$7 , @1.first_line, @1.first_column);
-        }
         | 'FUNCTION' ID '(' Parametros ')'  InstruccionesSent
-        {
-            $$ = new Funcion($2,$4,Type.VOID,$6,@1.first_line, @1.first_column);
-        }
         | 'FUNCTION' ID '(' ')'  InstruccionesSent  
-        {
-            $$ = new Funcion($2, [],Type.VOID,$5 , @1.first_line, @1.first_column);
-        }
 ;
 
 Parametros
@@ -199,56 +177,27 @@ Parametros
 ;
 OpcionParam
             :  ID ':' Tipo Dim  
-        {
-            let sim=new Simbolo(undefined,$1,Type.ARREGLO);
-            sim.tipoArreglo=$3;
-            sim.dim = $4;
-            $$ = sim;
-        }
         | ID ':' Tipo 
-        {
-            $$ = new Simbolo(undefined,$1,$3);
-        }
 ;
 
 
 Instruc
         : 'CONSOLE' '(' Expre ')' ';'
-        {
-             $$ = new Console($3, @1.first_line, @1.first_column);
-        }
         |  'GRAFICARTS' '('  ')' ';'
-        {
-             $$ = new Graficarts(@1.first_line, @1.first_column);
-        }
-        | Sentencia_if {
-            $$ = $1;
-        }
+        | Sentencia_if 
         | 'FOR' '(' Declaracion Exp ';' Actualizacion ')' InstruccionesSent
-        {
-            $$ = new For($3,$4,$6, $8,@1.first_line, @1.first_column);
-        }
+        | 'FOR' '(' DeclaForOF 'OF' Exp ')' InstruccionesSent
         | 'WHILE' '(' Exp ')' InstruccionesSent 
-        {
-            $$ = new While($3,$5, @1.first_line, @1.first_column);
-        }
         | 'DO'  InstruccionesSent 'WHILE' '(' Exp ')' ';'
-        {
-            $$ = new DoWhile($5,$2, @1.first_line, @1.first_column);
-        }
-        | 'BREAK' ';' { $$ = new Break(@1.first_line, @1.first_column); }
-        | 'CONTINUE' ';'  { $$ = new Continue(@1.first_line, @1.first_column); }
-        | Sent_switch { $$ = $1; }
-        | Declaracion {$$ = $1;}
-        | Unario ';' {$$ = new InstrucUnaria($1,@1.first_line, @1.first_column);}
-        | Llamada ';' { $$ = $1; } 
-        | 'RETURN' Exp ';' { $$ = new Return($2,@1.first_line, @1.first_column); }
-        | 'RETURN' ';' { $$ = new Return(undefined,@1.first_line, @1.first_column); }
+        | 'BREAK' ';' 
+        | 'CONTINUE' ';' 
+        | Sent_switch 
+        | Declaracion 
+        | Unario ';' 
+        | Llamada ';' 
+        | 'RETURN' Exp ';'
+        | 'RETURN' ';' 
         | ID AccesoAsig  '=' Exp ';'
-        {
-                $$ =  new AccesoAsig($1,$2,$4,@1.first_line, @1.first_column);
-        }         
-        | Funciones { $$ = $1; }
 
 ;
 
@@ -260,6 +209,11 @@ AccesoAsig
             $$ =[$2]
         }
 
+;
+
+DeclaForOF
+        : 'LET' ID
+        | 'CONST' ID
 ;
 /*
 AccesoAsig
@@ -273,65 +227,41 @@ AccesoAsig
 //*********************SENTENCIAS DE CONTROL
 Sentencia_if
             : 'IF' '(' Exp ')' InstruccionesSent Sentencia_else
-            {
-                $$ = new If($3, $5, $6, @1.first_line, @1.first_column);
-            }
 ;
 
 Sentencia_else
-                : 'ELSE' Sentencia_if { $$ = $2;}
-                | 'ELSE' InstruccionesSent { $$ = $2;}
-                |  { $$ = null;}
+                : 'ELSE' Sentencia_if 
+                | 'ELSE' InstruccionesSent 
+                |  
 ;
 
 InstruccionesSent
     : '{' Instrucciones '}' 
-    {
-        $$ = new Instrucciones($2, @1.first_line, @1.first_column);
-    }
-    | '{' '}' {
-        $$ = new Instrucciones(new Array(), @1.first_line, @1.first_column);
-    }
+    | '{' '}' 
 ;
 InstruccionesSwitch
                     : Instrucciones  
-                    {
-                        $$ = new Instrucciones($1, @1.first_line, @1.first_column);
-                    }
-                    |  {
-                        $$ = new Instrucciones(new Array(), @1.first_line, @1.first_column);
-                    }
+                    |  
 ;
 //************************SWITCH
 
 Sent_switch
             : 'SWITCH' '(' Exp ')' '{'  Cases Default '}' 
-            {
-                $$ = new Switch($3,$6,$7);
-            }
 ;
 
 Cases
     : Cases 'CASE'  Exp ':' InstruccionesSwitch
-    {
-        $$.set($3,$5); 
-    }
     | 'CASE' Exp ':' InstruccionesSwitch
-    {
-        let a = new Map();
-        $$ = a.set($2,$4);
-    }
 ;
 
 Default
         : 'DEFAULT' ':' InstruccionesSwitch
-        { $$ = $3; }
         |
 ;
 
 //*********************** CICLOS
 Actualizacion
-            : Unario { $$ = $1; }
+            : Unario 
             | ID '=' Exp ';'
             {
                 $$ = new Declaracion($1,undefined,$3,true, @1.first_line, @1.first_column);
@@ -343,18 +273,9 @@ Actualizacion
 
 
 Declaracion
-            : 'LET' ListaDeclaracion ';'
-            {
-                $$ = new ListDeclaracion($2, @1.first_line, @1.first_column); 
-            }            
-            | ID '=' Exp ';'
-            {
-                $$ = new Declaracion($1,undefined,undefined,true, @1.first_line, @1.first_column);
-            }            
+            : 'LET' ListaDeclaracion ';'        
+            | ID '=' Exp ';'        
             | 'CONST' ListaDeclaracionConst ';' 
-            {
-                $$ = new ListDeclaracion($2, @1.first_line, @1.first_column); 
-            } 
 ;
 
 ListaDeclaracion
@@ -364,29 +285,16 @@ ListaDeclaracion
 
 OpcionDeclaracion
                 : ID ':' Tipo '=' Exp
-                {
-                    $$ = new Declaracion($1,$3,undefined,false, @1.first_line, @1.first_column);
-                }
                 | ID ':' Tipo
-                {
-                    $$ = new Declaracion($1,$3,undefined,false, @1.first_line, @1.first_column);
-                }
                 | ID '=' Exp
-                {
-                    $$ = new Declaracion($1,undefined,undefined,false, @1.first_line, @1.first_column);
-                }
                 | ID
-                {
-                    $$ = new Declaracion($1,undefined,undefined,false, @1.first_line, @1.first_column);
-                }
-                | ID ':' Tipo Dim '=' Exp 
-                {
-                     $$ = new DecArreglo($1,Type.ARREGLO,$3,$4,undefined,false,@1.first_line, @1.first_column);
-                }                
+                | ID ':' Tipo Dim '=' Exp            
                 | ID ':' Tipo Dim  
-                {
-                    $$ = new DecArreglo($1,Type.ARREGLO,$3,$4,undefined,false,@1.first_line, @1.first_column);
-                }
+;
+OpcionDeclaracionConst
+                : ID ':' Tipo '=' Exp
+                | ID '=' Exp
+                | ID ':' Tipo Dim '=' Exp 
 ;
 
 Dim
@@ -402,13 +310,7 @@ Dim
 
 Dimensiones
             : '['  ']' 
-            {
-                $$ = new AsigArreglo(null,Type.ARREGLO,@1.first_line,@1.first_column);
-            }
             | '[' Expre ']'
-            {
-                $$ = new AsigArreglo($2,Type.ARREGLO,@1.first_line,@1.first_column);
-            }
 ;
 /*
 OpcDim
@@ -424,31 +326,13 @@ ListaDeclaracionConst
                 | OpcionDeclaracionConst { $$ = [$1]; }
 ;
 
-OpcionDeclaracionConst
-                : ID ':' Tipo '=' Exp
-                {
-                    $$ = new Declaracion($1,$3,$5,false, @1.first_line, @1.first_column);
-                    $$.constante=true;
-                }
-                | ID '=' Exp
-                {
-                    $$ = new Declaracion($1,undefined,$3,false, @1.first_line, @1.first_column);
-                    $$.constante=true;
-                }
-                | ID ':' Tipo Dim '=' Dimensiones 
-;
+
 
 //*****************LLAMADAS A FUNCIONES
 
 Llamada
         : ID '('  ')'
-        {
-            $$ = new Llamada($1, [], @1.first_line, @1.first_column);
-        }
         | ID '(' Expre ')'
-        {
-            $$ = new Llamada($1, $3, @1.first_line, @1.first_column);
-        }
 ;
 
 
@@ -464,83 +348,35 @@ Expre
 ;    
 
 Tipo
-    : 'NUMBER' { $$ = Type.NUMBER; }
-    | 'STRING' { $$ = Type.STRING; }
-    | 'BOOLEAN' { $$ = Type.BOOLEAN; }
-    | 'VOID' { $$ = Type.VOID; }
+    : 'NUMBER' 
+    | 'STRING'
+    | 'BOOLEAN' 
+    | 'VOID' 
+    | ID
 ;
 
 
+
 Exp
-    : Exp '+' Exp
-    {
-        $$ = new Aritmetico($1, $3, ArithmeticOption.SUMA, @1.first_line,@1.first_column);
-    }       
+    : Exp '+' Exp       
     | Exp '-' Exp
-    {
-        $$ = new Aritmetico($1, $3, ArithmeticOption.RESTA, @1.first_line,@1.first_column);
-    }
     | Exp '**' Exp
-    { 
-        $$ = new Aritmetico($1, $3, ArithmeticOption.POTENCIA, @1.first_line,@1.first_column);
-    }  
     
     | Exp '%' Exp
-    { 
-        $$ = new Aritmetico($1, $3, ArithmeticOption.MODULO, @1.first_line,@1.first_column);
-    }  
-    | Exp '*' Exp
-    { 
-        $$ = new Aritmetico($1, $3, ArithmeticOption.MULT, @1.first_line,@1.first_column);
-    }       
-    | Exp '/' Exp
-    {
-        $$ = new Aritmetico($1, $3, ArithmeticOption.DIV, @1.first_line,@1.first_column);
-    }            
-    | Exp '>' Exp   
-    {
-        $$ = new Relacional($1, $3,RelationalOption.MAYOR, @1.first_line, @1.first_column);
-    }
-    | Exp '<' Exp   
-    {
-        $$ = new Relacional($1, $3,RelationalOption.MENOR, @1.first_line, @1.first_column);
-    }
+    | Exp '*' Exp     
+    | Exp '/' Exp        
+    | Exp '>' Exp  
+    | Exp '<' Exp  
     | Exp '>=' Exp   
-    {
-        $$ = new Relacional($1, $3,RelationalOption.MAYORIGUAL, @1.first_line, @1.first_column);
-    }
-    | Exp '<=' Exp   
-    {
-        $$ = new Relacional($1, $3,RelationalOption.MENORIGUAL, @1.first_line, @1.first_column);
-    }
-    | Exp '==' Exp   
-    {
-        $$ = new Relacional($1, $3,RelationalOption.IGUAL, @1.first_line, @1.first_column);
-    }
+    | Exp '<=' Exp  
+    | Exp '==' Exp 
     | Exp '!=' Exp  
-    {
-        $$ = new Relacional($1, $3,RelationalOption.NOIGUAL, @1.first_line, @1.first_column);
-    } 
-    | Exp '&&' Exp   
-    {
-        $$ = new Logica($1, $3,LogicaOpcion.AND, @1.first_line, @1.first_column);
-    }
+    | Exp '&&' Exp  
     | Exp '||' Exp  
-    {
-        $$ = new Logica($1, $3,LogicaOpcion.OR, @1.first_line, @1.first_column);
-    } 
-    | Exp '?' Exp ':' Exp  
-    {
-        $$ = new Ternario($1, $3, $5, @1.first_line, @1.first_column);
-    }
+    | Exp '.' Exp
+    | Exp '?' Exp ':' Exp
     | '!' Exp 
-    {
-        $$ = new Logica($2,null,LogicaOpcion.NOT, @1.first_line, @1.first_column);
-    }
     | '-' Exp %prec Umenos  
-    {
-        $$ = new Aritmetico($2,null, ArithmeticOption.RESTA, @1.first_line,@1.first_column);
-    }
     | '(' Exp ')'
     {
         $$ = $2;
@@ -558,69 +394,48 @@ Exp
 ;
 
 AccesoArr
-        : AccesoArr '[' Exp ']' {
-            $$= new Acceso(undefined,$3,$1,@1.first_line, @1.first_column);
-        }
-        | ID '[' Exp ']' {
-            $$ = new Acceso($1,$3,null,@1.first_line, @1.first_column);
-        }
+        : AccesoArr '[' Exp ']'
+        | ID '[' Exp ']' 
 ;
 
 F
     : NUMERO
-    {
-        $$ = new Literal($1, @1.first_line, @1.first_column, Type.NUMBER);
-    }
     | CADENA
     {
         let txt=$1.replace(/\\n/g,"\n");
         txt = txt.replace(/\\t/g,"\t");
         txt = txt.replace(/\\r/g,"\r");
-        $$ = new Literal(txt.replace(/\"/g,""), @1.first_line, @1.first_column, Type.STRING);
+        //$$ = new Literal(txt.replace(/\"/g,""), @1.first_line, @1.first_column, Type.STRING);
     }
     | CADENA2
     {
         let txt2=$1.replace(/\\n/g,"\n");
         txt2 = txt2.replace(/\\t/g,"\t");
         txt2 = txt2.replace(/\\r/g,"\r");
-        $$ = new Literal(txt2.replace(/\'/g,""), @1.first_line, @1.first_column, Type.STRING);
+        //$$ = new Literal(txt2.replace(/\'/g,""), @1.first_line, @1.first_column, Type.STRING);
     }
     | TRUE
-    {
-         $$ = new Literal(true, @1.first_line, @1.first_column, Type.BOOLEAN);
-    }
     | FALSE
-    {
-        $$ = new Literal(false, @1.first_line, @1.first_column, Type.BOOLEAN);
-    }
     | ID
-    {
-        $$ = new Variable($1,@1.first_line, @1.first_column);
-    }
     | Llamada
     {
         $$ = $1;
     }
     | NULL 
-    {
-        $$ = new Literal(null, @1.first_line, @1.first_column, Type.NULL);
-    }
     | Exp '.' LENGTH
-    {
-        $$ = new Length($1,@1.first_line, @1.first_column);
-    }
+    | TypesExp
 ;
 
 Unario 
     : ID '++'
-    {
-        $$ = new Unario($1,OperadorOpcion.INCRE,@1.first_line, @1.first_column);
-    }
-    | ID '--'    
-    {
-        $$ = new Unario($1,OperadorOpcion.DECRE,@1.first_line, @1.first_column);
-    }
+    | ID '--'
 ;
 
+TypesExp    
+        : '{' ListTypesExp '}'
+;
 
-
+ListTypesExp
+            : ListTypesExp ID ':' Exp Fin
+        | 
+;
