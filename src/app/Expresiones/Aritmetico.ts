@@ -2,6 +2,7 @@ import { Expression } from "../Modelos/Expression";
 import { Retorno, Type } from "../Modelos/Retorno";
 import { Environment } from "../Entornos/Environment";
 import {Error_} from '../Reportes/Errores';
+import {Data} from "../Data/Data";
 export enum ArithmeticOption{
     SUMA,
     RESTA,
@@ -20,6 +21,8 @@ export class Aritmetico extends Expression{
     public execute(amb : Environment) : Retorno{
         const leftValue = this.left.execute(amb);
         const rightValue = this.right?.execute(amb);
+        const data = Data.getInstance();        
+        const tmp = data.newTmp();
         let result : Retorno;
         
         
@@ -31,18 +34,20 @@ export class Aritmetico extends Expression{
             return result;
         }
         let tipoDominante;
+        /*TODO
         if((leftValue.type==Type.ARREGLO && rightValue.type==Type.ARREGLO)
             ||(leftValue.type==Type.NUMBER && rightValue.type==Type.ARREGLO)
             ||(leftValue.type==Type.ARREGLO && rightValue.type==Type.NUMBER)){
             tipoDominante=Type.NUMBER;
-        }else
+        }else*/
             tipoDominante = this.tipoDominante(leftValue.type, rightValue.type,amb.getNombre());
         if(this.type == ArithmeticOption.SUMA){
-            if(tipoDominante == Type.STRING)
-                result = {value : (leftValue.value.toString() + rightValue.value.toString()), type : Type.STRING};
-            else if(tipoDominante == Type.NUMBER)
+            if(tipoDominante == Type.STRING){}
+                //result = {value : (leftValue.value.toString() + rightValue.value.toString()), type : Type.STRING};
+            else if(tipoDominante == Type.NUMBER){
+                data.addExpression(tmp, leftValue,rightValue, '+');
                 result = {value : (leftValue.value + rightValue.value), type : Type.NUMBER};
-            else
+            }else
                 throw new Error_(this.line, this.column, "Semantico", "Error no se pueden sumar :"+leftValue.type+" y "+ rightValue.type,amb.getNombre());
             
             

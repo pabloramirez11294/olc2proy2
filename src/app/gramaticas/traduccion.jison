@@ -1,6 +1,15 @@
  
 %{
     const {errores,Error_} = require('../Reportes/Errores');
+    //expresiones
+    const { ArithmeticOption,Aritmetico} = require('../Expresiones/Aritmetico');
+    const {Relacional, RelationalOption} = require('../Expresiones/Relacional');
+    const {Logica, LogicaOpcion} = require('../Expresiones/Logica');
+    const {Literal} = require('../Expresiones/Literal');
+    const {Variable} = require('../Expresiones/Variable');
+    const {Unario,OperadorOpcion} = require('../Expresiones/Unario');
+    const {Ternario} = require('../Expresiones/Ternario');
+    const {AsigArreglo} = require('../Expresiones/AsigArreglo');
 %}
 
 %lex
@@ -339,7 +348,7 @@ Tipo
 
 
 Exp
-    : Exp '+' Exp       
+    : Exp '+' Exp{ $$ = new Aritmetico($1, $3, ArithmeticOption.SUMA, @1.first_line,@1.first_column); }       
     | Exp '-' Exp
     | Exp '**' Exp  
     | Exp '%' Exp
