@@ -3,6 +3,9 @@
 -  Agregar estas lineas al archivo package.json:
 "browser": { "fs": false, "path": false, "os": false}
 
+### Subir a github pages
+- https://www.notion.so/Github-Pages-b7ee023c66654ad1961945fa0f51c4ef
+
 ### PARA INSTALAR EL EDITOR CODEMIRROR
 - npm install codemirror
 - npm install bootstrap

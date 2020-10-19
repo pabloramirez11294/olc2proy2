@@ -68,55 +68,6 @@ export class InicioComponent implements OnInit {
             errores.push(error);  
         }
       }
-      for (const instruc of instrucciones) {
-        if(instruc instanceof Error_ ||instruc instanceof Funcion)
-            continue;
-        try {          
-          if(instruc instanceof ListDeclaracion)
-              instruc.execute(entorno);
-             
-        } catch (error) {
-          //console.log(error)
-          if(error.ambito!=null){
-            error.ambito='global';
-            errores.push(error);  
-          }else
-            console.log(error);
-                    
-        }
-      }
-      
-
-    } catch (error) {
-      console.log(error)
-      if(error.ambito!=null){
-        error.ambito='';
-        errores.push(error);  
-      }else
-        errores.push(new Error_(error.lineNumber, 0, 'Lexico', error.message, ''));
-    }
-    //REPORTES    
-    this.simbolos=new Array<Array<string>>();
-    this.reportes(entorno);
-  }
-
-  ejecutar() {
-    this.tipo_ts="Ejecución";
-    errores.length=0;
-    reporte.simbolos.length=0;
-    const entorno = new Environment(null, 'global');
-    try {
-      const instrucciones = Ejecucion.parse(this.editor);    
-      for(const instruc of instrucciones){
-        try {
-            if(instruc instanceof Error_){
-              errores.push(instruc);continue;
-            }else if(instruc instanceof Funcion)
-              instruc.execute(entorno);
-        } catch (error) {
-            errores.push(error);  
-        }
-      }
 
       for (const instruc of instrucciones) {
         if(instruc instanceof Error_ ||instruc instanceof Funcion)

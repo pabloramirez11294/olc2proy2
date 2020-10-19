@@ -265,9 +265,6 @@ Default
 Actualizacion
             : Unario 
             | ID '=' Exp ';'
-            {
-                $$ = new Declaracion($1,undefined,$3,true, @1.first_line, @1.first_column);
-            }
 ;
 
 
@@ -310,20 +307,6 @@ Dimensiones
             : '['  ']' 
             | '[' Expre ']'
 ;
-/*
-OpcDim
-        : Expre
-        | Dimensiones 
-        | {
-                $$ = [new Array()]
-            }
-;
-*/
-ListaDeclaracionConst
-                : ListaDeclaracionConst ',' OpcionDeclaracionConst { $1.push($3); }
-                | OpcionDeclaracionConst { $$ = [$1]; }
-;
-
 
 
 //*****************LLAMADAS A FUNCIONES
