@@ -1,4 +1,4 @@
-##MANUAL TECNICO olc2proy2
+## MANUAL TECNICO olc2proy2
 ### Configuraciones de jison
 -  Agregar estas lineas al archivo package.json:
 "browser": { "fs": false, "path": false, "os": false}
@@ -41,7 +41,7 @@ graficarAST(){
 		wasmFolder('https://cdn.jsdelivr.net/npm/@hpcc-js/wasm@0.3.13/dist');
 		graphviz('span').renderDot('digraph {a -> b}');
 }
-	  ```
+```
 - html
 ```html
 <!DOCTYPE html>
