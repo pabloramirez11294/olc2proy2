@@ -160,6 +160,9 @@ break;
 case 86:
  this.$ = new Aritmetico($$[$0-2], $$[$0], ArithmeticOption.DIV, _$[$0-2].first_line,_$[$0-2].first_column); 
 break;
+case 98:
+ this.$ = new Aritmetico($$[$0],null, ArithmeticOption.RESTA, _$[$0-1].first_line,_$[$0-1].first_column); 
+break;
 case 99:
 
         this.$ = $$[$0-1];

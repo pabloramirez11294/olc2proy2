@@ -368,7 +368,7 @@ Exp
     | Exp '.' Exp
     | Exp '?' Exp ':' Exp
     | '!' Exp 
-    | '-' Exp %prec Umenos  
+    | '-' Exp %prec Umenos { $$ = new Aritmetico($2,null, ArithmeticOption.RESTA, @1.first_line,@1.first_column); }
     | '(' Exp ')'
     {
         $$ = $2;

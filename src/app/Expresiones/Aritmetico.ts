@@ -30,7 +30,7 @@ export class Aritmetico extends Expression{
         if(this.right==null && this.type==ArithmeticOption.RESTA){
             if(leftValue.type!=Type.NUMBER)
                 throw new Error_(this.line, this.column, "Semantico", "No se puede negar un valor que no sea Number:" + leftValue.value,amb.getNombre());
-            data.addExpression(tmp, leftValue,'-1', '*');
+            data.addExpression(tmp, 0 ,leftValue.value, '-');
             result = {value : tmp, type : Type.NUMBER, esTmp : true};
             return result;
         }

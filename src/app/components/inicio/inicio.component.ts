@@ -38,8 +38,8 @@ export class InicioComponent implements OnInit {
   simbolos:Array<Array<string>>;
   repErrores:Array<Array<string>>;
   tipo_ts:string="";
-  editor = `console.log(3);
-  let a:number=1.99;
+  editor = `console.log(3+8*9/7-9+9);
+  /*let a:number=1.99;
   let b:string="hola mundo";
   let c:boolean=true;
   if(1000 < 20){
@@ -48,7 +48,7 @@ export class InicioComponent implements OnInit {
     console.log(2); 
   }else{
     console.log(3); 
-  }`;
+  }*/`;
   consola = '';
 
   traducir(){
@@ -99,6 +99,7 @@ export class InicioComponent implements OnInit {
         errores.push(new Error_(error.lineNumber, 0, 'Lexico', error.message, ''));
     }
     //REPORTES    
+    Data.getInstance().addEncabezado();
     let codigo:string = Data.getInstance().getCodigo();
     this.setConsola(codigo);
     this.simbolos=new Array<Array<string>>();
