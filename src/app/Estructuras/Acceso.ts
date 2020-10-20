@@ -12,6 +12,7 @@ export class Acceso extends Expression{
    }
 
     public execute(amb: Environment):Retorno {
+        /* TODO acceso arrglo
         if(this.ant!=null){
             const ant=this.ant.execute(amb);
             const arr:Arreglo = ant.value;
@@ -25,7 +26,8 @@ export class Acceso extends Expression{
         //TODO ver validaciones de tipo y rango
         const indice = this.indice.execute(amb); 
         const res = arr.getVal(Number(indice.value));
-        return {value:res,type:sim.tipoArreglo};    
+        return {value:res,type:sim.tipoArreglo};    */
+        return null;
     }
 
 }

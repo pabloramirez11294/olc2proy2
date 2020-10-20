@@ -30,7 +30,8 @@ export class Aritmetico extends Expression{
         if(this.right==null && this.type==ArithmeticOption.RESTA){
             if(leftValue.type!=Type.NUMBER)
                 throw new Error_(this.line, this.column, "Semantico", "No se puede negar un valor que no sea Number:" + leftValue.value,amb.getNombre());
-            result = {value : (leftValue.value *-1), type : Type.NUMBER};
+            data.addExpression(tmp, leftValue,'-1', '*');
+            result = {value : tmp, type : Type.NUMBER, esTmp : true};
             return result;
         }
         let tipoDominante;
@@ -45,8 +46,8 @@ export class Aritmetico extends Expression{
             if(tipoDominante == Type.STRING){}
                 //result = {value : (leftValue.value.toString() + rightValue.value.toString()), type : Type.STRING};
             else if(tipoDominante == Type.NUMBER){
-                data.addExpression(tmp, leftValue,rightValue, '+');
-                result = {value : (leftValue.value + rightValue.value), type : Type.NUMBER};
+                data.addExpression(tmp, leftValue.value,rightValue.value, '+');
+                result = {value : tmp, type : Type.NUMBER, esTmp : true};
             }else
                 throw new Error_(this.line, this.column, "Semantico", "Error no se pueden sumar :"+leftValue.type+" y "+ rightValue.type,amb.getNombre());
             
@@ -55,21 +56,24 @@ export class Aritmetico extends Expression{
         else if(this.type == ArithmeticOption.RESTA){
             if(tipoDominante == Type.STRING)
                 throw new Error_(this.line, this.column, 'Semantico', 'No se puede restar: ' + leftValue.type + ' con ' + rightValue.type,amb.getNombre());
-            result = {value : (leftValue.value - rightValue.value), type : Type.NUMBER};
+            data.addExpression(tmp, leftValue.value,rightValue.value, '-');
+            result = {value : tmp, type : Type.NUMBER, esTmp : true};
         }
         else if(this.type == ArithmeticOption.MULT){
-            result = {value : (leftValue.value * rightValue.value), type : Type.NUMBER};
+            data.addExpression(tmp, leftValue.value,rightValue.value, '*');
+            result = {value : tmp, type : Type.NUMBER, esTmp : true};
         }else if(this.type == ArithmeticOption.POTENCIA){
-            result = {value : (leftValue.value ** rightValue.value), type : Type.NUMBER};
+            //result = {value : (leftValue.value ** rightValue.value), type : Type.NUMBER};
         }
         else if(this.type == ArithmeticOption.MODULO){
-            result = {value : (leftValue.value % rightValue.value), type : Type.NUMBER};
+            //result = {value : (leftValue.value % rightValue.value), type : Type.NUMBER};
         }
         else{
-            if(rightValue.value == 0){
+            if(rightValue.value == '0'){
                 throw new Error_(this.line, this.column, 'Semantico', 'No se puede dividir entre 0',amb.getNombre());
             }
-            result = {value : (leftValue.value / rightValue.value), type : Type.NUMBER};
+            data.addExpression(tmp, leftValue.value,rightValue.value, '/');
+            result = {value : tmp, type : Type.NUMBER, esTmp : true};
         }
        
         return result;

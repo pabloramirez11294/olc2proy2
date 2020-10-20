@@ -56,8 +56,8 @@ export class ForOf extends Instruction{
         const ambFor:Environment=new Environment(amb,amb.getNombre()+"_for");        
         this.declaracion.execute(ambFor);        
         let cont:number=0;
-        //arreglo
-        const arr:Arreglo=this.arr.execute(amb).value;
+        //TODO arreglo
+       /* const arr:Arreglo=this.arr.execute(amb).value;
 
         //for
         while(cont < arr.length()){
@@ -80,7 +80,7 @@ export class ForOf extends Instruction{
             }
             
         }
-
+        */
     }
     
 }

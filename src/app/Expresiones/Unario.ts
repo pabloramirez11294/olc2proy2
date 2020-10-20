@@ -22,9 +22,9 @@ export class Unario extends Expression{
             throw new Error_(this.line, this.column, "Semantico", "Para una opración unaria se necesita que: \'"+this.id+"' sea Number.",amb.getNombre());
 
         if(OperadorOpcion.INCRE==this.type){
-            result = {value: id.valor++,type:id.tipo};
+            //TODO result = {value: id.valor++,type:id.tipo};
         }else if(OperadorOpcion.DECRE==this.type){
-            result = {value: id.valor--,type:id.tipo};
+            //TODO result = {value: id.valor--,type:id.tipo};
         }
 
         return result;

@@ -13,9 +13,10 @@ export class Console extends Instruction{
         this.value.forEach(element => {
             const value = element.execute(environment);
             console.log(value);
-            if(value.type==Type.ARREGLO)
+           /*TODO C3D para arreglos 
+           if(value.type==Type.ARREGLO)
                 this.setConsolaA(value.value);
-            else    
+            else    */
                 this.setConsola(value);
         });
         txtConsola.consolatxt+="\n";

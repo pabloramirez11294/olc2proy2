@@ -3,12 +3,12 @@ export class  Data{
     private temporal : number;    
     private tempStorage : Set<string>;
     private label : number;
-    private code : string[];
+    private codigo : string;
     tabulador:string = '';
 
     private constructor(){
         this.temporal = this.label = 0;
-        this.code = new Array();
+        this.codigo = '';
         this.tempStorage = new Set();
     }
     public static getInstance():Data{
@@ -19,10 +19,18 @@ export class  Data{
         this.tempStorage.add(tmp);
         return tmp;
     }
+    public getCodigo():string{
+        return this.codigo;
+    }
+    public clearCodigo(){
+        this.temporal = this.label = 0;
+        this.codigo = '';
+        this.tempStorage = new Set();
+    }
 
     //Expresiones
     public addExpression(target : string, left: any, right: any = '', operator: string = ''){
-        this.code.push(`${this.tabulador}${target} = ${left} ${operator} ${right};`);
+        this.codigo+=`${this.tabulador}${target} = ${left} ${operator} ${right};\n`;
     }
 
 

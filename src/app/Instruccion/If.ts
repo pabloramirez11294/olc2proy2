@@ -15,11 +15,11 @@ export class If extends Instruction{
         if(condicion.type != Type.BOOLEAN){
             throw new Error_(this.line, this.column, 'Semantico', 'La expresion no regresa un valor booleano: ' + condicion.value+", es de tipo: "+condicion.type ,ent.getNombre());
         }
-        
+        /*TODO c3d if
         if(condicion.value == true){
             return this.codeIF.execute(ent);
         }else{
             return this.codeElse?.execute(ent);
-        }
+        }*/
     }
 }

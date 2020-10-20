@@ -21,7 +21,7 @@ export class Logica extends Expression{
         let result : Retorno={value:null,type:null};
         
         if(this.type == LogicaOpcion.NOT){     
-            result.value = !leftValue.value;         
+            //TODO result.value = !leftValue.value;         
             result.type = Type.BOOLEAN;
         }else if(leftValue.type!=Type.BOOLEAN || rightValue.type!= Type.BOOLEAN)
             throw new Error_(this.line, this.column, "Semantico", "Error con operaciones logicas tienen que ser booleanos",amb.getNombre());

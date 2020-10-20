@@ -1,6 +1,7 @@
  
 %{
-    const {errores,Error_} = require('../Reportes/Errores');
+    const {errores,Error_} = require('../Reportes/Errores');    
+    const { Type } = require("../Modelos/Retorno");
     //expresiones
     const { ArithmeticOption,Aritmetico} = require('../Expresiones/Aritmetico');
     const {Relacional, RelationalOption} = require('../Expresiones/Relacional');
@@ -10,6 +11,8 @@
     const {Unario,OperadorOpcion} = require('../Expresiones/Unario');
     const {Ternario} = require('../Expresiones/Ternario');
     const {AsigArreglo} = require('../Expresiones/AsigArreglo');
+    //instrucciones
+    const {Console} = require('../Instruccion/Console');
 %}
 
 %lex
@@ -193,7 +196,7 @@ OpcionParam
 
 
 Instruc
-        : 'CONSOLE' '(' Expre ')' ';'
+        : 'CONSOLE' '(' Expre ')' ';'{ $$ = new Console($3, @1.first_line, @1.first_column); }
         | Sentencia_if 
         | 'FOR' '(' Declaracion Exp ';' Actualizacion ')' InstruccionesSent
         | 'FOR' '(' DeclaForOF 'OF' Exp ')' InstruccionesSent
@@ -349,11 +352,11 @@ Tipo
 
 Exp
     : Exp '+' Exp{ $$ = new Aritmetico($1, $3, ArithmeticOption.SUMA, @1.first_line,@1.first_column); }       
-    | Exp '-' Exp
+    | Exp '-' Exp{ $$ = new Aritmetico($1, $3, ArithmeticOption.RESTA, @1.first_line,@1.first_column); }  
     | Exp '**' Exp  
     | Exp '%' Exp
-    | Exp '*' Exp     
-    | Exp '/' Exp        
+    | Exp '*' Exp { $$ = new Aritmetico($1, $3, ArithmeticOption.MULT, @1.first_line,@1.first_column); }  
+    | Exp '/' Exp{ $$ = new Aritmetico($1, $3, ArithmeticOption.DIV, @1.first_line,@1.first_column); }          
     | Exp '>' Exp  
     | Exp '<' Exp  
     | Exp '>=' Exp   
@@ -388,7 +391,7 @@ AccesoArr
 ;
 
 F
-    : NUMERO
+    : NUMERO{ $$ = new Literal($1, @1.first_line, @1.first_column, Type.NUMBER); }
     | CADENA
     {
         let txt=$1.replace(/\\n/g,"\n");

@@ -22,6 +22,7 @@ import { Return } from 'src/app/Instruccion/Return';
 import { While } from 'src/app/Instruccion/While';
 import { For } from 'src/app/Instruccion/For';
 import { Switch } from 'src/app/Instruccion/Switch';
+import { Data } from 'src/app/Data/Data';
 
 @Component({
   selector: 'app-inicio',
@@ -34,7 +35,6 @@ export class InicioComponent implements OnInit {
 
   ngOnInit(): void {
   }
-  title = 'olc2proy1';
   simbolos:Array<Array<string>>;
   repErrores:Array<Array<string>>;
   tipo_ts:string="";
@@ -53,6 +53,8 @@ export class InicioComponent implements OnInit {
 
   traducir(){
     this.tipo_ts="Traducción";
+    Data.getInstance();      
+    Data.getInstance().clearCodigo();
     errores.length=0;
     reporte.simbolos.length=0;
     const entorno = new Environment(null, 'global');
@@ -74,7 +76,7 @@ export class InicioComponent implements OnInit {
             continue;
         try {          
           const actual = instruc.execute(entorno);
-          this.setConsola();
+          //this.setConsola();
           if ((actual != null || actual != undefined)&& (actual.type==TipoEscape.BREAK || actual.type==TipoEscape.CONTINUE)) {
             errores.push(new Error_(actual.line,actual.column,'Semantico',actual.type + ' fuera de un ciclo',''));
           }         
@@ -97,6 +99,8 @@ export class InicioComponent implements OnInit {
         errores.push(new Error_(error.lineNumber, 0, 'Lexico', error.message, ''));
     }
     //REPORTES    
+    let codigo:string = Data.getInstance().getCodigo();
+    this.setConsola(codigo);
     this.simbolos=new Array<Array<string>>();
     this.reportes(entorno);    
     console.log('-----',this.simbolos);
@@ -118,8 +122,8 @@ export class InicioComponent implements OnInit {
     }
   }
 
-  setConsola() {
-    this.consola=txtConsola.consolatxt;
+  setConsola(codigo:string) {
+    this.consola=codigo;
   }
 
   limpiar(){

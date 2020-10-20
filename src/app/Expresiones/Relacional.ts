@@ -23,7 +23,7 @@ export class Relacional extends Expression{
             
         }else            
             this.mismoTipo(leftValue.type, rightValue.type,amb.getNombre());
-        
+        /*TODO c3d relacional
         if(this.type == RelationalOption.MENOR){     
             result.value = leftValue.value < rightValue.value;         
             result.type = Type.BOOLEAN;
@@ -42,7 +42,7 @@ export class Relacional extends Expression{
         }else if(this.type == RelationalOption.NOIGUAL){     
             result.value = leftValue.value != rightValue.value;         
             result.type = Type.BOOLEAN;
-        }
+        }*/
         return result;
     }
 }
