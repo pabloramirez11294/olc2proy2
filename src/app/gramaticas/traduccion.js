@@ -154,11 +154,35 @@ break;
 case 82:
  this.$ = new Aritmetico($$[$0-2], $$[$0], ArithmeticOption.RESTA, _$[$0-2].first_line,_$[$0-2].first_column); 
 break;
+case 83:
+ this.$ = new Aritmetico($$[$0-2], $$[$0], ArithmeticOption.POTENCIA, _$[$0-2].first_line,_$[$0-2].first_column); 
+break;
+case 84:
+ this.$ = new Aritmetico($$[$0-2], $$[$0], ArithmeticOption.MODULO, _$[$0-2].first_line,_$[$0-2].first_column); 
+break;
 case 85:
  this.$ = new Aritmetico($$[$0-2], $$[$0], ArithmeticOption.MULT, _$[$0-2].first_line,_$[$0-2].first_column); 
 break;
 case 86:
  this.$ = new Aritmetico($$[$0-2], $$[$0], ArithmeticOption.DIV, _$[$0-2].first_line,_$[$0-2].first_column); 
+break;
+case 87:
+this.$ = new Relacional($$[$0-2], $$[$0],RelationalOption.MAYOR, _$[$0-2].first_line, _$[$0-2].first_column);
+break;
+case 88:
+this.$ = new Relacional($$[$0-2], $$[$0],RelationalOption.MENOR, _$[$0-2].first_line, _$[$0-2].first_column);
+break;
+case 89:
+ this.$ = new Relacional($$[$0-2], $$[$0],RelationalOption.MAYORIGUAL, _$[$0-2].first_line, _$[$0-2].first_column);
+break;
+case 90:
+ this.$ = new Relacional($$[$0-2], $$[$0],RelationalOption.MENORIGUAL, _$[$0-2].first_line, _$[$0-2].first_column);
+break;
+case 91:
+ this.$ = new Relacional($$[$0-2], $$[$0],RelationalOption.IGUAL, _$[$0-2].first_line, _$[$0-2].first_column);
+break;
+case 92:
+this.$ = new Relacional($$[$0-2], $$[$0],RelationalOption.NOIGUAL, _$[$0-2].first_line, _$[$0-2].first_column);
 break;
 case 98:
  this.$ = new Aritmetico($$[$0],null, ArithmeticOption.RESTA, _$[$0-1].first_line,_$[$0-1].first_column); 

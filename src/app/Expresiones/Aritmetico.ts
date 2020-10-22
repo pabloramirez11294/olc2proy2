@@ -60,18 +60,26 @@ export class Aritmetico extends Expression{
             result = {value : tmp, type : Type.NUMBER, esTmp : true};
         }
         else if(this.type == ArithmeticOption.MULT){
+            if(tipoDominante == Type.STRING)
+                throw new Error_(this.line, this.column, 'Semantico', 'No se puede multiplicar: ' + leftValue.type + ' con ' + rightValue.type,amb.getNombre());
             data.addExpression(tmp, leftValue.value,rightValue.value, '*');
             result = {value : tmp, type : Type.NUMBER, esTmp : true};
         }else if(this.type == ArithmeticOption.POTENCIA){
             //result = {value : (leftValue.value ** rightValue.value), type : Type.NUMBER};
         }
         else if(this.type == ArithmeticOption.MODULO){
-            //result = {value : (leftValue.value % rightValue.value), type : Type.NUMBER};
+            if(tipoDominante == Type.STRING)
+                throw new Error_(this.line, this.column, 'Semantico', 'No se puede hacer el modulo de: ' + leftValue.type + ' con ' + rightValue.type,amb.getNombre());
+            data.addModulo(tmp, leftValue.value,rightValue.value);
+            result = {value : tmp, type : Type.NUMBER,esTmp:true};
         }
         else{
             if(rightValue.value == '0'){
                 throw new Error_(this.line, this.column, 'Semantico', 'No se puede dividir entre 0',amb.getNombre());
             }
+            if(tipoDominante == Type.STRING)
+                throw new Error_(this.line, this.column, 'Semantico', 'No se puede dividir: ' + leftValue.type + ' con ' + rightValue.type,amb.getNombre());
+            
             data.addExpression(tmp, leftValue.value,rightValue.value, '/');
             result = {value : tmp, type : Type.NUMBER, esTmp : true};
         }

@@ -19,6 +19,14 @@ export class  Data{
         this.listTmp.add(tmp);
         return tmp;
     }
+
+    public newLabel() : string{
+        return 'L' + this.label++;
+    }
+
+    public addLabel(label : string){
+        this.codigo+=`${this.tabulador}${label}:\n`;
+    }
     public getCodigo():string{
         return this.codigo;
     }
@@ -29,17 +37,32 @@ export class  Data{
     }
     
     public addComentario(comentario: string){
-        this.codigo+=`${this.tabulador}// ${comentario}`;
+        this.codigo+=`${this.tabulador}// ${comentario}\n`;
     }
 
     //Expresiones
-    public addExpression(target : string, left: any, right: any = '', operator: string = ''){
-        this.codigo+=`${this.tabulador}${target} = ${left} ${operator} ${right};\n`;
+    public addExpression(nomTmp : string, left: any, right: any = '', operator: string = ''){
+        if(!isNaN(left))
+            left=`${left}.0`;
+        if(!isNaN(right))
+            right=`${right}.0`;    
+        this.codigo+=`${this.tabulador}${nomTmp} = ${left} ${operator} ${right};\n`;
+    }
+    public addModulo(nomTmp : string, left: any, right: any = ''){
+        this.codigo+=`${this.tabulador}${nomTmp} = fmod(${left} , ${right});\n`;
     }
 
     //Instrucciones
     public addPrintf(formato: string, valor: any){
-        this.codigo += `${this.tabulador}printf("%${formato}",${valor});`;
+        this.codigo += `${this.tabulador}printf("%${formato}",${valor});\n`;
+    }
+
+    public addIf(left: any, right: any, operator: string, label : string){
+        this.codigo += `${this.tabulador}if (${left} ${operator} ${right}) goto ${label};\n`;
+    }
+
+    public addGoto(label : string){
+        this.codigo+=`${this.tabulador}goto ${label};\n`;
     }
 
     public addEncabezado(){        
@@ -53,10 +76,11 @@ export class  Data{
         }
         this.codigo =       
 `#include <stdio.h>
-float heap[16384];
-float stack[16394];
-float p;
-float h;${listaTmp}
+#include <math.h>
+double heap[16384];
+double stack[16394];
+double p;
+double h;${listaTmp}
 
 int main() {
 ${this.codigo}
