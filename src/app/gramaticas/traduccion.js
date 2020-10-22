@@ -167,10 +167,10 @@ case 86:
  this.$ = new Aritmetico($$[$0-2], $$[$0], ArithmeticOption.DIV, _$[$0-2].first_line,_$[$0-2].first_column); 
 break;
 case 87:
-this.$ = new Relacional($$[$0-2], $$[$0],RelationalOption.MAYOR, _$[$0-2].first_line, _$[$0-2].first_column);
+ this.$ = new Relacional($$[$0-2], $$[$0],RelationalOption.MAYOR, _$[$0-2].first_line, _$[$0-2].first_column);
 break;
 case 88:
-this.$ = new Relacional($$[$0-2], $$[$0],RelationalOption.MENOR, _$[$0-2].first_line, _$[$0-2].first_column);
+ this.$ = new Relacional($$[$0-2], $$[$0],RelationalOption.MENOR, _$[$0-2].first_line, _$[$0-2].first_column);
 break;
 case 89:
  this.$ = new Relacional($$[$0-2], $$[$0],RelationalOption.MAYORIGUAL, _$[$0-2].first_line, _$[$0-2].first_column);
@@ -183,6 +183,15 @@ case 91:
 break;
 case 92:
 this.$ = new Relacional($$[$0-2], $$[$0],RelationalOption.NOIGUAL, _$[$0-2].first_line, _$[$0-2].first_column);
+break;
+case 93:
+this.$ = new Logica($$[$0-2], $$[$0],LogicaOpcion.AND, _$[$0-2].first_line, _$[$0-2].first_column);
+break;
+case 94:
+ this.$ = new Logica($$[$0-2], $$[$0],LogicaOpcion.OR, _$[$0-2].first_line, _$[$0-2].first_column);
+break;
+case 97:
+ this.$ = new Logica($$[$0],null,LogicaOpcion.NOT, _$[$0-1].first_line, _$[$0-1].first_column); 
 break;
 case 98:
  this.$ = new Aritmetico($$[$0],null, ArithmeticOption.RESTA, _$[$0-1].first_line,_$[$0-1].first_column); 

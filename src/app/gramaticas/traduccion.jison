@@ -351,23 +351,23 @@ Tipo
 
 
 Exp
-    : Exp '+' Exp{ $$ = new Aritmetico($1, $3, ArithmeticOption.SUMA, @1.first_line,@1.first_column); }       
-    | Exp '-' Exp{ $$ = new Aritmetico($1, $3, ArithmeticOption.RESTA, @1.first_line,@1.first_column); }  
-    | Exp '**' Exp  { $$ = new Aritmetico($1, $3, ArithmeticOption.POTENCIA, @1.first_line,@1.first_column); }  
+    : Exp '+' Exp { $$ = new Aritmetico($1, $3, ArithmeticOption.SUMA, @1.first_line,@1.first_column); }       
+    | Exp '-' Exp { $$ = new Aritmetico($1, $3, ArithmeticOption.RESTA, @1.first_line,@1.first_column); }  
+    | Exp '**' Exp { $$ = new Aritmetico($1, $3, ArithmeticOption.POTENCIA, @1.first_line,@1.first_column); }  
     | Exp '%' Exp { $$ = new Aritmetico($1, $3, ArithmeticOption.MODULO, @1.first_line,@1.first_column); }  
     | Exp '*' Exp { $$ = new Aritmetico($1, $3, ArithmeticOption.MULT, @1.first_line,@1.first_column); }  
-    | Exp '/' Exp{ $$ = new Aritmetico($1, $3, ArithmeticOption.DIV, @1.first_line,@1.first_column); }          
-    | Exp '>' Exp  {$$ = new Relacional($1, $3,RelationalOption.MAYOR, @1.first_line, @1.first_column);}
-    | Exp '<' Exp  {$$ = new Relacional($1, $3,RelationalOption.MENOR, @1.first_line, @1.first_column);}
-    | Exp '>=' Exp   { $$ = new Relacional($1, $3,RelationalOption.MAYORIGUAL, @1.first_line, @1.first_column);}
-    | Exp '<=' Exp  { $$ = new Relacional($1, $3,RelationalOption.MENORIGUAL, @1.first_line, @1.first_column);}
+    | Exp '/' Exp { $$ = new Aritmetico($1, $3, ArithmeticOption.DIV, @1.first_line,@1.first_column); }          
+    | Exp '>' Exp { $$ = new Relacional($1, $3,RelationalOption.MAYOR, @1.first_line, @1.first_column);}
+    | Exp '<' Exp { $$ = new Relacional($1, $3,RelationalOption.MENOR, @1.first_line, @1.first_column);}
+    | Exp '>=' Exp { $$ = new Relacional($1, $3,RelationalOption.MAYORIGUAL, @1.first_line, @1.first_column);}
+    | Exp '<=' Exp { $$ = new Relacional($1, $3,RelationalOption.MENORIGUAL, @1.first_line, @1.first_column);}
     | Exp '==' Exp { $$ = new Relacional($1, $3,RelationalOption.IGUAL, @1.first_line, @1.first_column);}
-    | Exp '!=' Exp  {$$ = new Relacional($1, $3,RelationalOption.NOIGUAL, @1.first_line, @1.first_column);}
-    | Exp '&&' Exp  
-    | Exp '||' Exp  
+    | Exp '!=' Exp {$$ = new Relacional($1, $3,RelationalOption.NOIGUAL, @1.first_line, @1.first_column);}
+    | Exp '&&' Exp {$$ = new Logica($1, $3,LogicaOpcion.AND, @1.first_line, @1.first_column);}
+    | Exp '||' Exp { $$ = new Logica($1, $3,LogicaOpcion.OR, @1.first_line, @1.first_column);}
     | Exp '.' Exp
     | Exp '?' Exp ':' Exp
-    | '!' Exp 
+    | '!' Exp { $$ = new Logica($2,null,LogicaOpcion.NOT, @1.first_line, @1.first_column); }
     | '-' Exp %prec Umenos { $$ = new Aritmetico($2,null, ArithmeticOption.RESTA, @1.first_line,@1.first_column); }
     | '(' Exp ')'
     {
