@@ -12,7 +12,10 @@
     const {Ternario} = require('../Expresiones/Ternario');
     const {AsigArreglo} = require('../Expresiones/AsigArreglo');
     //instrucciones
+    const {Instrucciones} = require('../Instruccion/Instrucciones');
     const {Console} = require('../Instruccion/Console');
+    const {If} = require('../Instruccion/If');
+
 %}
 
 %lex
@@ -29,7 +32,6 @@ string2  (\'[^']*\')
 //valores
 {number}              return 'NUMERO'
 {string}             return 'CADENA'
-{string2}             return 'CADENA2'
 //tipos de datos
 "number"			  return 'NUMBER'
 "string"			  return 'STRING'
@@ -197,7 +199,7 @@ OpcionParam
 
 Instruc
         : 'CONSOLE' '(' Expre ')' ';'{ $$ = new Console($3, @1.first_line, @1.first_column); }
-        | Sentencia_if 
+        | Sentencia_if {  $$ = $1; }
         | 'FOR' '(' Declaracion Exp ';' Actualizacion ')' InstruccionesSent
         | 'FOR' '(' DeclaForOF 'OF' Exp ')' InstruccionesSent
         | 'FOR' '(' DeclaForOF 'IN' Exp ')' InstruccionesSent
@@ -240,18 +242,18 @@ AccesoAsig
 */
 //*********************SENTENCIAS DE CONTROL
 Sentencia_if
-            : 'IF' '(' Exp ')' InstruccionesSent Sentencia_else
+            : 'IF' '(' Exp ')' InstruccionesSent Sentencia_else{ $$ = new If($3, $5, $6, @1.first_line, @1.first_column);}
 ;
 
 Sentencia_else
-                : 'ELSE' Sentencia_if 
-                | 'ELSE' InstruccionesSent 
-                |  
+                : 'ELSE' Sentencia_if  { $$ = $2;}
+                | 'ELSE' InstruccionesSent { $$ = $2;}
+                |  { $$ = null;}
 ;
 
 InstruccionesSent
-    : '{' Instrucciones '}' 
-    | '{' '}' 
+    : '{' Instrucciones '}' {$$ = new Instrucciones($2, @1.first_line, @1.first_column);}
+    | '{' '}' { $$ = new Instrucciones(new Array(), @1.first_line, @1.first_column);}
 ;
 InstruccionesSwitch
                     : Instrucciones  
@@ -369,20 +371,11 @@ Exp
     | Exp '?' Exp ':' Exp
     | '!' Exp { $$ = new Logica($2,null,LogicaOpcion.NOT, @1.first_line, @1.first_column); }
     | '-' Exp %prec Umenos { $$ = new Aritmetico($2,null, ArithmeticOption.RESTA, @1.first_line,@1.first_column); }
-    | '(' Exp ')'
-    {
-        $$ = $2;
-    }
+    | '(' Exp ')' { $$ = $2; }
     | Unario { $$ = $1}
     | Dimensiones {  $$ = $1; }
-    | AccesoArr
-    {
-        $$ = $1;
-    }
-    | F
-    {
-        $$ = $1;
-    }
+    | AccesoArr { $$ = $1; }
+    | F  {  $$ = $1; }
 ;
 
 AccesoArr
@@ -398,13 +391,6 @@ F
         txt = txt.replace(/\\t/g,"\t");
         txt = txt.replace(/\\r/g,"\r");
         //$$ = new Literal(txt.replace(/\"/g,""), @1.first_line, @1.first_column, Type.STRING);
-    }
-    | CADENA2
-    {
-        let txt2=$1.replace(/\\n/g,"\n");
-        txt2 = txt2.replace(/\\t/g,"\t");
-        txt2 = txt2.replace(/\\r/g,"\r");
-        //$$ = new Literal(txt2.replace(/\'/g,""), @1.first_line, @1.first_column, Type.STRING);
     }
     | TRUE
     | FALSE
