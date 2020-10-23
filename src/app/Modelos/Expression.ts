@@ -6,6 +6,8 @@ export abstract class Expression {
 
     public line: number;
     public column: number;
+    public trueLabel : string='';
+    public falseLabel : string='';
 
     constructor(line: number, column: number) {
         this.line = line;

@@ -1,5 +1,6 @@
 import { Environment } from '../Entornos/Environment';
 import { Arreglo } from '../Estructuras/Arreglo';
+import { Return } from '../Instruccion/Return';
 import { Expression } from "../Modelos/Expression";
 import { Retorno, Type } from "../Modelos/Retorno";
 
@@ -24,7 +25,8 @@ export class AsigArreglo extends Expression{
         }
 
         let arreglo = new Arreglo(tipo,arr);
-
-        return {value:arreglo,type:tipo};
+        //TODO
+        //return {value:arreglo,type:tipo};
+        return null;
     }
 }

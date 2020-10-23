@@ -1,6 +1,18 @@
  
 %{
-    const {errores,Error_} = require('../Reportes/Errores');
+    const {errores,Error_} = require('../Reportes/Errores');    
+    const { Type } = require("../Modelos/Retorno");
+    //expresiones
+    const { ArithmeticOption,Aritmetico} = require('../Expresiones/Aritmetico');
+    const {Relacional, RelationalOption} = require('../Expresiones/Relacional');
+    const {Logica, LogicaOpcion} = require('../Expresiones/Logica');
+    const {Literal} = require('../Expresiones/Literal');
+    const {Variable} = require('../Expresiones/Variable');
+    const {Unario,OperadorOpcion} = require('../Expresiones/Unario');
+    const {Ternario} = require('../Expresiones/Ternario');
+    const {AsigArreglo} = require('../Expresiones/AsigArreglo');
+    //instrucciones
+    const {Console} = require('../Instruccion/Console');
 %}
 
 %lex
@@ -184,7 +196,7 @@ OpcionParam
 
 
 Instruc
-        : 'CONSOLE' '(' Expre ')' ';'
+        : 'CONSOLE' '(' Expre ')' ';'{ $$ = new Console($3, @1.first_line, @1.first_column); }
         | Sentencia_if 
         | 'FOR' '(' Declaracion Exp ';' Actualizacion ')' InstruccionesSent
         | 'FOR' '(' DeclaForOF 'OF' Exp ')' InstruccionesSent
@@ -339,24 +351,24 @@ Tipo
 
 
 Exp
-    : Exp '+' Exp       
-    | Exp '-' Exp
-    | Exp '**' Exp  
-    | Exp '%' Exp
-    | Exp '*' Exp     
-    | Exp '/' Exp        
-    | Exp '>' Exp  
-    | Exp '<' Exp  
-    | Exp '>=' Exp   
-    | Exp '<=' Exp  
-    | Exp '==' Exp 
-    | Exp '!=' Exp  
-    | Exp '&&' Exp  
-    | Exp '||' Exp  
+    : Exp '+' Exp { $$ = new Aritmetico($1, $3, ArithmeticOption.SUMA, @1.first_line,@1.first_column); }       
+    | Exp '-' Exp { $$ = new Aritmetico($1, $3, ArithmeticOption.RESTA, @1.first_line,@1.first_column); }  
+    | Exp '**' Exp { $$ = new Aritmetico($1, $3, ArithmeticOption.POTENCIA, @1.first_line,@1.first_column); }  
+    | Exp '%' Exp { $$ = new Aritmetico($1, $3, ArithmeticOption.MODULO, @1.first_line,@1.first_column); }  
+    | Exp '*' Exp { $$ = new Aritmetico($1, $3, ArithmeticOption.MULT, @1.first_line,@1.first_column); }  
+    | Exp '/' Exp { $$ = new Aritmetico($1, $3, ArithmeticOption.DIV, @1.first_line,@1.first_column); }          
+    | Exp '>' Exp { $$ = new Relacional($1, $3,RelationalOption.MAYOR, @1.first_line, @1.first_column);}
+    | Exp '<' Exp { $$ = new Relacional($1, $3,RelationalOption.MENOR, @1.first_line, @1.first_column);}
+    | Exp '>=' Exp { $$ = new Relacional($1, $3,RelationalOption.MAYORIGUAL, @1.first_line, @1.first_column);}
+    | Exp '<=' Exp { $$ = new Relacional($1, $3,RelationalOption.MENORIGUAL, @1.first_line, @1.first_column);}
+    | Exp '==' Exp { $$ = new Relacional($1, $3,RelationalOption.IGUAL, @1.first_line, @1.first_column);}
+    | Exp '!=' Exp {$$ = new Relacional($1, $3,RelationalOption.NOIGUAL, @1.first_line, @1.first_column);}
+    | Exp '&&' Exp {$$ = new Logica($1, $3,LogicaOpcion.AND, @1.first_line, @1.first_column);}
+    | Exp '||' Exp { $$ = new Logica($1, $3,LogicaOpcion.OR, @1.first_line, @1.first_column);}
     | Exp '.' Exp
     | Exp '?' Exp ':' Exp
-    | '!' Exp 
-    | '-' Exp %prec Umenos  
+    | '!' Exp { $$ = new Logica($2,null,LogicaOpcion.NOT, @1.first_line, @1.first_column); }
+    | '-' Exp %prec Umenos { $$ = new Aritmetico($2,null, ArithmeticOption.RESTA, @1.first_line,@1.first_column); }
     | '(' Exp ')'
     {
         $$ = $2;
@@ -379,7 +391,7 @@ AccesoArr
 ;
 
 F
-    : NUMERO
+    : NUMERO{ $$ = new Literal($1, @1.first_line, @1.first_column, Type.NUMBER); }
     | CADENA
     {
         let txt=$1.replace(/\\n/g,"\n");

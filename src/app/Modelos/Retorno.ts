@@ -8,6 +8,9 @@ export enum Type{
 }
 
 export type Retorno ={
-    value : any,
-    type : Type
+    value : string,
+    type : Type,
+    esTmp? : boolean,
+    trueLabel? : string,
+    falseLabel? : string
 }

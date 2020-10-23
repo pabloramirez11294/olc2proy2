@@ -1,6 +1,7 @@
 import { Expression } from "../Modelos/Expression";
 import { Retorno, Type } from "../Modelos/Retorno";
 import { Environment } from "../Entornos/Environment";
+import { Data } from '../Data/Data';
 export enum RelationalOption{
     MENOR,
     MAYOR,
@@ -21,28 +22,30 @@ export class Relacional extends Expression{
         let result : Retorno={value:null,type:null};
         if(leftValue.type==Type.ARREGLO && rightValue.type==Type.ARREGLO){
             
-        }else            
+        }else{         
             this.mismoTipo(leftValue.type, rightValue.type,amb.getNombre());
-        
-        if(this.type == RelationalOption.MENOR){     
-            result.value = leftValue.value < rightValue.value;         
-            result.type = Type.BOOLEAN;
-        }else if(this.type == RelationalOption.MAYOR){     
-            result.value = leftValue.value > rightValue.value;         
-            result.type = Type.BOOLEAN;
-        }else if(this.type == RelationalOption.MENORIGUAL){     
-            result.value = leftValue.value <= rightValue.value;         
-            result.type = Type.BOOLEAN;
-        }else if(this.type == RelationalOption.MAYORIGUAL){     
-            result.value = leftValue.value >= rightValue.value;         
-            result.type = Type.BOOLEAN;
-        }else if(this.type == RelationalOption.IGUAL){     
-            result.value = leftValue.value == rightValue.value;         
-            result.type = Type.BOOLEAN;
-        }else if(this.type == RelationalOption.NOIGUAL){     
-            result.value = leftValue.value != rightValue.value;         
-            result.type = Type.BOOLEAN;
-        }
-        return result;
+            const data = Data.getInstance();
+            this.trueLabel = this.trueLabel == '' ? data.newLabel() : this.trueLabel;
+            this.falseLabel = this.falseLabel == '' ? data.newLabel() : this.falseLabel;
+            if(this.type == RelationalOption.MENOR){     
+                data.addIf(leftValue.value,rightValue.value,'<',this.trueLabel);
+            }else if(this.type == RelationalOption.MAYOR){     
+                data.addIf(leftValue.value,rightValue.value,'>',this.trueLabel);
+            }else if(this.type == RelationalOption.MENORIGUAL){     
+                data.addIf(leftValue.value,rightValue.value,'<=',this.trueLabel);
+            }else if(this.type == RelationalOption.MAYORIGUAL){     
+                data.addIf(leftValue.value,rightValue.value,'>=',this.trueLabel);
+            }else if(this.type == RelationalOption.IGUAL){     
+                data.addIf(leftValue.value,rightValue.value,'==',this.trueLabel);
+            }else if(this.type == RelationalOption.NOIGUAL){     
+                data.addIf(leftValue.value,rightValue.value,'!=',this.trueLabel);            
+            }
+            result.value = '';         
+            result.type = Type.BOOLEAN;result.esTmp=false;
+            result.trueLabel = this.trueLabel;
+            result.falseLabel = this.falseLabel;
+            data.addGoto(this.falseLabel);
+            return result;
+        }               
     }
 }
