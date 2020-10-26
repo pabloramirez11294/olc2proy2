@@ -54,7 +54,7 @@ export class  Data{
 
     //Instrucciones
     public addPrintf(formato: string, valor: any){
-        this.codigo += `${this.tabulador}printf("%${formato}",${valor});\n`;
+        this.codigo += `${this.tabulador}printf("%${formato}\\n",${valor});\n`;
     }
 
     public addIf(left: any, right: any, operator: string, label : string){

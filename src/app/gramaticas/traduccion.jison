@@ -13,8 +13,11 @@
     const {AsigArreglo} = require('../Expresiones/AsigArreglo');
     //instrucciones
     const {Instrucciones} = require('../Instruccion/Instrucciones');
+    //sentencias de control
     const {Console} = require('../Instruccion/Console');
     const {If} = require('../Instruccion/If');
+    const {Switch} = require('../Instruccion/Switch');    
+    const {Break,Continue,TipoEscape} = require('../Instruccion/BreakContinue');
 
 %}
 
@@ -205,14 +208,14 @@ Instruc
         | 'FOR' '(' DeclaForOF 'IN' Exp ')' InstruccionesSent
         | 'WHILE' '(' Exp ')' InstruccionesSent 
         | 'DO'  InstruccionesSent 'WHILE' '(' Exp ')' ';'
-        | 'BREAK' ';' 
-        | 'CONTINUE' ';' 
-        | Sent_switch 
+        | 'BREAK' ';' { $$ = new Break(@1.first_line, @1.first_column); }
+        | 'CONTINUE' ';'  { $$ = new Continue(@1.first_line, @1.first_column); }
+        | Sent_switch { $$ = $1; }
         | Declaracion 
         | Unario ';' 
         | Llamada ';' 
-        | 'RETURN' Exp ';'
-        | 'RETURN' ';' 
+        | 'RETURN' Exp ';'{ $$ = new Return($2,@1.first_line, @1.first_column); }
+        | 'RETURN' ';'  { $$ = new Return(undefined,@1.first_line, @1.first_column); }
         | ID AccesoAsig  '=' Exp ';'
 
 ;
@@ -256,22 +259,22 @@ InstruccionesSent
     | '{' '}' { $$ = new Instrucciones(new Array(), @1.first_line, @1.first_column);}
 ;
 InstruccionesSwitch
-                    : Instrucciones  
-                    |  
+                    : Instrucciones  {$$ = new Instrucciones($1, @1.first_line, @1.first_column);}
+                    |  {$$ = new Instrucciones(new Array(), @1.first_line, @1.first_column);}
 ;
 //************************SWITCH
 
 Sent_switch
-            : 'SWITCH' '(' Exp ')' '{'  Cases Default '}' 
+            : 'SWITCH' '(' Exp ')' '{'  Cases Default '}' {$$ = new Switch($3,$6,$7);}
 ;
 
 Cases
-    : Cases 'CASE'  Exp ':' InstruccionesSwitch
-    | 'CASE' Exp ':' InstruccionesSwitch
+    : Cases 'CASE'  Exp ':' InstruccionesSwitch {$$.set($3,$5); }
+    | 'CASE' Exp ':' InstruccionesSwitch { let a = new Map();  $$ = a.set($2,$4);}
 ;
 
 Default
-        : 'DEFAULT' ':' InstruccionesSwitch
+        : 'DEFAULT' ':' InstruccionesSwitch {{ $$ = $3; }}
         |
 ;
 

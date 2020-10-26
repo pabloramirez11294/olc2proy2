@@ -5,6 +5,8 @@ import { Type } from "../Modelos/Retorno";
 import {Error_} from '../Reportes/Errores';
 import { Instrucciones } from './Instrucciones';
 import {TipoEscape,Break} from './BreakContinue';
+import { Data } from '../Data/Data';
+import { strict } from 'assert';
 
 export class Switch extends Instruction{
 
@@ -15,32 +17,44 @@ export class Switch extends Instruction{
 
     public execute(ent : Environment) {
         const condicion = this.condicion.execute(ent);
-        let noBreak:boolean=false;
-        let defau:boolean=true;
+        if(!condicion == null)
+            throw new Error_(this.line, this.column, 'Semantico', 'La expresion no regresa un temporal: ',ent.getNombre());
+        const data = Data.getInstance();
+        data.addComentario('SWITCH inicia');
+        let labels:Array<any> = new Array();
+
         for(var [clave, valor] of this.cases.entries()){
-            const con = clave.execute(ent);
-            if(condicion.type!=con.type)
-                throw new Error_(this.line, this.column, "Semantico", "Error en switch los valores deben de ser del mismo tipo.",ent.getNombre());
-            if(condicion.value==con.value || noBreak){   
-                defau=false;             
-                const val=valor.execute(ent);
-                if(val!=undefined && val.type==TipoEscape.BREAK){
-                    defau=false;
-                    break;
-                }else if(val!=undefined)
-                    return val;
-                else{
-                    noBreak=true;
-                    defau=true;
-                }
-            }
+            const label=data.newLabel();
+            const exp = clave.execute(ent);
+            labels.push(label);
+            data.addIf(condicion.value,exp.value,'==',label);
         }
-        if(defau){
+        //default o salida
+        const label=data.newLabel();
+        labels.push(label);
+        data.addGoto(label);
+        //break
+        let lbBreak:Array<string> = new Array();
+        //agregar labels para las instrucciones
+        labels.reverse();
+        for(var [clave, valor] of this.cases.entries()){
+            data.addLabel(labels.pop());
+            const val = valor.execute(ent);
+            //TODO verificar que venga return,break
+            if(val!=undefined && val.type==TipoEscape.BREAK)
+                lbBreak.push(val.trueLabel);
+        }
+        if(this.defaul != null){
+            data.addLabel(labels.pop());
             const val=this.defaul.execute(ent);
             if(val!=undefined)
                     return val;
-        }
-      //  console.log(this.cases);
-        
+        }else
+            data.addLabel(labels.pop());
+        //label del break
+        lbBreak.forEach(element => {
+            data.addLabel(element);
+        });
+
     }
 }
