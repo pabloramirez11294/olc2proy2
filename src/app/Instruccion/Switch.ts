@@ -22,6 +22,8 @@ export class Switch extends Instruction{
         const data = Data.getInstance();
         data.addComentario('SWITCH inicia');
         let labels:Array<any> = new Array();
+        //label de escape
+        let escape = undefined;
 
         for(var [clave, valor] of this.cases.entries()){
             const label=data.newLabel();
@@ -36,25 +38,30 @@ export class Switch extends Instruction{
         //break
         let lbBreak:Array<string> = new Array();
         //agregar labels para las instrucciones
-        labels.reverse();
         for(var [clave, valor] of this.cases.entries()){
-            data.addLabel(labels.pop());
+            data.addLabel(labels.shift());
             const val = valor.execute(ent);
-            //TODO verificar que venga return,break
+            //verificar que venga return,break
             if(val!=undefined && val.type==TipoEscape.BREAK)
                 lbBreak.push(val.trueLabel);
+            else if(val!=undefined)
+                escape = val;
         }
+        //instrucciones default o label de salida
+        data.addLabel(labels.pop());
         if(this.defaul != null){
-            data.addLabel(labels.pop());
             const val=this.defaul.execute(ent);
-            if(val!=undefined)
-                    return val;
-        }else
-            data.addLabel(labels.pop());
-        //label del break
+            if(val!=undefined && val.type==TipoEscape.BREAK)
+                lbBreak.push(val.trueLabel);
+            else if(val!=undefined)
+                escape = val;
+        }
+            
+        //label's del break
         lbBreak.forEach(element => {
             data.addLabel(element);
         });
-
+        data.addComentario('SWITCH termina');
+        return escape;
     }
 }

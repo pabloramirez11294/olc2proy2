@@ -10,7 +10,7 @@ export class If extends Instruction{
         line : number, column : number){
         super(line, column);
     }
-
+    //TODO falta instrucicones de escape
     public execute(ent : Environment) {
         const data = Data.getInstance();
         data.addComentario('IF inicia');
@@ -28,6 +28,7 @@ export class If extends Instruction{
             data.addLabel(tempLbl);
         }else{
             data.addLabel(condicion.falseLabel);
-        }
+        }        
+        data.addComentario('IF termina');
     }
 }
