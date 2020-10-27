@@ -4,6 +4,7 @@ import { Environment } from "../Entornos/Environment";
 import { Type } from "../Modelos/Retorno";
 import {Error_} from '../Reportes/Errores';
 import {TipoEscape} from "../Instruccion/BreakContinue";
+import { Data } from '../Data/Data';
 
 export class While extends Instruction{
 
@@ -11,8 +12,35 @@ export class While extends Instruction{
         super(line, column);
     }
 
-    public execute(amb : Environment) {
+    public execute(amb : Environment) {        
         let condicion = this.condicion.execute(amb);
+        const data = Data.getInstance();
+        const lblWhile = data.newLabel();
+        data.addComentario('WHILE inicia');
+        data.addLabel(lblWhile);
+        //label de escape
+        let escape = undefined;
+        let lblBreak = undefined;
+        if(condicion.type == Type.BOOLEAN){
+            data.addLabel(condicion.trueLabel);
+            const code = this.code.execute(amb);
+            if(code != null || code != undefined){
+                if(code.type == TipoEscape.BREAK)
+                    lblBreak = code.trueLabel;
+                else if(code.type == TipoEscape.CONTINUE)
+                    data.addGoto(lblWhile);
+                else
+                    escape = code;
+            }
+            data.addGoto(lblWhile);
+            data.addLabel(condicion.falseLabel); 
+            if(lblBreak)
+                data.addLabel(lblBreak);          
+            data.addComentario('WHILE termina');
+            return;
+        }
+        throw new Error_(this.line, this.column, 'Semantico', 'La expresion no regresa un valor booleano: ' + condicion.value+", es de tipo: "+condicion.type ,amb.getNombre());
+        //let condicion = this.condicion.execute(amb);
         if(condicion.type != Type.BOOLEAN){
             throw new Error_(this.line, this.column, 'Semantico', 'La expresion no regresa un valor booleano: ' + condicion.value+", es de tipo: "+condicion.type ,amb.getNombre());
         }

@@ -18,6 +18,7 @@
     const {If} = require('../Instruccion/If');
     const {Switch} = require('../Instruccion/Switch');    
     const {Break,Continue,TipoEscape} = require('../Instruccion/BreakContinue');
+    const {While,DoWhile} = require('../Instruccion/While');
 
 %}
 
@@ -206,8 +207,8 @@ Instruc
         | 'FOR' '(' Declaracion Exp ';' Actualizacion ')' InstruccionesSent
         | 'FOR' '(' DeclaForOF 'OF' Exp ')' InstruccionesSent
         | 'FOR' '(' DeclaForOF 'IN' Exp ')' InstruccionesSent
-        | 'WHILE' '(' Exp ')' InstruccionesSent 
-        | 'DO'  InstruccionesSent 'WHILE' '(' Exp ')' ';'
+        | 'WHILE' '(' Exp ')' InstruccionesSent {$$ = new While($3,$5, @1.first_line, @1.first_column);}
+        | 'DO'  InstruccionesSent 'WHILE' '(' Exp ')' ';' {$$ = new DoWhile($5,$2, @1.first_line, @1.first_column);}
         | 'BREAK' ';' { $$ = new Break(@1.first_line, @1.first_column); }
         | 'CONTINUE' ';'  { $$ = new Continue(@1.first_line, @1.first_column); }
         | Sent_switch { $$ = $1; }
