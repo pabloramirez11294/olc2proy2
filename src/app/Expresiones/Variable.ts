@@ -14,8 +14,8 @@ export class Variable extends Expression{
             throw new Error_(this.line, this.column, 'Semantico', 'VARIABLE: no existe la variable:' + this.id,amb.getNombre());
         if(id.tipo!=Type.NULL && id.valor == undefined)
             throw new Error_(this.line, this.column, 'Semantico', 'VARIABLE: no tiene valor asignado:' + this.id,amb.getNombre());
-        
-        return {value: id.valor,type: id.tipo};
+        //TODO 
+        return {value: id.valor.toString(),type: id.tipo};
     }
 
 }

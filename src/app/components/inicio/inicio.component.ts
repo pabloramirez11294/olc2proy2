@@ -11,7 +11,6 @@ import { wasmFolder } from "@hpcc-js/wasm";
 import { Instruction } from 'src/app/Modelos/Instruction';
 import { Console } from '../../Instruccion/Console';
 import { Literal } from 'src/app/Expresiones/Literal';
-import { ListDeclaracion } from 'src/app/Instruccion/ListDeclaracion';
 import { Declaracion } from 'src/app/Instruccion/Declaracion';
 import { Instrucciones } from 'src/app/Instruccion/Instrucciones';
 import { If } from 'src/app/Instruccion/If';
@@ -137,7 +136,7 @@ export class InicioComponent implements OnInit {
       this.simbolos.push(element);
     });
     for (var simbolo of tSimbolos.values()) {
-      const s:Array<string>=new Array<string>(simbolo.id,simbolo.valor,simbolo.tipo?.toString(),
+      const s:Array<string>=new Array<string>(simbolo.id,simbolo.valor.toString(),simbolo.tipo?.toString(),
                                                   simbolo.ambito,simbolo.linea,simbolo.columna);
       this.simbolos.push(s);
     }
@@ -209,12 +208,9 @@ export class InicioComponent implements OnInit {
       }else if(raiz instanceof Literal){
         this.cont++;      
         cuerpo += "\""+id+"_" + raiz.constructor.name + "\"->\""+this.cont+"_"+raiz.value+"\"";
-      }else if( raiz instanceof ListDeclaracion){
-        for(const hijos of raiz.lista){
+      }else if( raiz instanceof Declaracion){ //TODO revisar porque se quito listInstrucciones
           this.cont++;
-          cuerpo += "\""+id+"_" + raiz.constructor.name + "\"->\""+this.cont+"_"+hijos.constructor.name+"\"";
-          cuerpo += this.recorrerAST(hijos, this.cont); 
-        }
+          cuerpo += "\""+id+"_" + raiz.constructor.name + "\"->\""+this.cont+"_"+raiz.constructor.name+"\"";
       }else if(raiz instanceof Declaracion){
         this.cont++;      
         cuerpo += "\""+id+"_" + raiz.constructor.name + "\"->\""+this.cont+"_"+raiz.id+"\"";

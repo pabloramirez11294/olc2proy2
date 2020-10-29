@@ -22,7 +22,7 @@ export class Llamada extends Instruction{
             const sim:Simbolo=func.parametros[i];
             const param:Expression=this.parametros[i];
             const valor=param.execute(amb);
-
+            /*
             if(sim.tipo!=valor.type)
                 throw new Error_(this.line,this.column,'Semántico','Error los tipos no coinciden del parametro: '+sim.id,nombreAmbito);
             //TODO hacer mas validaciones, cambia al tipo del valor
@@ -32,7 +32,7 @@ export class Llamada extends Instruction{
             }else{                  
                 sim.valor=valor;
                 nuevoAmb.guardar(sim.id, sim.valor.value, sim.tipo,this.line,this.column,false);
-            }
+            }*/
         }
         //retornar
         const resultado=func.instrucciones.execute(nuevoAmb);

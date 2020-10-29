@@ -65,6 +65,19 @@ export class  Data{
         this.codigo+=`${this.tabulador}goto ${label};\n`;
     }
 
+    //HEAP
+    public nextHeap(){
+        this.codigo += (this.tabulador + 'h = h + 1;');
+    }
+
+    public addGetHeap(tmp : any, index: any){
+        this.codigo += (`${this.tabulador}${tmp} = Heap[${index}];`);
+    }
+
+    public addSetHeap(index: any, value : any){
+        this.codigo += (`${this.tabulador}Heap[${index}] = ${value};`);
+    }
+
     public addEncabezado(){        
         let listaTmp : string = '';
         if(this.listTmp.size!=0){

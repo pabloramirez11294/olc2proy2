@@ -12,7 +12,7 @@ export class AccesoAsig extends Instruction{
    }
 
     public execute(amb: Environment) {
-        const sim:Simbolo= amb.getVar(this.id);
+      /*  const sim:Simbolo= amb.getVar(this.id);
         const arr:Arreglo = sim.valor;
         const val = this.val.execute(amb);
         //TODO ver validaciones de tipo y rango
@@ -27,7 +27,7 @@ export class AccesoAsig extends Instruction{
 
         if(sim.tipoArreglo==Type.ARREGLO)
             sim.tipoArreglo=val.type;
-        res.arr[Number(indi.value)]=val.value;
+        res.arr[Number(indi.value)]=val.value;*/
     }
 
 

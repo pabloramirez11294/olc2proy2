@@ -19,6 +19,8 @@
     const {Switch} = require('../Instruccion/Switch');    
     const {Break,Continue,TipoEscape} = require('../Instruccion/BreakContinue');
     const {While,DoWhile} = require('../Instruccion/While');
+    //declaraciones
+    const {Declaracion} = require('../Instruccion/Declaracion');
 
 %}
 
@@ -212,7 +214,7 @@ Instruc
         | 'BREAK' ';' { $$ = new Break(@1.first_line, @1.first_column); }
         | 'CONTINUE' ';'  { $$ = new Continue(@1.first_line, @1.first_column); }
         | Sent_switch { $$ = $1; }
-        | Declaracion 
+        | Declaracion { $$ = $1; }
         | Unario ';' 
         | Llamada ';' 
         | 'RETURN' Exp ';'{ $$ = new Return($2,@1.first_line, @1.first_column); }
@@ -235,15 +237,7 @@ DeclaForOF
         : 'LET' ID
         | 'CONST' ID
 ;
-/*
-AccesoAsig
-        : AccesoAsig '[' Exp ']' {
-            $$= new AccesoAsig(undefined,$3,$1,@1.first_line, @1.first_column);
-        }
-        | ID '[' Exp ']'{
-            $$ = new AccesoAsig($1,$3,null,@1.first_line, @1.first_column);
-        }
-*/
+
 //*********************SENTENCIAS DE CONTROL
 Sentencia_if
             : 'IF' '(' Exp ')' InstruccionesSent Sentencia_else{ $$ = new If($3, $5, $6, @1.first_line, @1.first_column);}
@@ -275,7 +269,7 @@ Cases
 ;
 
 Default
-        : 'DEFAULT' ':' InstruccionesSwitch {{ $$ = $3; }}
+        : 'DEFAULT' ':' InstruccionesSwitch { $$ = $3; }
         |
 ;
 
@@ -290,21 +284,21 @@ Actualizacion
 
 
 Declaracion
-            : 'LET' OpcionDeclaracion ';'        
+            : 'LET' OpcionDeclaracion ';' { $$ = $1; }       
             | ID '=' Exp ';'        
-            | 'CONST' OpcionDeclaracionConst ';' 
+            | 'CONST' OpcionDeclaracionConst ';' { $$ = $1; }
 ;
 
 
 OpcionDeclaracion
-                : ID ':' Tipo '=' Exp
-                | ID ':' Tipo
+                : ID ':' Tipo '=' Exp {$$ = new Declaracion($1,$3,$5,false, @1.first_line, @1.first_column);}
+                | ID ':' Tipo {$$ = new Declaracion($1,$3,undefined,false, @1.first_line, @1.first_column);}
                 | ID ':' Tipo Dim '=' Exp            
                 | ID ':' Tipo Dim  
                 | ID ':' Tipo Dim '=' 'NEW' 'ARRAY' '(' Exp ')'
 ;
 OpcionDeclaracionConst
-                : ID ':' Tipo '=' Exp
+                : ID ':' Tipo '=' Exp {$$ = new Declaracion($1,$3,$5,false, @1.first_line, @1.first_column); $$.constante=true;}
                 | ID ':' Tipo Dim '=' Exp 
                 | ID ':' Tipo Dim '=' 'NEW' 'ARRAY' '(' Exp ')'
 

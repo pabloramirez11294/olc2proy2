@@ -3,6 +3,7 @@ import { Instruction } from "../Modelos/Instruction";
 import { Environment, Simbolo } from "../Entornos/Environment";
 import {Type} from "../Modelos/Retorno";
 import {Error_} from '../Reportes/Errores';
+import { Data } from '../Data/Data';
 export class Declaracion extends Instruction{
 
     public constante:boolean=false;
@@ -12,13 +13,9 @@ export class Declaracion extends Instruction{
     }
 
     public execute(amb: Environment) {
-
-        if(this.exp == undefined && this.tipo==undefined){//let a;
-            amb.guardar(this.id,undefined,undefined ,this.line,this.column,this.constante);
-        }else if(!this.asignacion && this.exp != undefined && this.tipo==undefined){// let a=val;
-            const valor = this.exp.execute(amb);
-            amb.guardar(this.id, valor.value, valor.type,this.line,this.column,this.constante);
-        }else if(this.exp == undefined){// let a:tipo;
+        const data = Data.getInstance();
+        const pos:number =0;
+         if(this.exp == undefined){// let a:tipo;
             amb.guardar(this.id,undefined,this.tipo ,this.line,this.column,this.constante);
         }else if(this.asignacion && this.tipo==undefined){//a=val;
             const valor = this.exp.execute(amb);                         
@@ -29,7 +26,8 @@ export class Declaracion extends Instruction{
                 throw new Error_(this.line, this.column, 'Semantico',
                 'DECLARACION: no coincide el tipo con el valor, valor:' + valor.value+", tipo: "+this.tipo ,amb.getNombre());
             }
-            amb.guardar(this.id, valor.value, this.tipo,this.line,this.column,this.constante);
+            amb.guardar(this.id,pos, this.tipo,this.line,this.column,this.constante);
+
         }
 
     }
