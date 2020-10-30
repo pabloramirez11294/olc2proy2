@@ -183,8 +183,8 @@ break;
 case 52:
  let a = new Map();  this.$ = a.set($$[$0-2],$$[$0]);
 break;
-case 57: case 59:
- this.$ = $$[$0-2]; 
+case 57: case 59: case 99:
+ this.$ = $$[$0-1]; 
 break;
 case 60:
 this.$ = new Declaracion($$[$0-4],$$[$0-2],$$[$0],false, _$[$0-4].first_line, _$[$0-4].first_column);
@@ -210,6 +210,18 @@ case 74:
         $$[$0-2].push($$[$0]);
         this.$ = $$[$0-2];
     
+break;
+case 76:
+ this.$ = Type.NUMBER; 
+break;
+case 77:
+ this.$ = Type.STRING; 
+break;
+case 78:
+ this.$ = Type.BOOLEAN; 
+break;
+case 79:
+ this.$ = Type.VOID; 
 break;
 case 81:
  this.$ = new Aritmetico($$[$0-2], $$[$0], ArithmeticOption.SUMA, _$[$0-2].first_line,_$[$0-2].first_column); 
@@ -259,9 +271,6 @@ break;
 case 98:
  this.$ = new Aritmetico($$[$0],null, ArithmeticOption.RESTA, _$[$0-1].first_line,_$[$0-1].first_column); 
 break;
-case 99:
- this.$ = $$[$0-1]; 
-break;
 case 100:
  this.$ = $$[$0]
 break;
@@ -275,6 +284,9 @@ case 107:
         txt = txt.replace(/\\r/g,"\r");
         //this.$ = new Literal(txt.replace(/\"/g,""), _$[$0].first_line, _$[$0].first_column, Type.STRING);
     
+break;
+case 110:
+this.$ = new Variable($$[$0],_$[$0].first_line, _$[$0].first_column);
 break;
 case 111:
 

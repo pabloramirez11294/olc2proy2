@@ -38,12 +38,13 @@ export class Environment{
         this.nombre=nombre;
     }
 
-    public guardar(id: string, valor: number, type: Type,linea:number,columna:number,constante:boolean){
+    public guardar(id: string, type: Type,linea:number,columna:number,constante:boolean):Simbolo{
         if(this.variables.has(id))
             throw new Error_(linea, columna, 'Semantico',
             'DECLARACION: ya existe la variable: '+id ,this.getNombre());
-    
-        this.variables.set(id, new Simbolo(valor, id, type,this.getNombre(),linea.toString(),columna.toString(),constante, this.anterior == null));
+        const sim = new Simbolo(this.pos++, id, type,this.getNombre(),linea.toString(),columna.toString(),constante, this.anterior == null);
+        this.variables.set(id,sim );
+        return sim;
     }
     public guardarArr(id: string, valor: any, type: Type,tipoArreglo:Type,dim:number,linea:number,columna:number,constante:boolean){
         if(this.variables.has(id))
@@ -119,5 +120,8 @@ export class Environment{
         return env;
     }
 
+    public esGlobal() : Boolean{
+        return this.anterior==null;
+    }
     
 }

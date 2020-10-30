@@ -284,9 +284,9 @@ Actualizacion
 
 
 Declaracion
-            : 'LET' OpcionDeclaracion ';' { $$ = $1; }       
+            : 'LET' OpcionDeclaracion ';' { $$ = $2; }       
             | ID '=' Exp ';'        
-            | 'CONST' OpcionDeclaracionConst ';' { $$ = $1; }
+            | 'CONST' OpcionDeclaracionConst ';' { $$ = $2; }
 ;
 
 
@@ -341,10 +341,10 @@ Expre
 ;    
 
 Tipo
-    : 'NUMBER' 
-    | 'STRING'
-    | 'BOOLEAN' 
-    | 'VOID' 
+    : 'NUMBER' { $$ = Type.NUMBER; }
+    | 'STRING' { $$ = Type.STRING; }
+    | 'BOOLEAN' { $$ = Type.BOOLEAN; }
+    | 'VOID' { $$ = Type.VOID; }
     | ID
 ;
 
@@ -392,7 +392,7 @@ F
     }
     | TRUE
     | FALSE
-    | ID
+    | ID {$$ = new Variable($1,@1.first_line, @1.first_column);}
     | Llamada
     {
         $$ = $1;
