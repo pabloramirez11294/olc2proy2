@@ -10,17 +10,14 @@ export class Instrucciones extends Instruction{
 
     public execute(env : Environment) {
         const newEnv = new Environment(env,env.getNombre());
-        //label de escape
-        let escape = undefined;
         for(const instr of this.code){
             try {
-                const element = instr.execute(newEnv);
-                if(element != undefined || element != null)
-                    escape = element;        
+                const element = instr.execute(newEnv);      
             } catch (error) {
                 errores.push(error);
             }
         }
-        return escape;
+        //TODO quitar return
+        return undefined;
     }
 }

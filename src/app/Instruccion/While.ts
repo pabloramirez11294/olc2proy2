@@ -18,48 +18,18 @@ export class While extends Instruction{
         data.addComentario('WHILE inicia');
         data.addLabel(lblWhile);        
         let condicion = this.condicion.execute(amb);
-        //label de escape
-        let escape = undefined;
-        let lblBreak = undefined;
         if(condicion.type == Type.BOOLEAN){
+            //sentencia d escape
+            amb.break = this.condicion.falseLabel;
+            amb.continue = lblWhile;//fin
             data.addLabel(condicion.trueLabel);
-            const code = this.code.execute(amb);
-            if(code != null || code != undefined){
-                if(code.type == TipoEscape.BREAK)
-                    lblBreak = code.trueLabel;
-                else if(code.type == TipoEscape.CONTINUE)
-                    data.addGoto(lblWhile);
-                else
-                    escape = code;
-            }
+            this.code.execute(amb);
             data.addGoto(lblWhile);
-            data.addLabel(condicion.falseLabel); 
-            if(lblBreak)
-                data.addLabel(lblBreak);          
+            data.addLabel(condicion.falseLabel);         
             data.addComentario('WHILE termina');
             return escape;
         }
         throw new Error_(this.line, this.column, 'Semantico', 'La expresion no regresa un valor booleano: ' + condicion.value+", es de tipo: "+condicion.type ,amb.getNombre());
-        //let condicion = this.condicion.execute(amb);
-        if(condicion.type != Type.BOOLEAN){
-            throw new Error_(this.line, this.column, 'Semantico', 'La expresion no regresa un valor booleano: ' + condicion.value+", es de tipo: "+condicion.type ,amb.getNombre());
-        }
-        while(condicion.value){
-            const code = this.code.execute(amb);
-            if(code != null || code != undefined){
-                if(code.type == TipoEscape.BREAK)
-                    break;
-                else if(code.type == TipoEscape.CONTINUE)
-                    continue;
-                else
-                    return code;
-            }
-            condicion = this.condicion.execute(amb);
-            if(condicion.type != Type.BOOLEAN){
-                throw new Error_(this.line, this.column, 'Semantico', 'La expresion no regresa un valor booleano: ' + condicion.value+", es de tipo: "+condicion.type ,amb.getNombre());
-            }
-        }
-
     }
     
 }

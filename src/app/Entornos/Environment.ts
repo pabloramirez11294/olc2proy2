@@ -23,12 +23,20 @@ export class Environment{
     private funciones : Map<string, Funcion>;
     private variables : Map<string, Simbolo>;
     pos: number;
+    //sentencias de escape
+    break: string | null;
+    continue: string | null;
+    return: string | null;
 
     constructor(public anterior : Environment | null,private nombre:string){
         this.variables = new Map();  
         this.funciones = new Map();      
         this.nombre = nombre;
         this.pos = 0;
+        //escape
+        this.break = anterior?.break || null;
+        this.return = anterior?.return || null;
+        this.continue = anterior?.continue || null;
     }
 
     public getNombre():string{

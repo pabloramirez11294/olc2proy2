@@ -1,6 +1,8 @@
 import { Data } from '../Data/Data';
+import { Environment } from '../Entornos/Environment';
 import { Instruction } from "../Modelos/Instruction";
 import { Return } from './Return';
+import {Error_} from '../Reportes/Errores';
 
 export enum TipoEscape{
     BREAK=100,
@@ -12,11 +14,11 @@ export class Break extends Instruction{
         super(line, column);
     }
     
-    public execute(){
-        const data = Data.getInstance();
-        const label = data.newLabel();
-        data.addGoto(label);
-        return { type : TipoEscape.BREAK , trueLabel: label};
+    public execute(amb:Environment){
+        if(amb.break == null){ 
+            throw new Error_(this.line, this.column, 'Semantico', 'Break en un ambito incorrecto' ,amb.getNombre());
+        }
+        Data.getInstance().addGoto(amb.break);
     }
 }
 
