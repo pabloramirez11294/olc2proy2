@@ -19,7 +19,7 @@ export class While extends Instruction{
         data.addLabel(lblWhile);        
         let condicion = this.condicion.execute(amb);
         if(condicion.type == Type.BOOLEAN){
-            //sentencia d escape
+            //sentencia de escape
             amb.break = this.condicion.falseLabel;
             amb.continue = lblWhile;//fin
             data.addLabel(condicion.trueLabel);

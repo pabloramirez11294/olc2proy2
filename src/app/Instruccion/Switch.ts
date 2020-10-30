@@ -15,52 +15,40 @@ export class Switch extends Instruction{
         super(line, column);
     }
 
-    public execute(ent : Environment) {
-        const condicion = this.condicion.execute(ent);
+    public execute(amb : Environment) {
+        const condicion = this.condicion.execute(amb);
         if(!condicion == null)
-            throw new Error_(this.line, this.column, 'Semantico', 'La expresion no regresa un temporal: ',ent.getNombre());
+            throw new Error_(this.line, this.column, 'Semantico', 'La expresion no regresa un temporal: ',amb.getNombre());
         const data = Data.getInstance();
         data.addComentario('SWITCH inicia');
         let labels:Array<any> = new Array();
-        //label de escape
-        let escape = undefined;
 
         for(var [clave, valor] of this.cases.entries()){
             const label=data.newLabel();
-            const exp = clave.execute(ent);
+            const exp = clave.execute(amb);
             labels.push(label);
             data.addIf(condicion.value,exp.value,'==',label);
         }
-        //default o salida
+        //default
         const label=data.newLabel();
         labels.push(label);
         data.addGoto(label);
-        //break
-        let lbBreak:Array<string> = new Array();
+        //label de salida y sentencia de escape        
+        const lblBreak=data.newLabel();
+        data.addGoto(lblBreak);
+        amb.break = lblBreak;
         //agregar labels para las instrucciones
         for(var [clave, valor] of this.cases.entries()){
             data.addLabel(labels.shift());
-            const val = valor.execute(ent);
-            //verificar que venga return,break
-            if(val!=undefined && val.type==TipoEscape.BREAK)
-                lbBreak.push(val.trueLabel);
-            else if(val!=undefined)
-                escape = val;
+            valor.execute(amb);
         }
         //instrucciones default o label de salida
         data.addLabel(labels.pop());
         if(this.defaul != null){
-            const val=this.defaul.execute(ent);
-            if(val!=undefined && val.type==TipoEscape.BREAK)
-                lbBreak.push(val.trueLabel);
-            else if(val!=undefined)
-                escape = val;
+            const val=this.defaul.execute(amb);
         }
-            
-        //label's del break
-        lbBreak.forEach(element => {
-            data.addLabel(element);
-        });
+        //label break
+        data.addLabel(lblBreak);
         data.addComentario('SWITCH termina');
         return escape;
     }
