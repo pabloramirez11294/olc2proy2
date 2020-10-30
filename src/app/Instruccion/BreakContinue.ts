@@ -28,7 +28,10 @@ export class Continue extends Instruction{
         super(line, column);
     }
 
-    public execute() {
-        return {line : this.line, column: this.column, type : TipoEscape.CONTINUE};
+    public execute(amb:Environment){
+        if(amb.continue == null){ 
+            throw new Error_(this.line, this.column, 'Semantico', 'Continue en un ambito incorrecto' ,amb.getNombre());
+        }
+        Data.getInstance().addGoto(amb.continue);
     }
 }
