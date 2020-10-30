@@ -12,6 +12,9 @@ export class If extends Instruction{
     }
     //TODO falta instrucicones de escape
     public execute(ent : Environment) {
+        //label de escape
+        let escape = undefined;
+
         const data = Data.getInstance();
         data.addComentario('IF inicia');
         const condicion = this.condicion.execute(ent);
@@ -19,16 +22,25 @@ export class If extends Instruction{
             throw new Error_(this.line, this.column, 'Semantico', 'La expresion no regresa un valor booleano: ' + condicion.value+", es de tipo: "+condicion.type ,ent.getNombre());
         }
         data.addLabel(condicion.trueLabel);
-        this.codeIF.execute(ent);
+        //*******por si viene label de escape
+        const code = this.codeIF.execute(ent);
+        if(code != null || code != undefined)
+            escape = code;
+        //************* 
         if(this.codeElse != null){
             const tempLbl = data.newLabel();
             data.addGoto(tempLbl);
             data.addLabel(condicion.falseLabel);
-            this.codeElse.execute(ent);
+            //*******por si viene label de escape
+            const code = this.codeElse.execute(ent);
+            if(code != null || code != undefined)
+                escape = code;
+            //************* 
             data.addLabel(tempLbl);
         }else{
             data.addLabel(condicion.falseLabel);
         }        
         data.addComentario('IF termina');
+        return escape;
     }
 }
