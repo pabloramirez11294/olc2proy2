@@ -186,6 +186,9 @@ break;
 case 57: case 59: case 99:
  this.$ = $$[$0-1]; 
 break;
+case 58:
+this.$ = new Declaracion($$[$0-3],undefined,$$[$0-1],true, _$[$0-3].first_line, _$[$0-3].first_column);
+break;
 case 60:
 this.$ = new Declaracion($$[$0-4],$$[$0-2],$$[$0],false, _$[$0-4].first_line, _$[$0-4].first_column);
 break;

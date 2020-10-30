@@ -13,11 +13,11 @@ export class While extends Instruction{
     }
 
     public execute(amb : Environment) {        
-        let condicion = this.condicion.execute(amb);
         const data = Data.getInstance();
         const lblWhile = data.newLabel();
         data.addComentario('WHILE inicia');
-        data.addLabel(lblWhile);
+        data.addLabel(lblWhile);        
+        let condicion = this.condicion.execute(amb);
         //label de escape
         let escape = undefined;
         let lblBreak = undefined;
@@ -37,7 +37,7 @@ export class While extends Instruction{
             if(lblBreak)
                 data.addLabel(lblBreak);          
             data.addComentario('WHILE termina');
-            return;
+            return escape;
         }
         throw new Error_(this.line, this.column, 'Semantico', 'La expresion no regresa un valor booleano: ' + condicion.value+", es de tipo: "+condicion.type ,amb.getNombre());
         //let condicion = this.condicion.execute(amb);

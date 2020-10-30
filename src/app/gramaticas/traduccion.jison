@@ -285,7 +285,7 @@ Actualizacion
 
 Declaracion
             : 'LET' OpcionDeclaracion ';' { $$ = $2; }       
-            | ID '=' Exp ';'        
+            | ID '=' Exp ';' {$$ = new Declaracion($1,undefined,$3,true, @1.first_line, @1.first_column);}       
             | 'CONST' OpcionDeclaracionConst ';' { $$ = $2; }
 ;
 

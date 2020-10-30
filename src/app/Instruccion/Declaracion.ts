@@ -17,8 +17,16 @@ export class Declaracion extends Instruction{
          if(this.exp == undefined){// let a:tipo;
             amb.guardar(this.id,this.tipo ,this.line,this.column,this.constante);
         }else if(this.asignacion && this.tipo==undefined){//a=val;
-            const valor = this.exp.execute(amb);                         
-            amb.asignar(this.id ,valor.value,valor.type,this.line,this.column);
+            const valor = this.exp.execute(amb);                     
+            const sim:Simbolo = amb.getVar(this.id);
+            if(valor.type != sim.tipo){
+                throw new Error_(this.line, this.column, 'Semantico',
+                'ASGINACION: no coincide el tipo con el valor, valor:' + valor.value+", tipo: "+this.tipo ,amb.getNombre());
+            }
+            
+            data.addSetStack(sim.valor,valor.value);
+            
+
         }else{//let a:number=val;
             const valor = this.exp.execute(amb);
             if(valor.type != this.tipo){
