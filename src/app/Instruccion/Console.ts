@@ -17,22 +17,21 @@ export class Console extends Instruction{
         this.value.forEach(element => {
             const value = element.execute(amb);
             switch(value.type){
+                case Type.BOOLEAN:
+                    const tmpLbl = data.newLabel();
+                    data.addLabel(value.trueLabel);
+                    data.addPrintf('d','1');
+                    data.addGoto(tmpLbl);
+                    data.addLabel(value.falseLabel);
+                    data.addPrintf('d','0');
+                    data.addLabel(tmpLbl);
+                    break;
                 case Type.NUMBER:
                     if (!value.esTmp && Number(value.value) % 1 == 0)
                         formato = 'd';
                     data.addPrintf(formato,value.value);
                     break;
-                case Type.BOOLEAN:
-                    formato = 'd';
-                    const tmp = data.newLabel();
-                    data.addLabel(value.trueLabel);
-                    data.addPrintf(formato,"1");
-                    data.addGoto(tmp);
-                    data.addLabel(value.falseLabel);
-                    data.addPrintf(formato,"0");
-                    data.addLabel(tmp);
-                    break;
-                default: 
+                default:
                     throw new Error_(this.line, this.column, "Semantico", "No se puede imprimir un valor de tipo: " + value.type,amb.getNombre());
             }
            /*TODO C3D para arreglos 

@@ -288,6 +288,12 @@ case 107:
         //this.$ = new Literal(txt.replace(/\"/g,""), _$[$0].first_line, _$[$0].first_column, Type.STRING);
     
 break;
+case 108:
+this.$ = new Literal('1', _$[$0].first_line, _$[$0].first_column, Type.BOOLEAN);
+break;
+case 109:
+this.$ = new Literal('0', _$[$0].first_line, _$[$0].first_column, Type.BOOLEAN);
+break;
 case 110:
 this.$ = new Variable($$[$0],_$[$0].first_line, _$[$0].first_column);
 break;

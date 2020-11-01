@@ -20,8 +20,17 @@ export class Variable extends Expression{
         const temp = data.newTmp();
         if (sim.global) {
             data.addGetStack(temp, sim.valor);
+            if(sim.tipo==Type.BOOLEAN){
+                const data = Data.getInstance();
+            this.trueLabel = data.newLabel();
+            this.falseLabel = data.newLabel();
+            data.addIf(temp, '1', '==', this.trueLabel);
+            data.addGoto(this.falseLabel);
+            return {value :undefined, type : Type.BOOLEAN , trueLabel: this.trueLabel,esTmp:false,falseLabel:this.falseLabel};
+            }
+            return {value: temp,type: sim.tipo,esTmp:true};
         }
-        return {value: temp,type: sim.tipo,esTmp:true};
+        
     }
 
 }
