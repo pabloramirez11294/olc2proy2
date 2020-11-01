@@ -38,6 +38,8 @@ export abstract class Expression {
             return Type.NUMBER;
         else if((tipo1 == Type.BOOLEAN && tipo2 == Type.STRING) || (tipo2 == Type.BOOLEAN && tipo1 == Type.STRING))
             return Type.STRING;
+        else if((tipo1 == Type.BOOLEAN && tipo2 == Type.NUMBER) || (tipo2 == Type.BOOLEAN && tipo1 == Type.NUMBER))
+            return Type.NUMBER;
         else if(tipo1 == Type.BOOLEAN && tipo2 == Type.BOOLEAN)
             return Type.BOOLEAN;
         else{

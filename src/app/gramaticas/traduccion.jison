@@ -12,7 +12,16 @@
     const {Ternario} = require('../Expresiones/Ternario');
     const {AsigArreglo} = require('../Expresiones/AsigArreglo');
     //instrucciones
+    const {Instrucciones} = require('../Instruccion/Instrucciones');
+    //sentencias de control
     const {Console} = require('../Instruccion/Console');
+    const {If} = require('../Instruccion/If');
+    const {Switch} = require('../Instruccion/Switch');    
+    const {Break,Continue,TipoEscape} = require('../Instruccion/BreakContinue');
+    const {While,DoWhile} = require('../Instruccion/While');
+    //declaraciones
+    const {Declaracion} = require('../Instruccion/Declaracion');
+
 %}
 
 %lex
@@ -29,7 +38,6 @@ string2  (\'[^']*\')
 //valores
 {number}              return 'NUMERO'
 {string}             return 'CADENA'
-{string2}             return 'CADENA2'
 //tipos de datos
 "number"			  return 'NUMBER'
 "string"			  return 'STRING'
@@ -197,20 +205,20 @@ OpcionParam
 
 Instruc
         : 'CONSOLE' '(' Expre ')' ';'{ $$ = new Console($3, @1.first_line, @1.first_column); }
-        | Sentencia_if 
+        | Sentencia_if {  $$ = $1; }
         | 'FOR' '(' Declaracion Exp ';' Actualizacion ')' InstruccionesSent
         | 'FOR' '(' DeclaForOF 'OF' Exp ')' InstruccionesSent
         | 'FOR' '(' DeclaForOF 'IN' Exp ')' InstruccionesSent
-        | 'WHILE' '(' Exp ')' InstruccionesSent 
-        | 'DO'  InstruccionesSent 'WHILE' '(' Exp ')' ';'
-        | 'BREAK' ';' 
-        | 'CONTINUE' ';' 
-        | Sent_switch 
-        | Declaracion 
+        | 'WHILE' '(' Exp ')' InstruccionesSent {$$ = new While($3,$5, @1.first_line, @1.first_column);}
+        | 'DO'  InstruccionesSent 'WHILE' '(' Exp ')' ';' {$$ = new DoWhile($5,$2, @1.first_line, @1.first_column);}
+        | 'BREAK' ';' { $$ = new Break(@1.first_line, @1.first_column); }
+        | 'CONTINUE' ';'  { $$ = new Continue(@1.first_line, @1.first_column); }
+        | Sent_switch { $$ = $1; }
+        | Declaracion { $$ = $1; }
         | Unario ';' 
         | Llamada ';' 
-        | 'RETURN' Exp ';'
-        | 'RETURN' ';' 
+        | 'RETURN' Exp ';'{ $$ = new Return($2,@1.first_line, @1.first_column); }
+        | 'RETURN' ';'  { $$ = new Return(undefined,@1.first_line, @1.first_column); }
         | ID AccesoAsig  '=' Exp ';'
 
 ;
@@ -229,47 +237,39 @@ DeclaForOF
         : 'LET' ID
         | 'CONST' ID
 ;
-/*
-AccesoAsig
-        : AccesoAsig '[' Exp ']' {
-            $$= new AccesoAsig(undefined,$3,$1,@1.first_line, @1.first_column);
-        }
-        | ID '[' Exp ']'{
-            $$ = new AccesoAsig($1,$3,null,@1.first_line, @1.first_column);
-        }
-*/
+
 //*********************SENTENCIAS DE CONTROL
 Sentencia_if
-            : 'IF' '(' Exp ')' InstruccionesSent Sentencia_else
+            : 'IF' '(' Exp ')' InstruccionesSent Sentencia_else{ $$ = new If($3, $5, $6, @1.first_line, @1.first_column);}
 ;
 
 Sentencia_else
-                : 'ELSE' Sentencia_if 
-                | 'ELSE' InstruccionesSent 
-                |  
+                : 'ELSE' Sentencia_if  { $$ = $2;}
+                | 'ELSE' InstruccionesSent { $$ = $2;}
+                |  { $$ = null;}
 ;
 
 InstruccionesSent
-    : '{' Instrucciones '}' 
-    | '{' '}' 
+    : '{' Instrucciones '}' {$$ = new Instrucciones($2, @1.first_line, @1.first_column);}
+    | '{' '}' { $$ = new Instrucciones(new Array(), @1.first_line, @1.first_column);}
 ;
 InstruccionesSwitch
-                    : Instrucciones  
-                    |  
+                    : Instrucciones  {$$ = new Instrucciones($1, @1.first_line, @1.first_column);}
+                    |  {$$ = new Instrucciones(new Array(), @1.first_line, @1.first_column);}
 ;
 //************************SWITCH
 
 Sent_switch
-            : 'SWITCH' '(' Exp ')' '{'  Cases Default '}' 
+            : 'SWITCH' '(' Exp ')' '{'  Cases Default '}' {$$ = new Switch($3,$6,$7);}
 ;
 
 Cases
-    : Cases 'CASE'  Exp ':' InstruccionesSwitch
-    | 'CASE' Exp ':' InstruccionesSwitch
+    : Cases 'CASE'  Exp ':' InstruccionesSwitch {$$.set($3,$5); }
+    | 'CASE' Exp ':' InstruccionesSwitch { let a = new Map();  $$ = a.set($2,$4);}
 ;
 
 Default
-        : 'DEFAULT' ':' InstruccionesSwitch
+        : 'DEFAULT' ':' InstruccionesSwitch { $$ = $3; }
         |
 ;
 
@@ -284,21 +284,21 @@ Actualizacion
 
 
 Declaracion
-            : 'LET' OpcionDeclaracion ';'        
-            | ID '=' Exp ';'        
-            | 'CONST' OpcionDeclaracionConst ';' 
+            : 'LET' OpcionDeclaracion ';' { $$ = $2; }       
+            | ID '=' Exp ';' {$$ = new Declaracion($1,undefined,$3,true, @1.first_line, @1.first_column);}       
+            | 'CONST' OpcionDeclaracionConst ';' { $$ = $2; }
 ;
 
 
 OpcionDeclaracion
-                : ID ':' Tipo '=' Exp
-                | ID ':' Tipo
+                : ID ':' Tipo '=' Exp {$$ = new Declaracion($1,$3,$5,false, @1.first_line, @1.first_column);}
+                | ID ':' Tipo {$$ = new Declaracion($1,$3,undefined,false, @1.first_line, @1.first_column);}
                 | ID ':' Tipo Dim '=' Exp            
                 | ID ':' Tipo Dim  
                 | ID ':' Tipo Dim '=' 'NEW' 'ARRAY' '(' Exp ')'
 ;
 OpcionDeclaracionConst
-                : ID ':' Tipo '=' Exp
+                : ID ':' Tipo '=' Exp {$$ = new Declaracion($1,$3,$5,false, @1.first_line, @1.first_column); $$.constante=true;}
                 | ID ':' Tipo Dim '=' Exp 
                 | ID ':' Tipo Dim '=' 'NEW' 'ARRAY' '(' Exp ')'
 
@@ -341,10 +341,10 @@ Expre
 ;    
 
 Tipo
-    : 'NUMBER' 
-    | 'STRING'
-    | 'BOOLEAN' 
-    | 'VOID' 
+    : 'NUMBER' { $$ = Type.NUMBER; }
+    | 'STRING' { $$ = Type.STRING; }
+    | 'BOOLEAN' { $$ = Type.BOOLEAN; }
+    | 'VOID' { $$ = Type.VOID; }
     | ID
 ;
 
@@ -369,20 +369,11 @@ Exp
     | Exp '?' Exp ':' Exp
     | '!' Exp { $$ = new Logica($2,null,LogicaOpcion.NOT, @1.first_line, @1.first_column); }
     | '-' Exp %prec Umenos { $$ = new Aritmetico($2,null, ArithmeticOption.RESTA, @1.first_line,@1.first_column); }
-    | '(' Exp ')'
-    {
-        $$ = $2;
-    }
+    | '(' Exp ')' { $$ = $2; }
     | Unario { $$ = $1}
     | Dimensiones {  $$ = $1; }
-    | AccesoArr
-    {
-        $$ = $1;
-    }
-    | F
-    {
-        $$ = $1;
-    }
+    | AccesoArr { $$ = $1; }
+    | F  {  $$ = $1; }
 ;
 
 AccesoArr
@@ -399,16 +390,9 @@ F
         txt = txt.replace(/\\r/g,"\r");
         //$$ = new Literal(txt.replace(/\"/g,""), @1.first_line, @1.first_column, Type.STRING);
     }
-    | CADENA2
-    {
-        let txt2=$1.replace(/\\n/g,"\n");
-        txt2 = txt2.replace(/\\t/g,"\t");
-        txt2 = txt2.replace(/\\r/g,"\r");
-        //$$ = new Literal(txt2.replace(/\'/g,""), @1.first_line, @1.first_column, Type.STRING);
-    }
-    | TRUE
-    | FALSE
-    | ID
+    | TRUE {$$ = new Literal('1', @1.first_line, @1.first_column, Type.BOOLEAN);}
+    | FALSE {$$ = new Literal('0', @1.first_line, @1.first_column, Type.BOOLEAN);}
+    | ID {$$ = new Variable($1,@1.first_line, @1.first_column);}
     | Llamada
     {
         $$ = $1;

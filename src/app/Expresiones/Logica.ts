@@ -54,7 +54,7 @@ export class Logica extends Expression{
             result.trueLabel = this.trueLabel;
             result.falseLabel = this.right.falseLabel;
         }        
-        result.value = '';         
+        result.value = null;         
         result.type = Type.BOOLEAN;
         result.esTmp=false;
         return result;

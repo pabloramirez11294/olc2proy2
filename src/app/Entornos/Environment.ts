@@ -5,26 +5,38 @@ import {Funcion} from '../Instruccion/Funcion';
 export class Simbolo{
     public tipoArreglo:Type;
     public dim:number;
-    public valor :any;
+    public valor :number;
     public id : string;
     public tipo : Type;
     public constante:boolean;
-    constructor(valor: any, id: string, tipo: Type,public ambito:string,public linea:string,public columna:string,
-                                                                                constante:boolean){
+    global: boolean;
+    constructor(valor: number, id: string, tipo: Type,public ambito:string,public linea:string,public columna:string,
+                                                                                constante:boolean,global:boolean){
         this.valor = valor;
         this.id = id;
         this.tipo = tipo;
-        this.constante=constante;
+        this.constante = constante;
+        this.global = global;
     }
 }
 export class Environment{
     private funciones : Map<string, Funcion>;
     private variables : Map<string, Simbolo>;
-    
+    pos: number;
+    //sentencias de escape
+    break: string | null;
+    continue: string | null;
+    return: string | null;
+
     constructor(public anterior : Environment | null,private nombre:string){
         this.variables = new Map();  
         this.funciones = new Map();      
         this.nombre = nombre;
+        this.pos = 0;
+        //escape
+        this.break = anterior?.break || null;
+        this.return = anterior?.return || null;
+        this.continue = anterior?.continue || null;
     }
 
     public getNombre():string{
@@ -34,22 +46,23 @@ export class Environment{
         this.nombre=nombre;
     }
 
-    public guardar(id: string, valor: any, type: Type,linea:number,columna:number,constante:boolean){
+    public guardar(id: string, type: Type,linea:number,columna:number,constante:boolean):Simbolo{
         if(this.variables.has(id))
             throw new Error_(linea, columna, 'Semantico',
             'DECLARACION: ya existe la variable: '+id ,this.getNombre());
-    
-        this.variables.set(id, new Simbolo(valor, id, type,this.getNombre(),linea.toString(),columna.toString(),constante));
+        const sim = new Simbolo(this.pos++, id, type,this.getNombre(),linea.toString(),columna.toString(),constante, this.anterior == null);
+        this.variables.set(id,sim );
+        return sim;
     }
     public guardarArr(id: string, valor: any, type: Type,tipoArreglo:Type,dim:number,linea:number,columna:number,constante:boolean){
         if(this.variables.has(id))
             throw new Error_(linea, columna, 'Semantico',
             'DECLARACION: ya existe la variable: '+id ,this.getNombre());
         
-        let sim:Simbolo=new Simbolo(valor, id, type,this.getNombre(),linea.toString(),columna.toString(),constante);
-        sim.tipoArreglo=tipoArreglo;
-        sim.dim=dim;
-        this.variables.set(id,sim);
+        //let sim:Simbolo=new Simbolo(valor, id, type,this.getNombre(),linea.toString(),columna.toString(),constante);
+  // sim.tipoArreglo=tipoArreglo;
+    //    sim.dim=dim;
+       // this.variables.set(id,sim);
     }
     
     //para el tipo       nombVar = exp;
@@ -115,5 +128,8 @@ export class Environment{
         return env;
     }
 
+    public esGlobal() : Boolean{
+        return this.anterior==null;
+    }
     
 }

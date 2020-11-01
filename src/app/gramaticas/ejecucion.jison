@@ -15,7 +15,7 @@
     const {If} = require('../Instruccion/If');
     const {Switch} = require('../Instruccion/Switch');
     const {Declaracion} = require('../Instruccion/Declaracion');
-    const {ListDeclaracion} = require('../Instruccion/ListDeclaracion');
+  //  const {ListDeclaracion} = require('../Instruccion/ListDeclaracion');
     const {Break,Continue,TipoEscape} = require('../Instruccion/BreakContinue');
     const {While,DoWhile} = require('../Instruccion/While');
     const {For,ForOf} = require('../Instruccion/For');
@@ -372,7 +372,7 @@ Actualizacion
 Declaracion
             : 'LET' ListaDeclaracion ';'
             {
-                $$ = new ListDeclaracion($2, @1.first_line, @1.first_column); 
+              //  $$ = new ListDeclaracion($2, @1.first_line, @1.first_column); 
             }            
             | ID '=' Exp ';'
             {
@@ -380,7 +380,7 @@ Declaracion
             }            
             | 'CONST' ListaDeclaracionConst ';' 
             {
-                $$ = new ListDeclaracion($2, @1.first_line, @1.first_column); 
+                //$$ = new ListDeclaracion($2, @1.first_line, @1.first_column); 
             } 
 ;
 

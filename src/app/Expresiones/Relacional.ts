@@ -40,7 +40,7 @@ export class Relacional extends Expression{
             }else if(this.type == RelationalOption.NOIGUAL){     
                 data.addIf(leftValue.value,rightValue.value,'!=',this.trueLabel);            
             }
-            result.value = '';         
+            result.value = null;         
             result.type = Type.BOOLEAN;result.esTmp=false;
             result.trueLabel = this.trueLabel;
             result.falseLabel = this.falseLabel;
