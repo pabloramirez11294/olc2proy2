@@ -15,7 +15,15 @@ export class Declaracion extends Instruction{
     public execute(amb: Environment) {
         const data = Data.getInstance();
          if(this.exp == undefined){// let a:tipo;
-            amb.guardar(this.id,this.tipo ,this.line,this.column,this.constante);
+            let defecto;
+            if(this.tipo == Type.NUMBER || this.tipo == Type.BOOLEAN)
+                defecto = '0';
+            else{
+                //TODO falta dar valor por defecto para string,array
+            }
+
+            const sim:Simbolo = amb.guardar(this.id,this.tipo ,this.line,this.column,this.constante);
+            data.addSetStack(sim.valor,defecto);
         }else if(this.asignacion && this.tipo==undefined){//a=val;
             const valor = this.exp.execute(amb);                     
             const sim:Simbolo = amb.getVar(this.id);
