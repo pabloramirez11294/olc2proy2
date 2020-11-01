@@ -1,7 +1,6 @@
 import { Instruction } from "../Modelos/Instruction";
 import { Expression } from "../Modelos/Expression";
 import { Environment } from "../Entornos/Environment";
-import { txtConsola } from '../Reportes/Consola';
 import {Type} from '../Modelos/Retorno';
 import {Error_} from '../Reportes/Errores';
 import { Arreglo } from '../Estructuras/Arreglo';
@@ -12,7 +11,8 @@ export class Console extends Instruction{
         super(line, column);
     }
     public execute(amb : Environment) {
-        const data = Data.getInstance();        
+        const data = Data.getInstance();    
+        data.addComentario('PRINT inicia');    
         let formato = 'f';
         this.value.forEach(element => {
             const value = element.execute(amb);
@@ -39,7 +39,7 @@ export class Console extends Instruction{
                 this.setConsolaA(value.value);
             else    */
         });
-        txtConsola.consolatxt+="\n";
+        data.addComentario('PRINT terminia');  
     }
 
     

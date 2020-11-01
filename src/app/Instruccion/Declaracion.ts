@@ -23,8 +23,18 @@ export class Declaracion extends Instruction{
                 throw new Error_(this.line, this.column, 'Semantico',
                 'ASGINACION: no coincide el tipo con el valor, valor:' + valor.value+", tipo: "+this.tipo ,amb.getNombre());
             }
-            
-            data.addSetStack(sim.valor,valor.value);
+            if(amb.esGlobal()){
+                if(valor.type == Type.BOOLEAN){
+                    const templabel = data.newLabel();
+                    data.addLabel(valor.trueLabel);
+                    data.addSetStack(sim.valor,'1');
+                    data.addGoto(templabel);
+                    data.addLabel(valor.falseLabel);
+                    data.addSetStack(sim.valor,'0');
+                    data.addLabel(templabel);
+                }else        
+                    data.addSetStack(sim.valor,valor.value);
+            }
             
 
         }else{//let a:number=val;
@@ -35,7 +45,16 @@ export class Declaracion extends Instruction{
             }
             const sim:Simbolo = amb.guardar(this.id, this.tipo,this.line,this.column,this.constante);
             if(amb.esGlobal()){
-                data.addSetStack(sim.valor,valor.value);
+                if(this.tipo == Type.BOOLEAN){
+                    const templabel = data.newLabel();
+                    data.addLabel(valor.trueLabel);
+                    data.addSetStack(sim.valor,'1');
+                    data.addGoto(templabel);
+                    data.addLabel(valor.falseLabel);
+                    data.addSetStack(sim.valor,'0');
+                    data.addLabel(templabel);
+                }else
+                    data.addSetStack(sim.valor,valor.value);
             }
 
         }

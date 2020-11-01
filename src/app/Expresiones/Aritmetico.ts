@@ -18,10 +18,31 @@ export class Aritmetico extends Expression{
         super(line,column);
     }
 
-    public execute(amb : Environment) : Retorno{
+    public execute(amb : Environment) : Retorno{        
+        const data = Data.getInstance(); 
         const leftValue = this.left.execute(amb);
-        const rightValue = this.right?.execute(amb);
-        const data = Data.getInstance();        
+        //agregar label
+        if(leftValue.type==Type.BOOLEAN){
+            if(leftValue.esTmp){
+                data.addLabel(leftValue.trueLabel);
+                data.addLabel(leftValue.falseLabel);
+            }else if(leftValue.value=='1') 
+                data.addLabel(leftValue.trueLabel);
+            else
+                data.addLabel(leftValue.falseLabel);
+        }
+        const rightValue = this.right?.execute(amb); 
+        //agregar label
+        if(rightValue.type==Type.BOOLEAN){
+            if(rightValue.esTmp){
+                data.addLabel(rightValue.trueLabel);
+                data.addLabel(rightValue.falseLabel);
+            }else if(rightValue.value=='1') 
+                data.addLabel(rightValue.trueLabel);
+            else
+                data.addLabel(rightValue.falseLabel);
+        }
+        
         const tmp = data.newTmp();
         let result : Retorno;
         
@@ -45,7 +66,7 @@ export class Aritmetico extends Expression{
         if(this.type == ArithmeticOption.SUMA){
             if(tipoDominante == Type.STRING){}
                 //result = {value : (leftValue.value.toString() + rightValue.value.toString()), type : Type.STRING};
-            else if(tipoDominante == Type.NUMBER){
+            else if(tipoDominante == Type.NUMBER ){               
                 data.addExpression(tmp, leftValue.value,rightValue.value, '+');
                 result = {value : tmp, type : Type.NUMBER, esTmp : true};
             }else
@@ -54,13 +75,13 @@ export class Aritmetico extends Expression{
             
         }
         else if(this.type == ArithmeticOption.RESTA){
-            if(tipoDominante == Type.STRING)
+            if(tipoDominante == Type.STRING || tipoDominante == Type.BOOLEAN)
                 throw new Error_(this.line, this.column, 'Semantico', 'No se puede restar: ' + leftValue.type + ' con ' + rightValue.type,amb.getNombre());
             data.addExpression(tmp, leftValue.value,rightValue.value, '-');
             result = {value : tmp, type : Type.NUMBER, esTmp : true};
         }
         else if(this.type == ArithmeticOption.MULT){
-            if(tipoDominante == Type.STRING)
+            if(tipoDominante == Type.STRING || tipoDominante == Type.BOOLEAN)
                 throw new Error_(this.line, this.column, 'Semantico', 'No se puede multiplicar: ' + leftValue.type + ' con ' + rightValue.type,amb.getNombre());
             data.addExpression(tmp, leftValue.value,rightValue.value, '*');
             result = {value : tmp, type : Type.NUMBER, esTmp : true};
@@ -68,7 +89,7 @@ export class Aritmetico extends Expression{
             //result = {value : (leftValue.value ** rightValue.value), type : Type.NUMBER};
         }
         else if(this.type == ArithmeticOption.MODULO){
-            if(tipoDominante == Type.STRING)
+            if(tipoDominante == Type.STRING || tipoDominante == Type.BOOLEAN)
                 throw new Error_(this.line, this.column, 'Semantico', 'No se puede hacer el modulo de: ' + leftValue.type + ' con ' + rightValue.type,amb.getNombre());
             data.addModulo(tmp, leftValue.value,rightValue.value);
             result = {value : tmp, type : Type.NUMBER,esTmp:true};
@@ -77,7 +98,7 @@ export class Aritmetico extends Expression{
             if(rightValue.value == '0'){
                 throw new Error_(this.line, this.column, 'Semantico', 'No se puede dividir entre 0',amb.getNombre());
             }
-            if(tipoDominante == Type.STRING)
+            if(tipoDominante == Type.STRING || tipoDominante == Type.BOOLEAN)
                 throw new Error_(this.line, this.column, 'Semantico', 'No se puede dividir: ' + leftValue.type + ' con ' + rightValue.type,amb.getNombre());
             
             data.addExpression(tmp, leftValue.value,rightValue.value, '/');
