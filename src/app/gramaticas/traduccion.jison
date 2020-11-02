@@ -21,6 +21,9 @@
     const {While,DoWhile} = require('../Instruccion/While');
     //declaraciones
     const {Declaracion} = require('../Instruccion/Declaracion');
+    //funciones
+    const {Funcion} = require('../Instruccion/Funcion');
+    const {Simbolo} = require('../Entornos/Environment');
 
 %}
 
@@ -182,8 +185,8 @@ Instrucciones
 
 
 Funciones
-        : 'FUNCTION' ID '(' Parametros ')' ':' Tipo InstruccionesSent
-        | 'FUNCTION' ID '(' ')' ':' Tipo InstruccionesSent  
+        : 'FUNCTION' ID '(' Parametros ')' ':' Tipo InstruccionesSent {$$ = new Funcion($2,$4,$7,$8,@1.first_line, @1.first_column);}
+        | 'FUNCTION' ID '(' ')' ':' Tipo InstruccionesSent  {$$ = new Funcion($2, [],$6,$7 , @1.first_line, @1.first_column);}
 ;
 
 Parametros
@@ -199,7 +202,7 @@ Parametros
 ;
 OpcionParam
             :  ID ':' Tipo Dim  
-        | ID ':' Tipo 
+        | ID ':' Tipo { $$ = new Simbolo(undefined,$1,$3);}
 ;
 
 

@@ -9,8 +9,8 @@ export class Llamada extends Instruction{
         super(line, column);
     }
 
-    public execute(amb : Environment):Retorno {
-        const nombreAmbito:string="func_"+this.id;
+    public execute(amb : Environment) {
+       /* const nombreAmbito:string="func_"+this.id;
         const func = amb.getFuncion(this.id);
         if(func == undefined || func==null)
             throw new Error_(this.line,this.column,'Semántico','No existe la función: '+this.id,amb.getNombre());
@@ -32,7 +32,7 @@ export class Llamada extends Instruction{
             }else{                  
                 sim.valor=valor;
                 nuevoAmb.guardar(sim.id, sim.valor.value, sim.tipo,this.line,this.column,false);
-            }*/
+            }
         }
         //retornar
         const resultado=func.instrucciones.execute(nuevoAmb);
@@ -41,6 +41,6 @@ export class Llamada extends Instruction{
         if(resultado?.type==Type.NULL){
             return;
         }
-        return resultado;
+        return resultado;*/
     }
 }

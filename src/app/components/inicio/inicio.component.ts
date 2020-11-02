@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import Ejecucion from '../../gramaticas/ejecucion';
 import Traduccion from '../../gramaticas/traduccion';
 import {  Error_ ,errores} from '../../Reportes/Errores';
-import { Environment, Simbolo } from '../../Entornos/Environment';
+import { Environment, Simbolo, SimboloFunc } from '../../Entornos/Environment';
 import {TipoEscape} from '../../Instruccion/BreakContinue';
 import { Funcion } from '../../Instruccion/Funcion';
 import { txtConsola,reporte } from '../../Reportes/Consola';
@@ -71,14 +71,10 @@ export class InicioComponent implements OnInit {
       }
 
       for (const instruc of instrucciones) {
-        if(instruc instanceof Error_ ||instruc instanceof Funcion)
+        if(instruc instanceof Error_)
             continue;
         try {          
-          const actual = instruc.execute(entorno);
-          //this.setConsola();
-          if ((actual != null || actual != undefined)&& (actual.type==TipoEscape.BREAK || actual.type==TipoEscape.CONTINUE)) {
-            errores.push(new Error_(actual.line,actual.column,'Semantico',actual.type + ' fuera de un ciclo',''));
-          }         
+          const actual = instruc.execute(entorno);        
         } catch (error) {
           //console.log(error)
           if(error.ambito!=null){
@@ -141,13 +137,13 @@ export class InicioComponent implements OnInit {
       this.simbolos.push(s);
     }
   }
-  setTablaFunciones(simbolos:Map<string,Funcion>):void{
+  setTablaFunciones(simbolos:Map<string,SimboloFunc>):void{
     reporte.simbolos.forEach(element => {
       this.simbolos.push(element);
     });
     for (var func of simbolos.values()) {
       const s:Array<string>=new Array<string>("func_"+func.id,'',func.tipo?.toString(),
-                                                  '',func.line?.toString(),func.column?.toString());
+                                                  '',func.func.line?.toString(),func.func.column?.toString());
       this.simbolos.push(s);
     }
     console.log(this.simbolos);

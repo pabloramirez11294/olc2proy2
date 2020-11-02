@@ -1,10 +1,10 @@
 export enum Type{
-    NUMBER,
-    STRING,
-    BOOLEAN,
-    NULL,
-    VOID,
-    ARREGLO
+    NUMBER='number',
+    STRING='string',
+    BOOLEAN='boolean',
+    NULL='null',
+    VOID='void',
+    ARREGLO='arreglo'
 }
 
 export type Retorno ={

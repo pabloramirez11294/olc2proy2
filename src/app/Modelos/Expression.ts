@@ -29,7 +29,7 @@ export abstract class Expression {
         }
     }
 
-    public tipoDominante(tipo1 : number, tipo2 : number,nombreAmb:string) : Type{
+    public tipoDominante(tipo1 : string, tipo2 : string,nombreAmb:string) : Type{
         if(tipo1 == Type.NULL || tipo2 == Type.NULL)
             return Type.NULL;
         else if(tipo1 == Type.STRING || tipo2 == Type.STRING)

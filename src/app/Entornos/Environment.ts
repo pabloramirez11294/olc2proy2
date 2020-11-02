@@ -19,8 +19,29 @@ export class Simbolo{
         this.global = global;
     }
 }
+export class SimboloFunc{
+    tipo: Type;
+    id: string;
+    size: number;
+    params: Array<Parametro>;
+
+    constructor(public func: Funcion,public idUnico: string) {
+        this.tipo = func.tipo;
+        this.id = func.id;
+        this.size = func.parametros.length;
+        this.params = func.parametros;
+    }
+}
+
+export class Parametro {
+    constructor(public id: string,public tipo: Type) {
+        this.id = id.toLowerCase();
+    }
+
+    
+}
 export class Environment{
-    private funciones : Map<string, Funcion>;
+    private funciones : Map<string, SimboloFunc>;
     private variables : Map<string, Simbolo>;
     pos: number;
     //sentencias de escape
@@ -43,10 +64,11 @@ export class Environment{
         return this.nombre;
     }
     public setNombre(nombre:string){
-        this.nombre=nombre;
+        this.nombre=nombre.toLowerCase();
     }
 
     public guardar(id: string, type: Type,linea:number,columna:number,constante:boolean):Simbolo{
+        id = id.toLowerCase();
         if(this.variables.has(id))
             throw new Error_(linea, columna, 'Semantico',
             'DECLARACION: ya existe la variable: '+id ,this.getNombre());
@@ -55,6 +77,7 @@ export class Environment{
         return sim;
     }
     public guardarArr(id: string, valor: any, type: Type,tipoArreglo:Type,dim:number,linea:number,columna:number,constante:boolean){
+        id = id.toLowerCase();
         if(this.variables.has(id))
             throw new Error_(linea, columna, 'Semantico',
             'DECLARACION: ya existe la variable: '+id ,this.getNombre());
@@ -67,6 +90,7 @@ export class Environment{
     
     //para el tipo       nombVar = exp;
     public asignar(id: string, valor: any,type: Type,linea:number,columna:number){
+        id = id.toLowerCase();
         const sim:Simbolo = this.getVar(id); 
         if(sim==null)
             throw new Error_(linea, columna, 'Semantico','ASIGNACIÓN: no existe la variable:' + id,this.getNombre());
@@ -85,6 +109,7 @@ export class Environment{
     }
     
     public getVar(id: string) : Simbolo | undefined | null{
+        id = id.toLowerCase();
         let env : Environment | null = this;
         while(env != null){
             if(env.variables.has(id)){
@@ -99,17 +124,17 @@ export class Environment{
         return this.variables;
     }
 
-    public guardarFuncion(id: string, funcion : Funcion,linea:number,columna:number){
-        let global:Environment=this.getGlobal();
-        if(global.funciones.has(id))
+    public guardarFuncion(idUnico: string, funcion : Funcion,linea:number,columna:number){
+        if(this.getGlobal().funciones.has(idUnico))
             throw new Error_(linea, columna, 'Semantico',
-                'Error: ya existe la funcion: '+id ,this.getNombre());
-        this.funciones.set(id, funcion);
+                'Error: ya existe la funcion: '+funcion.id.toLowerCase() ,this.getNombre());
+        this.funciones.set(funcion.id.toLowerCase(), new SimboloFunc(funcion,idUnico));
     }
-    public getFunciones():Map<string, Funcion>{
+    public getFunciones():Map<string, SimboloFunc>{
         return this.funciones;
     }
-    public getFuncion(id: string) : Funcion | undefined{
+    public getFuncion(id: string) : SimboloFunc | undefined{
+        id = id.toLowerCase();
         let env : Environment | null = this;
         while(env != null){
             if(env.funciones.has(id)){
