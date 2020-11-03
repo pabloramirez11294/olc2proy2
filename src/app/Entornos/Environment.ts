@@ -124,6 +124,19 @@ export class Environment{
         return this.variables;
     }
 
+    
+    public getGlobal() : Environment{
+        let env : Environment | null = this;
+        while(env?.anterior != null){
+            env = env.anterior;
+        }
+        return env;
+    }
+
+    public esGlobal() : Boolean{
+        return this.anterior==null;
+    }
+    //FUNCIONES
     public guardarFuncion(idUnico: string, funcion : Funcion,linea:number,columna:number){
         if(this.getGlobal().funciones.has(idUnico))
             throw new Error_(linea, columna, 'Semantico',
@@ -144,17 +157,14 @@ export class Environment{
         }
         return undefined;
     }
-
-    public getGlobal() : Environment{
-        let env : Environment | null = this;
-        while(env?.anterior != null){
-            env = env.anterior;
-        }
-        return env;
-    }
-
-    public esGlobal() : Boolean{
-        return this.anterior==null;
+    size: number;
+    idFuncion : string;
+    actualFunc: SimboloFunc | null;
+    setAmbFuncion(idFuncion: string, actualFunc : SimboloFunc, retorno : string){
+        this.size = 1; //1 porque la posicion 0 es para el return
+        this.idFuncion = idFuncion;
+        this.return = retorno;
+        this.actualFunc = actualFunc;
     }
     
 }

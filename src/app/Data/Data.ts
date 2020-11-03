@@ -4,15 +4,22 @@ export class  Data{
     private listTmp : Set<string>;
     private label : number;
     private codigo : string;
+    private codigoFunc : string;
     tabulador:string = '';
-
+    private esFunc;
     private constructor(){
+        this.esFunc = false;
         this.temporal = this.label = 0;
         this.codigo = '';
         this.listTmp = new Set();
+        this.codigoFunc = '';
     }
     public static getInstance():Data{
         return this.instance || (this.instance = new this());
+    }
+
+    private setCod(cod:string){
+        !this.esFunc ? this.codigo += cod : this.codigoFunc += cod;
     }
     public newTmp() : string{
         const tmp = 'T' + this.temporal++;
@@ -25,7 +32,7 @@ export class  Data{
     }
 
     public addLabel(label : string){
-        this.codigo+=`${this.tabulador}${label}:\n`;
+        this.setCod(`${this.tabulador}${label}:\n`);
     }
     public getCodigo():string{
         return this.codigo;
@@ -33,11 +40,12 @@ export class  Data{
     public clearCodigo(){
         this.temporal = this.label = 0;
         this.codigo = '';
+        this.codigoFunc = '';
         this.listTmp = new Set();
     }
     
     public addComentario(comentario: string){
-        this.codigo+=`${this.tabulador}// ${comentario}\n`;
+        this.setCod(`${this.tabulador}// ${comentario}\n`);
     }
 
     //Expresiones
@@ -46,45 +54,63 @@ export class  Data{
             left=`${left}.0`;
         if(!isNaN(right) && !right.includes('.'))
             right=`${right}.0`;    
-        this.codigo+=`${this.tabulador}${nomTmp} = ${left} ${operator} ${right};\n`;
+        this.setCod(`${this.tabulador}${nomTmp} = ${left} ${operator} ${right};\n`);
     }
     public addModulo(nomTmp : string, left: any, right: any = ''){
-        this.codigo+=`${this.tabulador}${nomTmp} = fmod(${left} , ${right});\n`;
+        this.setCod(`${this.tabulador}${nomTmp} = fmod(${left} , ${right});\n`);
     }
 
     //Instrucciones
     public addPrintf(formato: string, valor: any){
-        this.codigo += `${this.tabulador}printf("%${formato}\\n",${valor});\n`;
+        this.setCod ( `${this.tabulador}printf("%${formato}\\n",${valor});\n`);
     }
 
     public addIf(left: any, right: any, operator: string, label : string){
-        this.codigo += `${this.tabulador}if (${left} ${operator} ${right}) goto ${label};\n`;
+        this.setCod (`${this.tabulador}if (${left} ${operator} ${right}) goto ${label};\n`);
     }
 
     public addGoto(label : string){
-        this.codigo+=`${this.tabulador}goto ${label};\n`;
+        this.setCod(`${this.tabulador}goto ${label};\n`);
     }
 
     //HEAP
     public nextHeap(){
-        this.codigo += (this.tabulador + 'h = h + 1;');
+        this.setCod(this.tabulador + 'h = h + 1;');
     }
 
     public addGetHeap(tmp : any, index: any){
-        this.codigo += (`${this.tabulador}${tmp} = Heap[${index}];\n`);
+        this.setCod(`${this.tabulador}${tmp} = Heap[${index}];\n`);
     }
 
     public addSetHeap(index: any, value : any){
-        this.codigo += (`${this.tabulador}Heap[${index}] = ${value};\n`);
+        this.setCod(`${this.tabulador}Heap[${index}] = ${value};\n`);
     }
 
     //STACK
     public addGetStack(target : any, index: any){
-        this.codigo += ( `${this.tabulador}${target} = Stack[${index}];\n`);
+        this.setCod( `${this.tabulador}${target} = Stack[${index}];\n`);
     }
 
     public addSetStack(index: any, value : any){
-        this.codigo += (`${this.tabulador}Stack[${index}] = ${value};\n`);
+        this.setCod(`${this.tabulador}Stack[${index}] = ${value};\n`);
+    }
+    //FUNCIONES
+    public setListTmp(tempStorage : Set<string>){
+        this.listTmp = tempStorage;
+    }
+    public getListTmp(){
+        return this.listTmp;
+    }
+    public clearListTmp(){
+        this.listTmp.clear();
+    }
+    public addEncabezadoFunc(id: string){
+        this.esFunc = true;
+        this.setCod(`\nvoid ${id}(){\n`);
+    }
+    public addFinalFunc(){
+        this.setCod('return; \n}\n');        
+        this.esFunc = false;
     }
 
     public addEncabezado(){        
@@ -103,6 +129,8 @@ double Heap[16384];
 double Stack[16394];
 double p;
 double h;${listaTmp}
+
+${this.codigoFunc}
 
 int main() {
 ${this.codigo}
