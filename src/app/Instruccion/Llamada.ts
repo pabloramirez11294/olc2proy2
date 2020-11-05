@@ -3,6 +3,7 @@ import { Environment, Simbolo } from "../Entornos/Environment";
 import { Expression } from "../Modelos/Expression";
 import { Error_ } from '../Reportes/Errores';
 import { Retorno, Type } from "../Modelos/Retorno";
+import { Data } from '../Data/Data';
 export class Llamada extends Instruction{
 
     constructor(private id: string, private parametros : Array<Expression>, line : number, column : number){
@@ -10,6 +11,43 @@ export class Llamada extends Instruction{
     }
 
     public execute(amb : Environment) {
+        const func = amb.getFuncion(this.id);
+        if(func == undefined || func==null)
+            throw new Error_(this.line,this.column,'Semántico','No existe la función: '+this.id,amb.getNombre());
+        if(this.parametros.length!=func.params.length)
+            throw new Error_(this.line,this.column,'Semántico','La función: '+this.id+
+                " ,no tiene la misma cantidad de parametros.",amb.getNombre());
+        const paramsValues = new Array<Retorno>();
+        const data = Data.getInstance();        
+        console.log('********',data.getListTmp());
+        let size;
+        if(!amb.esGlobal())
+            size = data.saveTemps(amb);
+        this.parametros.forEach((param)=>{
+            paramsValues.push(param.execute(amb));
+        })
+        const temp = data.newTmp();
+        //cambio ambito simulado
+        if(paramsValues.length != 0){
+            data.addExpression(temp,'p',amb.size + 1,'+'); //+1 porque la posicion 0 es para el retorno;
+            paramsValues.forEach((value,index)=>{
+                //TODO paso de parametros booleanos
+                data.addSetStack(temp,value.value);
+                if(index != paramsValues.length - 1)
+                    data.addExpression(temp,temp,'1','+');
+            });    
+        }
+
+        data.addNextEnv(amb.size);
+        data.addCall(func.idUnico);
+        data.addGetStack(temp,'p');
+        data.addAntEnv(amb.size);
+        if(!amb.esGlobal())
+            data.recoverTemps(amb,size);
+        data.addTemp(temp);
+
+        if (func.tipo != Type.BOOLEAN) return {valor:undefined,esTmp:false,tipo:func.tipo};
+
        /* const nombreAmbito:string="func_"+this.id;
         const func = amb.getFuncion(this.id);
         if(func == undefined || func==null)

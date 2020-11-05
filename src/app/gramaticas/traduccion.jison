@@ -24,7 +24,7 @@
     //funciones
     const {Funcion} = require('../Instruccion/Funcion');
     const {Simbolo} = require('../Entornos/Environment');
-
+    const {Llamada} = require('../Instruccion/Llamada');
 %}
 
 %lex
@@ -219,7 +219,7 @@ Instruc
         | Sent_switch { $$ = $1; }
         | Declaracion { $$ = $1; }
         | Unario ';' 
-        | Llamada ';' 
+        | Llamada ';' { $$ = $1; }  
         | 'RETURN' Exp ';'{ $$ = new Return($2,@1.first_line, @1.first_column); }
         | 'RETURN' ';'  { $$ = new Return(undefined,@1.first_line, @1.first_column); }
         | ID AccesoAsig  '=' Exp ';'
@@ -327,8 +327,8 @@ Dimensiones
 //*****************LLAMADAS A FUNCIONES
 
 Llamada
-        : ID '('  ')'
-        | ID '(' Expre ')'
+        : ID '('  ')' {$$ = new Llamada($1, [], @1.first_line, @1.first_column);}
+        | ID '(' Expre ')' {$$ = new Llamada($1, $3, @1.first_line, @1.first_column);}
 ;
 
 

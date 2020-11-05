@@ -43,7 +43,7 @@ export class Parametro {
 export class Environment{
     private funciones : Map<string, SimboloFunc>;
     private variables : Map<string, Simbolo>;
-    pos: number;
+    size: number;
     //sentencias de escape
     break: string | null;
     continue: string | null;
@@ -53,7 +53,7 @@ export class Environment{
         this.variables = new Map();  
         this.funciones = new Map();      
         this.nombre = nombre;
-        this.pos = 0;
+        this.size = 0;
         //escape
         this.break = anterior?.break || null;
         this.return = anterior?.return || null;
@@ -72,7 +72,7 @@ export class Environment{
         if(this.variables.has(id))
             throw new Error_(linea, columna, 'Semantico',
             'DECLARACION: ya existe la variable: '+id ,this.getNombre());
-        const sim = new Simbolo(this.pos++, id, type,this.getNombre(),linea.toString(),columna.toString(),constante, this.anterior == null);
+        const sim = new Simbolo(this.size++, id, type,this.getNombre(),linea.toString(),columna.toString(),constante, this.anterior == null);
         this.variables.set(id,sim );
         return sim;
     }
@@ -157,7 +157,6 @@ export class Environment{
         }
         return undefined;
     }
-    size: number;
     idFuncion : string;
     actualFunc: SimboloFunc | null;
     setAmbFuncion(idFuncion: string, actualFunc : SimboloFunc, retorno : string){

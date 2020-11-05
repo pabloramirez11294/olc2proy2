@@ -22,24 +22,26 @@ export class Funcion extends Instruction{
             return;
         }
         //c3d
+        const nombreAmbito:string="func_"+this.id;
         const sim = amb.getFuncion(this.id);
         const data = Data.getInstance();
-        const nuevoAmb = new Environment(amb,'func'+'id');
+        const nuevoAmb = new Environment(amb,nombreAmbito);
         const returnLbl = data.newLabel();
-        const tempStorage = data.getListTmp();
+        const listTmp =new Set( data.getListTmp());
 
         nuevoAmb.setAmbFuncion(this.id,sim,returnLbl);
         this.parametros.forEach((param)=>{
             nuevoAmb.guardar(param.id,param.tipo,Number(param.linea),Number(param.columna),false);
         });
-        //data.clearListTmp();
+        data.clearListTmp();
         data.tabulador = '\t';
         data.addEncabezadoFunc(sim.idUnico);
         this.instrucciones.execute(nuevoAmb);
+        data.addGoto(returnLbl);
         data.addLabel(returnLbl);
         data.addFinalFunc();
         data.tabulador = '';
-        data.setListTmp(tempStorage);
+        data.setListTmp(listTmp);
     }
 
     private analisisParams(amb:Environment){
