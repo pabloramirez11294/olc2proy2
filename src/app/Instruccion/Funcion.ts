@@ -36,7 +36,7 @@ export class Funcion extends Instruction{
         data.clearListTmp();
         data.tabulador = '\t';
         data.addEncabezadoFunc(sim.idUnico);
-        this.instrucciones.execute(nuevoAmb);
+        this.instrucciones.executeF(nuevoAmb);
         data.addGoto(returnLbl);
         data.addLabel(returnLbl);
         data.addFinalFunc();

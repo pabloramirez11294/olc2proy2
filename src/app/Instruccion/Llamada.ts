@@ -4,13 +4,13 @@ import { Expression } from "../Modelos/Expression";
 import { Error_ } from '../Reportes/Errores';
 import { Retorno, Type } from "../Modelos/Retorno";
 import { Data } from '../Data/Data';
-export class Llamada extends Instruction{
+export class Llamada extends Expression{
 
     constructor(private id: string, private parametros : Array<Expression>, line : number, column : number){
         super(line, column);
     }
 
-    public execute(amb : Environment) {
+    public execute(amb : Environment):Retorno {
         const func = amb.getFuncion(this.id);
         if(func == undefined || func==null)
             throw new Error_(this.line,this.column,'Semántico','No existe la función: '+this.id,amb.getNombre());
@@ -29,7 +29,7 @@ export class Llamada extends Instruction{
         const temp = data.newTmp();
         //cambio ambito simulado
         if(paramsValues.length != 0){
-            data.addExpression(temp,'p',amb.size + 1,'+'); //+1 porque la posicion 0 es para el retorno;
+            data.addExpression(temp,'p',String( amb.size + 1),'+'); //+1 porque la posicion 0 es para el retorno;
             paramsValues.forEach((value,index)=>{
                 //TODO paso de parametros booleanos
                 data.addSetStack(temp,value.value);
@@ -46,7 +46,7 @@ export class Llamada extends Instruction{
             data.recoverTemps(amb,size);
         data.addTemp(temp);
 
-        if (func.tipo != Type.BOOLEAN) return {valor:undefined,esTmp:false,tipo:func.tipo};
+        if (func.tipo != Type.BOOLEAN) return {value:temp,esTmp:true,type:func.tipo};
 
        /* const nombreAmbito:string="func_"+this.id;
         const func = amb.getFuncion(this.id);

@@ -25,6 +25,7 @@
     const {Funcion} = require('../Instruccion/Funcion');
     const {Simbolo} = require('../Entornos/Environment');
     const {Llamada} = require('../Instruccion/Llamada');
+    const {Return} = require('../Instruccion/Return');
 %}
 
 %lex

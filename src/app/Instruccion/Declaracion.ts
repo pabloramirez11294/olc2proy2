@@ -43,6 +43,9 @@ export class Declaracion extends Instruction{
                 }else        
                     data.addSetStack(sim.valor,valor.value);
             }else{
+                const temp = data.newTmp(); 
+                //data.freeTemp(temp);
+                data.addExpression(temp,'p',sim.valor.toString(),'+');
                 if(valor.type == Type.BOOLEAN){
                     const templabel = data.newLabel();
                     data.addLabel(valor.trueLabel);
@@ -74,6 +77,20 @@ export class Declaracion extends Instruction{
                     data.addLabel(templabel);
                 }else
                     data.addSetStack(sim.valor,valor.value);
+            }else{
+                const temp = data.newTmp(); 
+                //data.freeTemp(temp);
+                data.addExpression(temp,'p',sim.valor.toString(),'+');
+                if(valor.type == Type.BOOLEAN){
+                    const templabel = data.newLabel();
+                    data.addLabel(valor.trueLabel);
+                    data.addSetStack(sim.valor,'1');
+                    data.addGoto(templabel);
+                    data.addLabel(valor.falseLabel);
+                    data.addSetStack(sim.valor,'0');
+                    data.addLabel(templabel);
+                }else        
+                    data.addSetStack(temp,valor.value);
             }
 
         }

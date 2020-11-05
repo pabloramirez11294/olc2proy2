@@ -29,6 +29,21 @@ export class Variable extends Expression{
                 return {value :temp, type : Type.BOOLEAN , trueLabel: this.trueLabel,esTmp:true,falseLabel:this.falseLabel};
             }
             return {value: temp,type: sim.tipo,esTmp:true};
+        }else{
+            const tempAux = data.newTmp(); 
+           // data.freeTemp(tempAux);
+            data.addExpression(tempAux, 'p', sim.valor.toString(), '+');
+            data.addGetStack(temp, tempAux);
+            if (sim.tipo == Type.BOOLEAN){
+                const data = Data.getInstance();
+                this.trueLabel = this.trueLabel == '' ? data.newLabel() : this.trueLabel;
+                this.falseLabel = this.falseLabel == '' ? data.newLabel() : this.falseLabel;
+                data.addIf(temp, '1', '==', this.trueLabel);
+                data.addGoto(this.falseLabel);
+                return {value :temp, type : Type.BOOLEAN , trueLabel: this.trueLabel,esTmp:true,falseLabel:this.falseLabel};
+            }
+            
+            return {value: temp,type: sim.tipo,esTmp:true};
         }
         
     }

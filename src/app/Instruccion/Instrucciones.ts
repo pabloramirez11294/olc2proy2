@@ -20,4 +20,15 @@ export class Instrucciones extends Instruction{
         //TODO quitar return
         return undefined;
     }
+    public executeF(env : Environment) {
+        for(const instr of this.code){
+            try {
+                instr.execute(env);      
+            } catch (error) {
+                errores.push(error);
+            }
+        }
+        //TODO quitar return
+        return undefined;
+    }
 }
