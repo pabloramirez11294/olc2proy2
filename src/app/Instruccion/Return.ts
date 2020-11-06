@@ -12,19 +12,25 @@ export class Return extends Instruction{
 
     public execute(amb : Environment) {
         const value = this.exp?.execute(amb) || {value:undefined,esTmp:false,type:Type.VOID};
-        const symFunc = amb.actualFunc;
-        const generator = Data.getInstance();
-        if (symFunc == null)
+        const func = amb.actualFunc;
+        const data = Data.getInstance();
+        if (func == null)
             throw new Error_(this.line,this.column,'Semántico','return fuera de una funcion',amb.getNombre());
 
-        if (symFunc.tipo != value.type)
+        if (func.tipo != value.type)
             throw new Error_(this.line,this.column,'Semántico','return devuleve diferente tipo',amb.getNombre());
 
-        
+        if(func.tipo == Type.BOOLEAN){
+            const templabel = data.newLabel();
+            data.addLabel(value.trueLabel);
+            data.addSetStack('p', '1');
+            data.addGoto(templabel);
+            data.addLabel(value.falseLabel);
+            data.addSetStack('p', '0');
+            data.addLabel(templabel);
+        }else if (func.tipo !=  Type.VOID)
+            data.addSetStack('p', value.value);
 
-        if (symFunc.tipo !=  Type.VOID)
-            generator.addSetStack('p', value.value);
-
-        generator.addGoto(amb.return || '');
+        data.addGoto(amb.return || '');
     }
 }

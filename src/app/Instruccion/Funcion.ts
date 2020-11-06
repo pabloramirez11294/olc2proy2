@@ -34,14 +34,13 @@ export class Funcion extends Instruction{
             nuevoAmb.guardar(param.id,param.tipo,Number(param.linea),Number(param.columna),false);
         });
         data.clearListTmp();
-        data.tabulador = '\t';
         data.addEncabezadoFunc(sim.idUnico);
         this.instrucciones.executeF(nuevoAmb);
         data.addGoto(returnLbl);
         data.addLabel(returnLbl);
         data.addFinalFunc();
-        data.tabulador = '';
         data.setListTmp(listTmp);
+        
     }
 
     private analisisParams(amb:Environment){

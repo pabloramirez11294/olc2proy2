@@ -139,7 +139,8 @@ export class Environment{
     }
     //FUNCIONES
     public guardarFuncion(idUnico: string, funcion : Funcion,linea:number,columna:number){
-        if(this.getGlobal().funciones.has(idUnico))
+        const aux = this.getGlobal().funciones;
+        if(aux.has(funcion.id.toLowerCase()))
             throw new Error_(linea, columna, 'Semantico',
                 'Error: ya existe la funcion: '+funcion.id.toLowerCase() ,this.getNombre());
         this.funciones.set(funcion.id.toLowerCase(), new SimboloFunc(funcion,idUnico));

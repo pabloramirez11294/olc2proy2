@@ -8,7 +8,6 @@ export class  Data{
     private label : number;
     private codigo : string;
     private codigoFunc : string;
-    tabulador:string = '';
     private esFunc;
     private constructor(){
         this.esFunc = false;
@@ -40,7 +39,7 @@ export class  Data{
     }
 
     public addLabel(label : string){
-        this.setCod(`${this.tabulador}${label}:\n`);
+        this.setCod(`${label}:\n`);
     }
     public getCodigo():string{
         return this.codigo;
@@ -53,7 +52,7 @@ export class  Data{
     }
     
     public addComentario(comentario: string){
-        this.setCod(`${this.tabulador}// ${comentario}\n`);
+        this.setCod(`// ${comentario}\n`);
     }
 
     //Expresiones
@@ -62,53 +61,53 @@ export class  Data{
             left=`${left}.0`;
         if(!isNaN(right) && !right.includes('.'))
             right=`${right}.0`;    
-        this.freeTemp(left);this.freeTemp(right);
-        this.setCod(`${this.tabulador}${nomTmp} = ${left} ${operator} ${right};\n`);
+        this.tmpUsado(left);this.tmpUsado(right);
+        this.setCod(`${nomTmp} = ${left} ${operator} ${right};\n`);
     }
     public addModulo(nomTmp : string, left: any, right: any = ''){
-        this.freeTemp(left);this.freeTemp(right);
-        this.setCod(`${this.tabulador}${nomTmp} = fmod(${left} , ${right});\n`);
+        this.tmpUsado(left);this.tmpUsado(right);
+        this.setCod(`${nomTmp} = fmod(${left} , ${right});\n`);
     }
 
     //Instrucciones
     public addPrintf(formato: string, valor: any){
-        this.freeTemp(valor);
-        this.setCod ( `${this.tabulador}printf("%${formato}\\n",${valor});\n`);
+        this.tmpUsado(valor);
+        this.setCod ( `printf("%${formato}\\n",${valor});\n`);
     }
 
     public addIf(left: any, right: any, operator: string, label : string){
-        this.freeTemp(left);this.freeTemp(right);
-        this.setCod (`${this.tabulador}if (${left} ${operator} ${right}) goto ${label};\n`);
+        this.tmpUsado(left);this.tmpUsado(right);
+        this.setCod (`if (${left} ${operator} ${right}) goto ${label};\n`);
     }
 
     public addGoto(label : string){
-        this.setCod(`${this.tabulador}goto ${label};\n`);
+        this.setCod(`goto ${label};\n`);
     }
 
     //HEAP
     public nextHeap(){
-        this.setCod(this.tabulador + 'h = h + 1;');
+        this.setCod('h = h + 1;');
     }
 
     public addGetHeap(tmp : any, index: any){
-        this.freeTemp(tmp);
-        this.setCod(`${this.tabulador}${tmp} = Heap[(int)${index}];\n`);
+        this.tmpUsado(tmp);
+        this.setCod(`${tmp} = Heap[(int)${index}];\n`);
     }
 
     public addSetHeap(index: any, value : any){
-        this.freeTemp(index);this.freeTemp(value);
-        this.setCod(`${this.tabulador}Heap[(int)${index}] = ${value};\n`);
+        this.tmpUsado(index);this.tmpUsado(value);
+        this.setCod(`Heap[(int)${index}] = ${value};\n`);
     }
 
     //STACK
     public addGetStack(target : any, index: any){
-        this.freeTemp(index);
-        this.setCod( `${this.tabulador}${target} = Stack[(int)${index}];\n`);
+        this.tmpUsado(index);
+        this.setCod( `${target} = Stack[(int)${index}];\n`);
     }
 
     public addSetStack(index: any, value : any){
-        this.freeTemp(index);this.freeTemp(value);
-        this.setCod(`${this.tabulador}Stack[(int)${index}] = ${value};\n`);
+        this.tmpUsado(index);this.tmpUsado(value);
+        this.setCod(`Stack[(int)${index}] = ${value};\n`);
     }
     //FUNCIONES
     public setListTmp(listTmp : Set<string>){
@@ -131,25 +130,25 @@ export class  Data{
         this.esFunc = false;
     }
     public addNextEnv(size: number){
-        this.setCod(`${this.tabulador}p = p + ${size};\n`);
+        this.setCod(`p = p + ${size};\n`);
     }
 
     public addAntEnv(size: number){
-        this.setCod(`${this.tabulador}p = p - ${size};\n`);
+        this.setCod(`p = p - ${size};\n`);
     }
 
     public addCall(id: string){
-        this.setCod(`${this.tabulador} ${id}();\n`);
+        this.setCod(` ${id}();\n`);
     }
 
-    public saveTemps(enviorement: Environment) : number{
+    public apartarTmp(amb: Environment) : number{
         const sizeListTemp = this.listTmp.size;
         const listTmpAux = new Set(this.listTmp);
         if(sizeListTemp > 0){
             let size = 0;            
             const temp = this.newTmp();             
             this.addComentario('Guardar temporales');
-            this.addExpression(temp,'p',enviorement.size.toString(),'+');
+            this.addExpression(temp,'p',amb.size.toString(),'+');
             this.listTmp.forEach((value)=>{
                 size++;
                 this.addSetStack(temp,value);
@@ -158,13 +157,13 @@ export class  Data{
             });
             this.addComentario('Fin fuardar temporales');
         }
-        let sizeAux = enviorement.size;
-        enviorement.size = sizeAux + sizeListTemp;
+        let sizeAux = amb.size;
+        amb.size = sizeAux + sizeListTemp;
         this.listTmp = listTmpAux;
         return sizeAux;
     }
 
-    public recoverTemps(enviorement: Environment, pos: number){
+    public recuperarTmp(amb: Environment, pos: number){
         if(this.listTmp.size > 0){
             const temp = this.newTmp(); 
             let size = 0;
@@ -178,11 +177,11 @@ export class  Data{
                     this.addExpression(temp,temp,'1','+');
             });
             this.addComentario('Finaliza recuperado de temporales');
-            enviorement.size = pos;
+            amb.size = pos;
         }
     }
 
-    public freeTemp(temp: string){
+    public tmpUsado(temp: string){
         if(this.listTmp.has(temp)){
             this.listTmp.delete(temp);
         }
