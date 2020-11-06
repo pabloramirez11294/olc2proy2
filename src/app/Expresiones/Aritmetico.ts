@@ -44,6 +44,7 @@ export class Aritmetico extends Expression{
         }
         
         const tmp = data.newTmp();
+        //data.freeTemp(tmp);
         let result : Retorno;
         
         

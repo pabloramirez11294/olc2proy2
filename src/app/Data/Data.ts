@@ -1,9 +1,9 @@
 import { Environment } from "../Entornos/Environment";
+import { For } from "../Instruccion/For";
 
 export class  Data{
     private static instance: Data;
     private temporal : number;    
-    private listTmpAux : Set<string>;
     private listTmp : Set<string>;
     private label : number;
     private codigo : string;
@@ -27,12 +27,12 @@ export class  Data{
     public newTmp() : string{
         const tmp = 'T' + this.temporal++;
         this.listTmp.add(tmp);
-        this.listTmpAux.add(tmp);
         return tmp;
     }
     public addTemp(temp: string){
-        if(!this.listTmp.has(temp))
-            this.listTmp.add(temp);
+        if(!this.listTmp.has(temp)){
+            this.listTmp.add(temp);         
+        }
     }
 
     public newLabel() : string{
@@ -50,7 +50,6 @@ export class  Data{
         this.codigo = '';
         this.codigoFunc = '';
         this.listTmp = new Set();
-        this.listTmpAux = new Set();
     }
     
     public addComentario(comentario: string){
@@ -63,18 +62,22 @@ export class  Data{
             left=`${left}.0`;
         if(!isNaN(right) && !right.includes('.'))
             right=`${right}.0`;    
+        this.freeTemp(left);this.freeTemp(right);
         this.setCod(`${this.tabulador}${nomTmp} = ${left} ${operator} ${right};\n`);
     }
     public addModulo(nomTmp : string, left: any, right: any = ''){
+        this.freeTemp(left);this.freeTemp(right);
         this.setCod(`${this.tabulador}${nomTmp} = fmod(${left} , ${right});\n`);
     }
 
     //Instrucciones
     public addPrintf(formato: string, valor: any){
+        this.freeTemp(valor);
         this.setCod ( `${this.tabulador}printf("%${formato}\\n",${valor});\n`);
     }
 
     public addIf(left: any, right: any, operator: string, label : string){
+        this.freeTemp(left);this.freeTemp(right);
         this.setCod (`${this.tabulador}if (${left} ${operator} ${right}) goto ${label};\n`);
     }
 
@@ -88,19 +91,23 @@ export class  Data{
     }
 
     public addGetHeap(tmp : any, index: any){
+        this.freeTemp(tmp);
         this.setCod(`${this.tabulador}${tmp} = Heap[(int)${index}];\n`);
     }
 
     public addSetHeap(index: any, value : any){
+        this.freeTemp(index);this.freeTemp(value);
         this.setCod(`${this.tabulador}Heap[(int)${index}] = ${value};\n`);
     }
 
     //STACK
     public addGetStack(target : any, index: any){
+        this.freeTemp(index);
         this.setCod( `${this.tabulador}${target} = Stack[(int)${index}];\n`);
     }
 
     public addSetStack(index: any, value : any){
+        this.freeTemp(index);this.freeTemp(value);
         this.setCod(`${this.tabulador}Stack[(int)${index}] = ${value};\n`);
     }
     //FUNCIONES
@@ -136,32 +143,34 @@ export class  Data{
     }
 
     public saveTemps(enviorement: Environment) : number{
-        if(this.listTmp.size > 0){
-            const temp = this.newTmp(); this.freeTemp(temp);
-            let size = 0;
-
-            this.addComentario('Inicia guardado de temporales');
-            this.addExpression(temp,'p',enviorement.size,'+');
+        const sizeListTemp = this.listTmp.size;
+        const listTmpAux = new Set(this.listTmp);
+        if(sizeListTemp > 0){
+            let size = 0;            
+            const temp = this.newTmp();             
+            this.addComentario('Guardar temporales');
+            this.addExpression(temp,'p',enviorement.size.toString(),'+');
             this.listTmp.forEach((value)=>{
                 size++;
                 this.addSetStack(temp,value);
-                if(size !=  this.listTmp.size)
+                if(size !=  sizeListTemp)
                     this.addExpression(temp,temp,'1','+');
             });
-            this.addComentario('Fin guardado de temporales');
+            this.addComentario('Fin fuardar temporales');
         }
-        let ptr = enviorement.size;
-        enviorement.size = ptr + this.listTmp.size;
-        return ptr;
+        let sizeAux = enviorement.size;
+        enviorement.size = sizeAux + sizeListTemp;
+        this.listTmp = listTmpAux;
+        return sizeAux;
     }
 
     public recoverTemps(enviorement: Environment, pos: number){
         if(this.listTmp.size > 0){
-            const temp = this.newTmp(); this.freeTemp(temp);
+            const temp = this.newTmp(); 
             let size = 0;
 
             this.addComentario('Inicia recuperado de temporales');
-            this.addExpression(temp,'p',pos,'+');
+            this.addExpression(temp,'p',pos.toString(),'+');
             this.listTmp.forEach((value)=>{
                 size++;
                 this.addGetStack(value,temp);
@@ -181,12 +190,12 @@ export class  Data{
 
     public addEncabezado(){        
         let listaTmp : string = '';
-        if(this.listTmp.size!=0){
+        if(this.temporal!=0){
             listaTmp = '\nfloat '
-            this.listTmp.forEach(element => {
-                listaTmp += element + ',';
-            });
-            listaTmp = listaTmp.replace(/.$/,';');            
+            for(let i=0;i<this.temporal;i++){
+                listaTmp +=`T${i},`;
+            }
+            listaTmp = listaTmp.replace(/.$/,';');    
         }
         this.codigo =       
 `#include <stdio.h>

@@ -20,9 +20,7 @@ export class Llamada extends Expression{
         const paramsValues = new Array<Retorno>();
         const data = Data.getInstance();        
         console.log('********',data.getListTmp());
-        let size;
-        if(!amb.esGlobal())
-            size = data.saveTemps(amb);
+        const size = data.saveTemps(amb);
         this.parametros.forEach((param)=>{
             paramsValues.push(param.execute(amb));
         })
@@ -42,8 +40,7 @@ export class Llamada extends Expression{
         data.addCall(func.idUnico);
         data.addGetStack(temp,'p');
         data.addAntEnv(amb.size);
-        if(!amb.esGlobal())
-            data.recoverTemps(amb,size);
+        data.recoverTemps(amb,size);
         data.addTemp(temp);
 
         if (func.tipo != Type.BOOLEAN) return {value:temp,esTmp:true,type:func.tipo};

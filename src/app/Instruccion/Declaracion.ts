@@ -79,7 +79,7 @@ export class Declaracion extends Instruction{
                     data.addSetStack(sim.valor,valor.value);
             }else{
                 const temp = data.newTmp(); 
-                //data.freeTemp(temp);
+               // data.freeTemp(temp);
                 data.addExpression(temp,'p',sim.valor.toString(),'+');
                 if(valor.type == Type.BOOLEAN){
                     const templabel = data.newLabel();

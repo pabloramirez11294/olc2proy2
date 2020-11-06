@@ -53,11 +53,12 @@ export class Environment{
         this.variables = new Map();  
         this.funciones = new Map();      
         this.nombre = nombre;
-        this.size = 0;
+        this.size = anterior?.size || 0
         //escape
         this.break = anterior?.break || null;
         this.return = anterior?.return || null;
         this.continue = anterior?.continue || null;
+        this.actualFunc = anterior?.actualFunc || null;
     }
 
     public getNombre():string{
