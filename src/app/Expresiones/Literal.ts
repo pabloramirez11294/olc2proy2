@@ -4,7 +4,7 @@ import { Retorno, Type } from "../Modelos/Retorno";
 
 export class Literal extends Expression{
     
-    constructor(public value : any, line : number, column: number, private type : string){
+    constructor(public value : string, line : number, column: number, private type : string){
         super(line, column);
     }
 
@@ -12,8 +12,16 @@ export class Literal extends Expression{
         if(this.type == Type.NUMBER)
             return {value : String(this.value), type : Type.NUMBER,esTmp:false};
         else if(this.type == Type.STRING){
-            //TODO c3d para string
-            //return {value : this.value, type : Type.STRING};
+            const data = Data.getInstance();
+            const tmp = data.newTmp();
+            data.addExpression(tmp, 'h');            
+            data.addSetHeap(tmp, this.value.length.toString());
+            data.nextHeap();
+            for (let i = 0; i < this.value.length; i++) {
+                data.addSetHeap('h', this.value.charCodeAt(i));
+                data.nextHeap();
+            }
+            return {value : tmp, type : Type.STRING, esTmp:true};
         }else if(this.type == Type.BOOLEAN){
             const data = Data.getInstance();
             this.trueLabel = this.trueLabel == '' ? data.newLabel() : this.trueLabel;

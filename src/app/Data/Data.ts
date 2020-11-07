@@ -59,7 +59,7 @@ export class  Data{
     public addExpression(nomTmp : string, left: any, right: any = '', operator: string = ''){
         if(!isNaN(left) && !left.includes('.'))
             left=`${left}.0`;
-        if(!isNaN(right) && !right.includes('.'))
+        if(right != '' && !isNaN(right) && !right.includes('.'))
             right=`${right}.0`;    
         this.tmpUsado(left);this.tmpUsado(right);
         this.setCod(`${nomTmp} = ${left} ${operator} ${right};\n`);
@@ -205,12 +205,31 @@ double p;
 double h;${listaTmp}
 
 ${this.codigoFunc}
+${this.codePrintString}
 
 int main() {
 ${this.codigo}
 return 0;
 }`      ;
     }
+
+    private codePrintString:string = `
+int t0_s,t1_s,t2_s;
+void nativa_printString(){
+t0_s=Heap[(int)p];
+t1_s=1;
+L3_s:
+if(t1_s<=t0_s) goto L1_s;
+goto L2_s;
+L1_s:
+t2_s=Heap[t1_s];
+printf("%c",(char)t2_s);
+t1_s=t1_s+1;
+goto L3_s;
+L2_s:
+printf("%s","\\n");
+}
+    `;
 
 
 }
