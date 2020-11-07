@@ -36,10 +36,10 @@ export class Llamada extends Expression{
         }
         data.addComentario('Fin cambio de ambito simulado');
         data.addComentario('Inicio cambio de ambito');
-        data.addNextEnv(amb.size);
-        data.addCall(func.idUnico);
+        data.addNextAmb(amb.size);
+        data.addCallFunc(func.idUnico);
         data.addGetStack(auxPtmpReturn,'p');
-        data.addAntEnv(amb.size);
+        data.addAntAmb(amb.size);
         data.recuperarTmp(amb,size);
         data.addTemp(auxPtmpReturn);
         data.addComentario('Fin cambio de ambito');

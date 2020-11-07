@@ -129,15 +129,15 @@ export class  Data{
         this.setCod('return; \n}\n');        
         this.esFunc = false;
     }
-    public addNextEnv(size: number){
+    public addNextAmb(size: number){
         this.setCod(`p = p + ${size};\n`);
     }
 
-    public addAntEnv(size: number){
+    public addAntAmb(size: number){
         this.setCod(`p = p - ${size};\n`);
     }
 
-    public addCall(id: string){
+    public addCallFunc(id: string){
         this.setCod(` ${id}();\n`);
     }
 
