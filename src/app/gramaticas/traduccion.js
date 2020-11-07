@@ -300,7 +300,7 @@ case 107:
         let txt=$$[$0].replace(/\\n/g,"\n");
         txt = txt.replace(/\\t/g,"\t");
         txt = txt.replace(/\\r/g,"\r");
-        //this.$ = new Literal(txt.replace(/\"/g,""), _$[$0].first_line, _$[$0].first_column, Type.STRING);
+        this.$ = new Literal(txt.replace(/\"/g,""), _$[$0].first_line, _$[$0].first_column, Type.STRING);
     
 break;
 case 108:

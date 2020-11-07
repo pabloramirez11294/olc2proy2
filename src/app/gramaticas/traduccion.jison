@@ -392,7 +392,7 @@ F
         let txt=$1.replace(/\\n/g,"\n");
         txt = txt.replace(/\\t/g,"\t");
         txt = txt.replace(/\\r/g,"\r");
-        //$$ = new Literal(txt.replace(/\"/g,""), @1.first_line, @1.first_column, Type.STRING);
+        $$ = new Literal(txt.replace(/\"/g,""), @1.first_line, @1.first_column, Type.STRING);
     }
     | TRUE {$$ = new Literal('1', @1.first_line, @1.first_column, Type.BOOLEAN);}
     | FALSE {$$ = new Literal('0', @1.first_line, @1.first_column, Type.BOOLEAN);}
