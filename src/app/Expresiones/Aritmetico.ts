@@ -33,7 +33,7 @@ export class Aritmetico extends Expression{
         }
         const rightValue = this.right?.execute(amb); 
         //agregar label
-        if(rightValue.type==Type.BOOLEAN){
+        if(rightValue?.type==Type.BOOLEAN){
             if(rightValue.esTmp){
                 data.addLabel(rightValue.trueLabel);
                 data.addLabel(rightValue.falseLabel);
