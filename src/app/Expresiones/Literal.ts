@@ -16,7 +16,7 @@ export class Literal extends Expression{
             const tmp = data.newTmp();
             data.addComentario('Inicia string');
             data.addExpression(tmp, 'h');            
-            data.addSetHeap(tmp, this.value.length.toString());
+            data.addSetHeap('h', this.value.length.toString());
             data.nextHeap();
             for (let i = 0; i < this.value.length; i++) {
                 data.addSetHeap('h', this.value.charCodeAt(i));

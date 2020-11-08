@@ -34,6 +34,20 @@ export class Llamada extends Expression{
                 data.addExpression(tmpString,String( amb.size ));
                 data.addSetStack(tmpString,valGuardar.value);
                 valGuardar.value=tmpString;
+            }else if(valGuardar.type == Type.BOOLEAN){
+                let temporBool;
+                if(!valGuardar.esTmp)
+                    temporBool = data.newTmp();
+                else    
+                    temporBool = valGuardar.value;
+                const tmpLbl = data.newLabel();
+                data.addLabel(valGuardar.trueLabel);
+                data.addExpression(temporBool,'1');
+                data.addLabel(valGuardar.falseLabel);
+                data.addGoto(tmpLbl);
+                data.addExpression(temporBool,'0');
+                data.addLabel(tmpLbl);
+                valGuardar.value = temporBool;
             }
             paramsValues.push(valGuardar);
         })
@@ -43,7 +57,6 @@ export class Llamada extends Expression{
         if(paramsValues.length != 0){
             data.addExpression(auxPtmpReturn,'p',String( amb.size + 1),'+'); 
             paramsValues.forEach((value,index)=>{
-                //TODO falta para booleanos
                 data.addSetStack(auxPtmpReturn,value.value);
                 if(index != paramsValues.length - 1)
                     data.addExpression(auxPtmpReturn,auxPtmpReturn,'1','+');
