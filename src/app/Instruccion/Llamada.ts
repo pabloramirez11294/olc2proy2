@@ -23,10 +23,17 @@ export class Llamada extends Expression{
         const size = data.apartarTmp(amb);
         this.parametros.forEach((param)=>{
             const valGuardar = param.execute(amb);
+            //pasar string por referencia
             if(param instanceof Variable && valGuardar.type == Type.STRING){
                 const paraAux:any = param;
                 const simVar = amb.getVar(paraAux.id);
                 data.addExpression(valGuardar.value,simVar.valor.toString());
+            }else if (valGuardar.type == Type.STRING){
+                const tmpString = data.newTmp();  
+                amb.size++;               
+                data.addExpression(tmpString,String( amb.size ));
+                data.addSetStack(tmpString,valGuardar.value);
+                valGuardar.value=tmpString;
             }
             paramsValues.push(valGuardar);
         })
