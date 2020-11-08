@@ -16,7 +16,7 @@ export class Variable extends Expression{
             throw new Error_(this.line, this.column, 'Semantico', 'VARIABLE: no existe la variable:' + this.id,amb.getNombre());
         if(sim.tipo!=Type.NULL && sim.valor == undefined)
             throw new Error_(this.line, this.column, 'Semantico', 'VARIABLE: no tiene valor asignado:' + this.id,amb.getNombre());
-        //TODO 
+
         const temp = data.newTmp();
         if (sim.global) {
             data.addGetStack(temp, sim.valor);
@@ -31,7 +31,6 @@ export class Variable extends Expression{
             return {value: temp,type: sim.tipo,esTmp:true};
         }else{
             const tempAux = data.newTmp(); 
-            //data.freeTemp(tempAux);
             data.addExpression(tempAux, 'p', sim.valor.toString(), '+');
             data.addGetStack(temp, tempAux);
             if (sim.tipo == Type.BOOLEAN){
@@ -41,6 +40,10 @@ export class Variable extends Expression{
                 data.addIf(temp, '1', '==', this.trueLabel);
                 data.addGoto(this.falseLabel);
                 return {value :temp, type : Type.BOOLEAN , trueLabel: this.trueLabel,esTmp:true,falseLabel:this.falseLabel};
+            }else if(sim.tipo == Type.STRING){
+                const tempAux2 = data.newTmp();
+                data.addGetStack(tempAux2,temp);
+                return {value: tempAux2,type: sim.tipo,esTmp:true};
             }
             
             return {value: temp,type: sim.tipo,esTmp:true};

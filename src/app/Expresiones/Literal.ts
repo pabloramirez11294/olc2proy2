@@ -14,6 +14,7 @@ export class Literal extends Expression{
         else if(this.type == Type.STRING){
             const data = Data.getInstance();
             const tmp = data.newTmp();
+            data.addComentario('Inicia string');
             data.addExpression(tmp, 'h');            
             data.addSetHeap(tmp, this.value.length.toString());
             data.nextHeap();
@@ -21,6 +22,7 @@ export class Literal extends Expression{
                 data.addSetHeap('h', this.value.charCodeAt(i));
                 data.nextHeap();
             }
+            data.addComentario('Fin string');
             return {value : tmp, type : Type.STRING, esTmp:true};
         }else if(this.type == Type.BOOLEAN){
             const data = Data.getInstance();

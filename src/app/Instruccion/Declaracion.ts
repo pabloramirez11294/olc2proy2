@@ -14,7 +14,8 @@ export class Declaracion extends Instruction{
 
     public execute(amb: Environment) {
         const data = Data.getInstance();
-         if(this.exp == undefined){// let a:tipo;
+        data.addComentario('Inicia declaracion o asignacion');
+        if(this.exp == undefined){// let a:tipo;
             let defecto;
             if(this.tipo == Type.NUMBER || this.tipo == Type.BOOLEAN)
                 defecto = '0';
@@ -43,9 +44,6 @@ export class Declaracion extends Instruction{
                 }else        
                     data.addSetStack(sim.valor,valor.value);
             }else{
-                const temp = data.newTmp(); 
-                //data.freeTemp(temp);
-                data.addExpression(temp,'p',sim.valor.toString(),'+');
                 if(valor.type == Type.BOOLEAN){
                     const templabel = data.newLabel();
                     data.addLabel(valor.trueLabel);
@@ -54,10 +52,14 @@ export class Declaracion extends Instruction{
                     data.addLabel(valor.falseLabel);
                     data.addSetStack(sim.valor,'0');
                     data.addLabel(templabel);
+                }else if(sim.tipo == Type.STRING){
+                    const tempAux2 = data.newTmp();
+                    data.addExpression(tempAux2, 'p', sim.valor.toString(), '+');                    
+                    data.addGetStack(tempAux2,tempAux2);
+                    data.addSetStack(tempAux2,valor.value);
                 }else        
                     data.addSetStack(sim.valor,valor.value);
             }
-            
 
         }else{//let a:number=val;
             const valor = this.exp.execute(amb);
@@ -79,7 +81,6 @@ export class Declaracion extends Instruction{
                     data.addSetStack(sim.valor,valor.value);
             }else{
                 const temp = data.newTmp(); 
-               // data.freeTemp(temp);
                 data.addExpression(temp,'p',sim.valor.toString(),'+');
                 if(valor.type == Type.BOOLEAN){
                     const templabel = data.newLabel();
@@ -94,6 +95,8 @@ export class Declaracion extends Instruction{
             }
 
         }
+        
+        data.addComentario('Fin asignacion o delaracion');
 
     }
     public getId():string{

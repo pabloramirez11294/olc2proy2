@@ -3,6 +3,8 @@ import { Expression } from "../Modelos/Expression";
 import { Error_ } from '../Reportes/Errores';
 import { Retorno, Type } from "../Modelos/Retorno";
 import { Data } from '../Data/Data';
+import { Variable } from "../Expresiones/Variable";
+
 export class Llamada extends Expression{
 
     constructor(private id: string, private parametros : Array<Expression>, line : number, column : number){
@@ -20,7 +22,13 @@ export class Llamada extends Expression{
         const data = Data.getInstance();        
         const size = data.apartarTmp(amb);
         this.parametros.forEach((param)=>{
-            paramsValues.push(param.execute(amb));
+            const valGuardar = param.execute(amb);
+            if(param instanceof Variable && valGuardar.type == Type.STRING){
+                const paraAux:any = param;
+                const simVar = amb.getVar(paraAux.id);
+                data.addExpression(valGuardar.value,simVar.valor.toString());
+            }
+            paramsValues.push(valGuardar);
         })
         const auxPtmpReturn = data.newTmp();
         //cambio ambito simulado
