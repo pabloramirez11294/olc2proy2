@@ -4,6 +4,7 @@ import { Environment, Simbolo } from "../Entornos/Environment";
 import {Type} from "../Modelos/Retorno";
 import {Error_} from '../Reportes/Errores';
 import { Data } from '../Data/Data';
+import { Literal } from "../Expresiones/Literal";
 export class Declaracion extends Instruction{
 
     public constante:boolean=false;
@@ -21,6 +22,8 @@ export class Declaracion extends Instruction{
                 defecto = '0';
             else{
                 //TODO falta dar valor por defecto para string,array
+                const cad = new Literal('', this.line, this.column, Type.STRING);
+                defecto = cad.execute().value;
             }
 
             const sim:Simbolo = amb.guardar(this.id,this.tipo ,this.line,this.column,this.constante);
