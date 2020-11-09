@@ -26,6 +26,8 @@
     const {Simbolo} = require('../Entornos/Environment');
     const {Llamada} = require('../Instruccion/Llamada');
     const {Return} = require('../Instruccion/Return');
+    //estructuras
+    const {Length} = require('../Estructuras/Length');
 %}
 
 %lex
@@ -410,7 +412,7 @@ F
         $$ = $1;
     }
     | NULL 
-    | Exp '.' LENGTH
+    | Exp '.' LENGTH {$$ = new Length($1,@1.first_line, @1.first_column);}
     | Exp '.' 'CHARAT' '(' Exp ')'
     | Exp '.' 'TOLOWERCASE' '(' ')'
     | Exp '.' 'TOUPPERCASE' '(' ')'
