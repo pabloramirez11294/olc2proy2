@@ -3,6 +3,7 @@ import { Retorno, Type } from "../Modelos/Retorno";
 import { Environment } from "../Entornos/Environment";
 import {Error_} from '../Reportes/Errores';
 import {Data} from "../Data/Data";
+import { readFile } from "fs";
 export enum ArithmeticOption{
     SUMA,
     RESTA,
@@ -64,9 +65,20 @@ export class Aritmetico extends Expression{
         }else*/
             tipoDominante = this.tipoDominante(leftValue.type, rightValue.type,amb.getNombre());
         if(this.type == ArithmeticOption.SUMA){
-            if(tipoDominante == Type.STRING){}
-                //result = {value : (leftValue.value.toString() + rightValue.value.toString()), type : Type.STRING};
-            else if(tipoDominante == Type.NUMBER ){               
+            if(tipoDominante == Type.STRING){
+                if(leftValue.type==Type.STRING && rightValue.type==Type.NUMBER){
+                    data.addExpression(tmp,'p',String(amb.size + 1), '+');
+                    data.addSetStack(tmp,leftValue.value);
+                    data.addExpression(tmp,tmp,'1','+');
+                    data.addSetStack(tmp,rightValue.value);
+                    data.addNextAmb(amb.size);
+                    data.addCallFunc('native_concatStringNumber');
+                    data.addGetStack(tmp,'p');
+                    data.addAntAmb(amb.size);
+                }
+                
+                result = {value : tmp, type : Type.STRING, esTmp : true};
+            }else if(tipoDominante == Type.NUMBER ){               
                 data.addExpression(tmp, leftValue.value,rightValue.value, '+');
                 result = {value : tmp, type : Type.NUMBER, esTmp : true};
             }else

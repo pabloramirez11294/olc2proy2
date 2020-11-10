@@ -233,6 +233,60 @@ goto L3_s;
 L2_s:
 printf("%s","\\n");
 }
+
+
+void native_concatStringNumber(){
+int t0,tReturn,tString,tNumber,tamano=0,entero,contador,cont;
+double decimal;
+t0=Stack[(int)p+1];
+tString=Heap[(int)t0];
+tNumber=Stack[(int)p+2];
+
+entero=(int)tNumber;
+decimal = fmod(tNumber,1.0);
+contador=1;
+L3:
+if(entero/10>0)goto L1;
+goto L2;
+L1:
+entero=entero/10;
+contador++;
+goto L3;
+L2:
+cont=contador;
+
+tamano+=contador;
+tamano+=tString;
+tReturn=h;
+Heap[(int)h] = tamano;h = h + 1;
+contador=0;t0+=1;
+L9:
+if(contador<tString) goto L7;
+goto L8;
+L7:
+Heap[(int)h]=Heap[(int)t0+contador];
+h = h + 1;contador++;
+goto L9;
+L8:
+    
+contador=cont;
+cont=0;
+char buf[contador];
+snprintf(buf, sizeof(buf), "%d\\n", tNumber);	
+L6:
+if(cont<contador)goto L4;
+goto L5;
+L4:
+Heap[(int)h]=(int) buf[cont];h = h + 1;
+cont++;
+goto L6;
+L5:
+
+Stack[(int)p]=tReturn;
+
+}
+
+
     `;
 
 
