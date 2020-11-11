@@ -27,8 +27,8 @@ export class Console extends Instruction{
                     data.addLabel(tmpLbl);
                     break;
                 case Type.NUMBER:
-                    /*if (!value.esTmp && Number(value.value) % 1 == 0)
-                        formato = 'd';*/
+                    if (!value.esTmp && Number(value.value) % 1 == 0)
+                        formato = 'd';
                     data.addPrintf(formato,value.value);
                     break;
                 case Type.STRING:

@@ -75,6 +75,15 @@ export class Aritmetico extends Expression{
                     data.addCallFunc('native_concatStringNumber');
                     data.addGetStack(tmp,'p');
                     data.addAntAmb(amb.size);
+                }else if(rightValue.type==Type.STRING && leftValue.type==Type.NUMBER){
+                    data.addExpression(tmp,'p',String(amb.size + 1), '+');
+                    data.addSetStack(tmp,rightValue.value);
+                    data.addExpression(tmp,tmp,'1','+');
+                    data.addSetStack(tmp,leftValue.value);
+                    data.addNextAmb(amb.size);
+                    data.addCallFunc('native_concatNumberString');
+                    data.addGetStack(tmp,'p');
+                    data.addAntAmb(amb.size);
                 }
                 
                 result = {value : tmp, type : Type.STRING, esTmp : true};
