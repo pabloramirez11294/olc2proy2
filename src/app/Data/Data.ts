@@ -237,6 +237,44 @@ goto L3_s;
 L2_s:
 return;
 }
+
+void native_concatString(){
+int t0,t1,tReturn,tString,tString2,tamano=0,contador;
+t0=Stack[(int)p+1];
+tString=Heap[(int)t0];
+t1=Stack[(int)p+2];
+tString2=Heap[(int)t1];
+
+tamano+=tString;
+tamano+=tString2;
+tReturn=h;
+h=h+1;//size
+contador=0;
+t0+=1;
+L6:
+if(contador<tString) goto L4;
+goto L5;
+L4:
+Heap[(int)h]=Heap[(int)t0];
+h = h + 1;contador++;	
+t0+=1;
+goto L6;
+L5:
+
+contador=0;
+t1+=1;
+L9:
+if(contador<tString2) goto L7;
+goto L8;
+L7:
+Heap[(int)h]=Heap[(int)t1];
+h = h + 1;contador++;	
+t1+=1;
+goto L9;
+L8:
+Heap[(int)tReturn] = tamano;h = h + 1;
+Stack[(int)p]=tReturn;
+}
     
     
 

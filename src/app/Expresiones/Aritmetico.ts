@@ -84,6 +84,17 @@ export class Aritmetico extends Expression{
                     data.addCallFunc('native_concatNumberString');
                     data.addGetStack(tmp,'p');
                     data.addAntAmb(amb.size);
+                }else if(leftValue.type==Type.STRING && rightValue.type==Type.STRING){
+                    data.addExpression(tmp,'p',String(amb.size + 1), '+');
+                    data.addSetStack(tmp,leftValue.value);
+                    data.addExpression(tmp,tmp,'1','+');
+                    data.addExpression(tmp,'p',String(amb.size + 2), '+');
+                    data.addSetStack(tmp,rightValue.value);
+                    data.addExpression(tmp,tmp,'1','+');
+                    data.addNextAmb(amb.size);
+                    data.addCallFunc('native_concatString');
+                    data.addGetStack(tmp,'p');
+                    data.addAntAmb(amb.size);
                 }
                 
                 result = {value : tmp, type : Type.STRING, esTmp : true};
