@@ -70,9 +70,12 @@ export class  Data{
     }
 
     //Instrucciones
-    public addPrintf(formato: string, valor: any){
+    public addPrintf(formato: string, valor: any,salto=false){
         this.tmpUsado(valor);
-        this.setCod ( `printf("%${formato}\\n",${valor});\n`);
+        if(!salto)
+            this.setCod ( `printf("%${formato}",${valor});`);
+        else
+            this.setCod ( `printf("\\n");`);
     }
 
     public addIf(left: any, right: any, operator: string, label : string){
@@ -231,7 +234,7 @@ printf("%c",(char)t2_s);
 t3_s=t3_s+1;
 goto L3_s;
 L2_s:
-printf("%s","\\n");
+return;
 }
 
 
