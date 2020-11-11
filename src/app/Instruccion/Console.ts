@@ -31,6 +31,12 @@ export class Console extends Instruction{
                         formato = 'd';
                     data.addPrintf(formato,value.value);
                     break;
+                case Type.STRING:
+                    data.addNextAmb(amb.size);
+                    data.addSetStack('p', value.value);
+                    data.addCallFunc('nativa_printString');
+                    data.addAntAmb(amb.size);
+                break;
                 default:
                     throw new Error_(this.line, this.column, "Semantico", "No se puede imprimir un valor de tipo: " + value.type,amb.getNombre());
             }
@@ -39,6 +45,7 @@ export class Console extends Instruction{
                 this.setConsolaA(value.value);
             else    */
         });
+        data.addPrintf('c',undefined,true);
         data.addComentario('PRINT terminia');  
     }
 

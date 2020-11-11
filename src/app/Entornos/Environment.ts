@@ -2,6 +2,7 @@
 import { Type } from "../Modelos/Retorno";
 import {Error_} from '../Reportes/Errores';
 import {Funcion} from '../Instruccion/Funcion';
+import { Recoverable } from "repl";
 export class Simbolo{
     public tipoArreglo:Type;
     public dim:number;
@@ -162,7 +163,7 @@ export class Environment{
     idFuncion : string;
     actualFunc: SimboloFunc | null;
     setAmbFuncion(idFuncion: string, actualFunc : SimboloFunc, retorno : string){
-        this.size = 1; //1 porque la posicion 0 es para el return
+        this.size = 1; 
         this.idFuncion = idFuncion;
         this.return = retorno;
         this.actualFunc = actualFunc;

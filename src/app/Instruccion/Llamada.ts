@@ -3,6 +3,8 @@ import { Expression } from "../Modelos/Expression";
 import { Error_ } from '../Reportes/Errores';
 import { Retorno, Type } from "../Modelos/Retorno";
 import { Data } from '../Data/Data';
+import { Variable } from "../Expresiones/Variable";
+
 export class Llamada extends Expression{
 
     constructor(private id: string, private parametros : Array<Expression>, line : number, column : number){
@@ -20,7 +22,34 @@ export class Llamada extends Expression{
         const data = Data.getInstance();        
         const size = data.apartarTmp(amb);
         this.parametros.forEach((param)=>{
-            paramsValues.push(param.execute(amb));
+            const valGuardar = param.execute(amb);
+            //pasar string por referencia
+            if(param instanceof Variable && valGuardar.type == Type.STRING){
+                const paraAux:any = param;
+                const simVar = amb.getVar(paraAux.id);
+                data.addExpression(valGuardar.value,simVar.valor.toString());
+            }else if (valGuardar.type == Type.STRING){
+                const tmpString = data.newTmp();  
+                amb.size++;               
+                data.addExpression(tmpString,String( amb.size ));
+                data.addSetStack(tmpString,valGuardar.value);
+                valGuardar.value=tmpString;
+            }else if(valGuardar.type == Type.BOOLEAN){
+                let temporBool;
+                if(!valGuardar.esTmp)
+                    temporBool = data.newTmp();
+                else    
+                    temporBool = valGuardar.value;
+                const tmpLbl = data.newLabel();
+                data.addLabel(valGuardar.trueLabel);
+                data.addExpression(temporBool,'1');
+                data.addLabel(valGuardar.falseLabel);
+                data.addGoto(tmpLbl);
+                data.addExpression(temporBool,'0');
+                data.addLabel(tmpLbl);
+                valGuardar.value = temporBool;
+            }
+            paramsValues.push(valGuardar);
         })
         const auxPtmpReturn = data.newTmp();
         //cambio ambito simulado
@@ -28,7 +57,6 @@ export class Llamada extends Expression{
         if(paramsValues.length != 0){
             data.addExpression(auxPtmpReturn,'p',String( amb.size + 1),'+'); 
             paramsValues.forEach((value,index)=>{
-                //TODO falta para booleanos
                 data.addSetStack(auxPtmpReturn,value.value);
                 if(index != paramsValues.length - 1)
                     data.addExpression(auxPtmpReturn,auxPtmpReturn,'1','+');

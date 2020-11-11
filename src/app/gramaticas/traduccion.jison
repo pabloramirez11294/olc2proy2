@@ -26,6 +26,8 @@
     const {Simbolo} = require('../Entornos/Environment');
     const {Llamada} = require('../Instruccion/Llamada');
     const {Return} = require('../Instruccion/Return');
+    //estructuras
+    const {Length,CharAt,ToLowerCase,ToUpperCase,Concat} = require('../Estructuras/Length');
 %}
 
 %lex
@@ -42,6 +44,7 @@ string2  (\'[^']*\')
 //valores
 {number}              return 'NUMERO'
 {string}             return 'CADENA'
+{string2}             return 'CADENA2'
 //tipos de datos
 "number"			  return 'NUMBER'
 "string"			  return 'STRING'
@@ -392,7 +395,14 @@ F
         let txt=$1.replace(/\\n/g,"\n");
         txt = txt.replace(/\\t/g,"\t");
         txt = txt.replace(/\\r/g,"\r");
-        //$$ = new Literal(txt.replace(/\"/g,""), @1.first_line, @1.first_column, Type.STRING);
+        $$ = new Literal(txt.replace(/\"/g,""), @1.first_line, @1.first_column, Type.STRING);
+    }
+    | CADENA2
+    {
+        let txt2=$1.replace(/\\n/g,"\n");
+        txt2 = txt2.replace(/\\t/g,"\t");
+        txt2 = txt2.replace(/\\r/g,"\r");
+        $$ = new Literal(txt2.replace(/\'/g,""), @1.first_line, @1.first_column, Type.STRING);
     }
     | TRUE {$$ = new Literal('1', @1.first_line, @1.first_column, Type.BOOLEAN);}
     | FALSE {$$ = new Literal('0', @1.first_line, @1.first_column, Type.BOOLEAN);}
@@ -402,11 +412,11 @@ F
         $$ = $1;
     }
     | NULL 
-    | Exp '.' LENGTH
-    | Exp '.' 'CHARAT' '(' Exp ')'
-    | Exp '.' 'TOLOWERCASE' '(' ')'
-    | Exp '.' 'TOUPPERCASE' '(' ')'
-    | Exp '.' 'CONCAT' '(' Exp ')'
+    | Exp '.' LENGTH {$$ = new Length($1,@1.first_line, @1.first_column);}
+    | Exp '.' 'CHARAT' '(' Exp ')' { $$ = new CharAt($1,$5,@1.first_line, @1.first_column);}
+    | Exp '.' 'TOLOWERCASE' '(' ')'{ $$ = new ToLowerCase($1,@1.first_line, @1.first_column);}
+    | Exp '.' 'TOUPPERCASE' '(' ')'{ $$ = new ToUpperCase($1,@1.first_line, @1.first_column);}
+    | Exp '.' 'CONCAT' '(' Exp ')'{ $$ = new Concat($1,$5,@1.first_line, @1.first_column);}
     | TypesExp
 ;
 
