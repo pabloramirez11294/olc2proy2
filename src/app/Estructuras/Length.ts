@@ -29,3 +29,31 @@ export class Length extends Expression{
 
 }
 
+export class CharAt extends Expression{
+
+    constructor(private id: Expression,private index: Expression ,linea : number, columna: number){
+        super(linea,columna);
+    }
+    public execute(amb:Environment): Retorno{
+        let res:Retorno;
+        const sim = this.id.execute(amb);
+        const data = Data.getInstance();
+        const index = this.index.execute(amb);
+
+        const tmp = data.newTmp();
+        const tmp2 = data.newTmp();
+        data.addExpression(tmp,sim.value,index.value,'+');
+        data.addExpression(tmp,tmp,'1','+');
+        data.addGetHeap(tmp2,tmp);
+
+        data.addSetHeap('h','1');
+        const treturn=data.newTmp();
+        data.addExpression(treturn,'h');
+        data.nextHeap();
+        data.addSetHeap('h',tmp2);
+        res = {value:treturn,esTmp:true,type:Type.STRING};
+
+        return res;
+    }
+
+}

@@ -27,7 +27,7 @@
     const {Llamada} = require('../Instruccion/Llamada');
     const {Return} = require('../Instruccion/Return');
     //estructuras
-    const {Length} = require('../Estructuras/Length');
+    const {Length,CharAt} = require('../Estructuras/Length');
 %}
 
 %lex
@@ -413,7 +413,7 @@ F
     }
     | NULL 
     | Exp '.' LENGTH {$$ = new Length($1,@1.first_line, @1.first_column);}
-    | Exp '.' 'CHARAT' '(' Exp ')'
+    | Exp '.' 'CHARAT' '(' Exp ')' { $$ = new CharAt($1,$5,@1.first_line, @1.first_column);}
     | Exp '.' 'TOLOWERCASE' '(' ')'
     | Exp '.' 'TOUPPERCASE' '(' ')'
     | Exp '.' 'CONCAT' '(' Exp ')'
