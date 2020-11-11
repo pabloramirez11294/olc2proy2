@@ -57,3 +57,57 @@ export class CharAt extends Expression{
     }
 
 }
+
+export class ToLowerCase extends Expression{
+
+    constructor(private id: Expression,linea : number, columna: number){
+        super(linea,columna);
+    }
+    public execute(amb:Environment): Retorno{
+        let res:Retorno;
+        const sim = this.id.execute(amb);
+        const data = Data.getInstance();
+
+        const tmp = data.newTmp();
+        const tmp2 = data.newTmp();
+        
+        data.addExpression(tmp,'p',String(amb.size + 1), '+');
+        data.addSetStack(tmp,sim.value);
+        data.addNextAmb(amb.size);
+        data.addCallFunc('native_toLowerCase');
+        data.addGetStack(tmp2,'p');
+        data.addAntAmb(amb.size);
+
+        res = {value:tmp2,esTmp:true,type:Type.STRING};
+
+        return res;
+    }
+
+}
+
+export class ToUpperCase extends Expression{
+
+    constructor(private id: Expression,linea : number, columna: number){
+        super(linea,columna);
+    }
+    public execute(amb:Environment): Retorno{
+        let res:Retorno;
+        const sim = this.id.execute(amb);
+        const data = Data.getInstance();
+
+        const tmp = data.newTmp();
+        const tmp2 = data.newTmp();
+        
+        data.addExpression(tmp,'p',String(amb.size + 1), '+');
+        data.addSetStack(tmp,sim.value);
+        data.addNextAmb(amb.size);
+        data.addCallFunc('native_toUpperCase');
+        data.addGetStack(tmp2,'p');
+        data.addAntAmb(amb.size);
+
+        res = {value:tmp2,esTmp:true,type:Type.STRING};
+
+        return res;
+    }
+
+}

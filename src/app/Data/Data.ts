@@ -272,7 +272,7 @@ h = h + 1;contador++;
 t1+=1;
 goto L9;
 L8:
-Heap[(int)tReturn] = tamano;h = h + 1;
+Heap[(int)tReturn] = tamano;
 Stack[(int)p]=tReturn;
 }
     
@@ -345,7 +345,7 @@ cont2++;
 goto L14;
 L13:	
 L11:
-Heap[(int)tReturn] = tamano;h = h + 1;
+Heap[(int)tReturn] = tamano;
 Stack[(int)p]=tReturn;
 }
 
@@ -418,11 +418,79 @@ t0+=1;
 goto L6;
 L5:
 
-Heap[(int)tReturn] = tamano;h = h + 1;
+Heap[(int)tReturn] = tamano;
 Stack[(int)p]=tReturn;
 }
 
+void native_toUpperCase(){
+int t0,t1,tReturn,tString,contador;
+t0=Stack[(int)p+1];
+tString=Heap[(int)t0];
 
+tReturn=h;
+h=h+1;//size
+contador=0;
+t0+=1;
+L6:
+if(contador<tString) goto L4;
+goto L5;
+L4:
+t1=Heap[(int)t0];
+//conversion
+if(t1>=97)goto L7;
+goto L8;
+L7:
+if(t1<=122) goto L9;
+goto L10;
+L9:
+t1-=32;
+L10:
+L8:
+
+Heap[(int)h]=t1;	
+h = h + 1;contador++;	
+t0+=1;
+goto L6;
+L5:
+Heap[(int)tReturn] = tString;
+Stack[(int)p]=tReturn;
+
+}
+
+void native_toLowerCase(){
+int t0,t1,tReturn,tString,contador;
+t0=Stack[(int)p+1];
+tString=Heap[(int)t0];
+
+tReturn=h;
+h=h+1;//size
+contador=0;
+t0+=1;
+L6:
+if(contador<tString) goto L4;
+goto L5;
+L4:
+t1=Heap[(int)t0];
+//conversion
+if(t1>=65)goto L7;
+goto L8;
+L7:
+if(t1<=90) goto L9;
+goto L10;
+L9:
+t1+=32;
+L10:
+L8:
+
+Heap[(int)h]=t1;	
+h = h + 1;contador++;	
+t0+=1;
+goto L6;
+L5:
+Heap[(int)tReturn] = tString;
+Stack[(int)p]=tReturn;
+
+}
     `;
 
 
