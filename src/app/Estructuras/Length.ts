@@ -37,8 +37,14 @@ export class CharAt extends Expression{
     public execute(amb:Environment): Retorno{
         let res:Retorno;
         const sim = this.id.execute(amb);
+        if(sim.type != Type.STRING)
+            throw new Error_(this.line, this.column, "Semantico", "Error CharAt necesita ser STRING:",amb.getNombre());
+        
         const data = Data.getInstance();
         const index = this.index.execute(amb);
+        if(index.type != Type.NUMBER)
+            throw new Error_(this.line, this.column, "Semantico", "Error CharAt index necesita ser NUMBER:",amb.getNombre());
+        
 
         const tmp = data.newTmp();
         const tmp2 = data.newTmp();
@@ -66,6 +72,9 @@ export class ToLowerCase extends Expression{
     public execute(amb:Environment): Retorno{
         let res:Retorno;
         const sim = this.id.execute(amb);
+        if(sim.type != Type.STRING)
+            throw new Error_(this.line, this.column, "Semantico", "Error ToLowerCase necesita ser STRING:",amb.getNombre());
+        
         const data = Data.getInstance();
 
         const tmp = data.newTmp();
@@ -93,6 +102,8 @@ export class ToUpperCase extends Expression{
     public execute(amb:Environment): Retorno{
         let res:Retorno;
         const sim = this.id.execute(amb);
+        if(sim.type != Type.STRING)
+            throw new Error_(this.line, this.column, "Semantico", "Error ToUpperCase necesita ser STRING:",amb.getNombre());
         const data = Data.getInstance();
 
         const tmp = data.newTmp();
@@ -111,3 +122,39 @@ export class ToUpperCase extends Expression{
     }
 
 }
+
+export class Concat extends Expression{
+
+    constructor(private id: Expression,private string: Expression,linea : number, columna: number){
+        super(linea,columna);
+    }
+    public execute(amb:Environment): Retorno{
+        let res:Retorno;
+        const sim = this.id.execute(amb);
+        const string = this.string.execute(amb);
+        if(string.type != Type.STRING || sim.type != Type.STRING)
+            throw new Error_(this.line, this.column, "Semantico", "Error Concat necesitan ser STRING:",amb.getNombre());
+            
+        const data = Data.getInstance();
+
+        const tmp = data.newTmp();
+        const tmp2 = data.newTmp();
+        
+        data.addExpression(tmp,'p',String(amb.size + 1), '+');
+        data.addSetStack(tmp,sim.value);
+        data.addExpression(tmp,tmp,'1','+');
+        data.addExpression(tmp,'p',String(amb.size + 2), '+');
+        data.addSetStack(tmp,string.value);
+        data.addExpression(tmp,tmp,'1','+');
+        data.addNextAmb(amb.size);
+        data.addCallFunc('native_concatString');
+        data.addGetStack(tmp,'p');
+        data.addAntAmb(amb.size);
+
+        res = {value:tmp,esTmp:true,type:Type.STRING};
+
+        return res;
+    }
+
+}
+
