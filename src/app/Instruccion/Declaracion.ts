@@ -58,7 +58,7 @@ export class Declaracion extends Instruction{
                 }else if(sim.tipo == Type.STRING){
                     const tempAux2 = data.newTmp();
                     data.addExpression(tempAux2, 'p', sim.valor.toString(), '+');                    
-                    data.addGetStack(tempAux2,tempAux2);
+                    //data.addGetStack(tempAux2,tempAux2);
                     data.addSetStack(tempAux2,valor.value);
                 }else        
                     data.addSetStack(sim.valor,valor.value);
