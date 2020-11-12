@@ -4,6 +4,7 @@ import { Environment } from "../Entornos/Environment";
 import {Error_} from '../Reportes/Errores';
 import {Data} from "../Data/Data";
 import { readFile } from "fs";
+import { Llamada } from "../Instruccion/Llamada";
 export enum ArithmeticOption{
     SUMA,
     RESTA,
@@ -118,7 +119,10 @@ export class Aritmetico extends Expression{
             data.addExpression(tmp, leftValue.value,rightValue.value, '*');
             result = {value : tmp, type : Type.NUMBER, esTmp : true};
         }else if(this.type == ArithmeticOption.POTENCIA){
-            //result = {value : (leftValue.value ** rightValue.value), type : Type.NUMBER};
+            let arrayExp:Expression[]=[this.left,this.right];
+            let llamada:Llamada = new Llamada('nativa_potencia', arrayExp, this.line, this.column);
+            let resp = llamada.execute(amb);
+            result = {value : resp.value, type : Type.NUMBER,esTmp:true};
         }
         else if(this.type == ArithmeticOption.MODULO){
             if(tipoDominante == Type.STRING || tipoDominante == Type.BOOLEAN)

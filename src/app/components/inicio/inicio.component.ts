@@ -58,6 +58,7 @@ export class InicioComponent implements OnInit {
     reporte.simbolos.length=0;
     const entorno = new Environment(null, 'global');
     try {
+      this.editor=this.potencia+this.editor;
       const instrucciones = Traduccion.parse(this.editor);    
       for(const instruc of instrucciones){
         try {
@@ -269,6 +270,19 @@ export class InicioComponent implements OnInit {
   public cadena(id:number,raiz:string,cont:number,hijo:string):string{
     return "\""+id+"_" + raiz + "\"->\""+cont+"_"+hijo+"\"";
   }
+
+
+  private potencia:string = ` 
+function nativa_potencia(x:number, y:number):number{
+  if( y == 0){
+      return 1;
+  }else if (y >= 1){
+      return x * nativa_potencia(x, y - 1);
+  }
+}
+  
+  
+  `;
 
 
 }
