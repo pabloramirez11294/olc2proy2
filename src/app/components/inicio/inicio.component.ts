@@ -58,8 +58,7 @@ export class InicioComponent implements OnInit {
     reporte.simbolos.length=0;
     const entorno = new Environment(null, 'global');
     try {
-      this.editor=this.potencia+this.editor;
-      const instrucciones = Traduccion.parse(this.editor);    
+      const instrucciones = Traduccion.parse(this.editor+this.potencia);    
       for(const instruc of instrucciones){
         try {
             if(instruc instanceof Error_){

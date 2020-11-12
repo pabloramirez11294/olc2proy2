@@ -193,7 +193,7 @@ export class  Data{
     public addEncabezado(){        
         let listaTmp : string = '';
         if(this.temporal!=0){
-            listaTmp = '\nfloat '
+            listaTmp = '\double '
             for(let i=0;i<this.temporal;i++){
                 listaTmp +=`T${i},`;
             }
