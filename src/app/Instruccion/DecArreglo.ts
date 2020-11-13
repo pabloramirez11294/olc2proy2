@@ -4,7 +4,7 @@ import { Environment, Simbolo } from "../Entornos/Environment";
 import {Type} from "../Modelos/Retorno";
 import {Error_} from '../Reportes/Errores';
 export class DecArreglo extends Instruction{
-
+    public tamano=false;
     public constante:boolean=false;
     constructor(public id: string,public tipo:Type,public tipoArreglo:Type,public dim:number ,private exp : Expression,
                             private asignacion:boolean,line : number, column: number){
