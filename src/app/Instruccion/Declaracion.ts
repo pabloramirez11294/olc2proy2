@@ -57,8 +57,7 @@ export class Declaracion extends Instruction{
                     data.addLabel(templabel);
                 }else if(sim.tipo == Type.STRING){
                     const tempAux2 = data.newTmp();
-                    data.addExpression(tempAux2, 'p', sim.valor.toString(), '+');                    
-                    data.addGetStack(tempAux2,tempAux2);
+                    data.addExpression(tempAux2, 'p', sim.valor.toString(), '+'); 
                     data.addSetStack(tempAux2,valor.value);
                 }else        
                     data.addSetStack(sim.valor,valor.value);
@@ -84,17 +83,20 @@ export class Declaracion extends Instruction{
                     data.addSetStack(sim.valor,valor.value);
             }else{
                 const temp = data.newTmp(); 
-                data.addExpression(temp,'p',sim.valor.toString(),'+');
                 if(valor.type == Type.BOOLEAN){
                     const templabel = data.newLabel();
-                    data.addLabel(valor.trueLabel);
-                    data.addSetStack(sim.valor,'1');
+                    data.addLabel(valor.trueLabel);                    
+                    data.addExpression(temp,'p',sim.valor.toString(),'+');
+                    data.addSetStack(temp,'1');
                     data.addGoto(templabel);
                     data.addLabel(valor.falseLabel);
-                    data.addSetStack(sim.valor,'0');
+                    data.addExpression(temp,'p',sim.valor.toString(),'+');
+                    data.addSetStack(temp,'0');
                     data.addLabel(templabel);
-                }else        
+                }else{ 
+                    data.addExpression(temp,'p',sim.valor.toString(),'+');      
                     data.addSetStack(temp,valor.value);
+                }
             }
 
         }

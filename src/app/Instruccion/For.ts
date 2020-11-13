@@ -7,6 +7,7 @@ import {TipoEscape} from "../Instruccion/BreakContinue";
 import {Declaracion} from "../Instruccion/Declaracion";
 import { Instrucciones } from './Instrucciones';
 import { Arreglo } from '../Estructuras/Arreglo';
+import { Data } from "../Data/Data";
 
 export class For extends Instruction{
 
@@ -16,31 +17,29 @@ export class For extends Instruction{
 
     public execute(amb : Environment) {
         //declaración
+        const data = Data.getInstance();
+        const lblFor = data.newLabel();
+        data.addComentario('For inicia');
         const ambFor:Environment=new Environment(amb,amb.getNombre()+"_for");
         this.declaracion.execute(ambFor);        
         //condición
+        data.addLabel(lblFor); 
         let condicion = this.condicion.execute(ambFor);
         if(condicion.type != Type.BOOLEAN){
             throw new Error_(this.line, this.column, 'Semantico', 'La expresion no regresa un valor booleano: ' + condicion.value+", es de tipo: "+condicion.type ,ambFor.getNombre());
-        }
+        }        
+        ambFor.continue = this.condicion.trueLabel;
+        ambFor.break = this.condicion.falseLabel;
+        data.addLabel(this.condicion.trueLabel);
+        this.code.execute(ambFor);
+        this.Actualizacion.execute(ambFor);
+        data.addGoto(lblFor);
+        data.addLabel(condicion.falseLabel);  
         //for
-        while(condicion.value){
-            const code = this.code.execute(ambFor);
-            if(code != null || code != undefined){
-                if(code.type == TipoEscape.BREAK)
-                    break;
-                else if(code.type == TipoEscape.CONTINUE)
-                    continue;
-                else
-                    return code;
-            }
-            this.Actualizacion.execute(ambFor);
-            condicion = this.condicion.execute(ambFor);
-            if(condicion.type != Type.BOOLEAN){
-                throw new Error_(this.line, this.column, 'Semantico', 'La expresion no regresa un valor booleano: ' + condicion.value+", es de tipo: "+condicion.type ,ambFor.getNombre());
-            }
-        }
+        
+        
 
+        data.addComentario('For termina');
     }
     
 }

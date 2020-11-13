@@ -134,6 +134,9 @@ break;
 case 23: case 101: case 103:
   this.$ = $$[$0]; 
 break;
+case 24:
+ this.$ = new For($$[$0-5],$$[$0-4],$$[$0-2], $$[$0],_$[$0-7].first_line, _$[$0-7].first_column);
+break;
 case 27:
 this.$ = new While($$[$0-2],$$[$0], _$[$0-4].first_line, _$[$0-4].first_column);
 break;
@@ -145,6 +148,9 @@ case 29:
 break;
 case 30:
  this.$ = new Continue(_$[$0-1].first_line, _$[$0-1].first_column); 
+break;
+case 33:
+this.$ = new InstrucUnaria($$[$0-1],_$[$0-1].first_line, _$[$0-1].first_column);
 break;
 case 34: case 57: case 59: case 99:
  this.$ = $$[$0-1]; 
@@ -194,6 +200,12 @@ this.$.set($$[$0-2],$$[$0]);
 break;
 case 52:
  let a = new Map();  this.$ = a.set($$[$0-2],$$[$0]);
+break;
+case 55: case 100:
+ this.$ = $$[$0]
+break;
+case 56:
+this.$ = new Declaracion($$[$0-3],undefined,$$[$0-1],true, _$[$0-3].first_line, _$[$0-3].first_column); 
 break;
 case 58:
 this.$ = new Declaracion($$[$0-3],undefined,$$[$0-1],true, _$[$0-3].first_line, _$[$0-3].first_column);
@@ -283,14 +295,14 @@ break;
 case 94:
  this.$ = new Logica($$[$0-2], $$[$0],LogicaOpcion.OR, _$[$0-2].first_line, _$[$0-2].first_column);
 break;
+case 96:
+this.$ = new Ternario($$[$0-4], $$[$0-2], $$[$0], _$[$0-4].first_line, _$[$0-4].first_column);
+break;
 case 97:
  this.$ = new Logica($$[$0],null,LogicaOpcion.NOT, _$[$0-1].first_line, _$[$0-1].first_column); 
 break;
 case 98:
  this.$ = new Aritmetico($$[$0],null, ArithmeticOption.RESTA, _$[$0-1].first_line,_$[$0-1].first_column); 
-break;
-case 100:
- this.$ = $$[$0]
 break;
 case 106:
  this.$ = new Literal($$[$0], _$[$0].first_line, _$[$0].first_column, Type.NUMBER); 
@@ -339,6 +351,12 @@ case 117:
 break;
 case 118:
  this.$ = new Concat($$[$0-5],$$[$0-1],_$[$0-5].first_line, _$[$0-5].first_column);
+break;
+case 120:
+ this.$ = new Unario($$[$0-1],OperadorOpcion.INCRE,_$[$0-1].first_line, _$[$0-1].first_column);
+break;
+case 121:
+ this.$ = new Unario($$[$0-1],OperadorOpcion.DECRE,_$[$0-1].first_line, _$[$0-1].first_column);
 break;
 }
 },
@@ -611,6 +629,8 @@ _handle_error:
     const {Switch} = require('../Instruccion/Switch');    
     const {Break,Continue,TipoEscape} = require('../Instruccion/BreakContinue');
     const {While,DoWhile} = require('../Instruccion/While');
+    const {For,ForOf} = require('../Instruccion/For');
+    const {InstrucUnaria} = require('../Instruccion/InstrucUnaria');
     //declaraciones
     const {Declaracion} = require('../Instruccion/Declaracion');
     //funciones

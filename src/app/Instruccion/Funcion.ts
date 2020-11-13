@@ -17,7 +17,9 @@ export class Funcion extends Instruction{
         if(this.pasada){
             this.pasada = false;
             this.analisisParams(amb);
-            const idFunction = this.setIdFunction(amb);
+            let idFunction = this.setIdFunction(amb);
+            if(this.id=='nativa_potencia')
+                idFunction='nativa_potencia';
             amb.guardarFuncion(idFunction, this,this.line,this.column);
             return;
         }

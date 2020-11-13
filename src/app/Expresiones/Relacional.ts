@@ -17,14 +17,21 @@ export class Relacional extends Expression{
     }
 
     public execute(amb : Environment) : Retorno{
+        const data = Data.getInstance();
         const leftValue = this.left.execute(amb);
         const rightValue = this.right.execute(amb);
+        if(leftValue.type==Type.BOOLEAN && rightValue.type==Type.BOOLEAN){
+            data.addLabel(leftValue.falseLabel);
+            data.addLabel(leftValue.trueLabel);
+            data.addLabel(rightValue.falseLabel);
+            data.addLabel(rightValue.trueLabel);
+        }
         let result : Retorno={value:null,type:null};
         if(leftValue.type==Type.ARREGLO && rightValue.type==Type.ARREGLO){
             
         }else{         
             this.mismoTipo(leftValue.type, rightValue.type,amb.getNombre());
-            const data = Data.getInstance();
+            
             this.trueLabel = this.trueLabel == '' ? data.newLabel() : this.trueLabel;
             this.falseLabel = this.falseLabel == '' ? data.newLabel() : this.falseLabel;
             if(this.type == RelationalOption.MENOR){     

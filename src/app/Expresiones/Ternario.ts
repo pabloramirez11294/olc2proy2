@@ -2,6 +2,7 @@ import { Expression } from "../Modelos/Expression";
 import { Retorno, Type } from "../Modelos/Retorno";
 import { Environment } from "../Entornos/Environment";
 import {Error_} from '../Reportes/Errores';
+import { Data } from "../Data/Data";
 
 
 export class Ternario extends Expression{
@@ -10,19 +11,24 @@ export class Ternario extends Expression{
     }
 
     public execute(amb : Environment) : Retorno{
+        const data = Data.getInstance();
         const condicion = this.condicion.execute(amb);
         if(condicion.type != Type.BOOLEAN){
             throw new Error_(this.line, this.column, 'Semantico', 'La expresion no regresa un valor booleano: ' + condicion.value+", es de tipo: "+condicion.type ,amb.getNombre());
         }
-              
-        
-        if(condicion.value){
-            const leftValue = this.left.execute(amb);
-            return leftValue;
-        }else{
-             const rightValue = this.right.execute(amb);
-             return rightValue;
-        }
+        const lblsalida = data.newLabel();
+        let res = data.newTmp();
+        data.addLabel(this.condicion.trueLabel);
+        const leftValue = this.left.execute(amb);
+        data.addExpression(res,leftValue.value);
+        data.addGoto(lblsalida);
+        data.addLabel(condicion.falseLabel);     
+        const rightValue = this.right.execute(amb);
+        data.addExpression(res,rightValue.value);
+        data.addLabel(lblsalida);
+
+
+        return {value:res,type:leftValue.type,esTmp:true};
             
     }
 }

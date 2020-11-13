@@ -4,6 +4,7 @@ import { Environment } from "../Entornos/Environment";
 import {Error_} from '../Reportes/Errores';
 import {Data} from "../Data/Data";
 import { readFile } from "fs";
+import { Llamada } from "../Instruccion/Llamada";
 export enum ArithmeticOption{
     SUMA,
     RESTA,
@@ -66,7 +67,7 @@ export class Aritmetico extends Expression{
             tipoDominante = this.tipoDominante(leftValue.type, rightValue.type,amb.getNombre());
         if(this.type == ArithmeticOption.SUMA){
             if(tipoDominante == Type.STRING){
-                if(leftValue.type==Type.STRING && rightValue.type==Type.NUMBER){
+                if(leftValue.type==Type.STRING && (rightValue.type==Type.NUMBER || rightValue.type==Type.BOOLEAN)){
                     data.addExpression(tmp,'p',String(amb.size + 1), '+');
                     data.addSetStack(tmp,leftValue.value);
                     data.addExpression(tmp,tmp,'1','+');
@@ -75,7 +76,7 @@ export class Aritmetico extends Expression{
                     data.addCallFunc('native_concatStringNumber');
                     data.addGetStack(tmp,'p');
                     data.addAntAmb(amb.size);
-                }else if(rightValue.type==Type.STRING && leftValue.type==Type.NUMBER){
+                }else if(rightValue.type==Type.STRING && (leftValue.type==Type.NUMBER || leftValue.type==Type.BOOLEAN)){
                     data.addExpression(tmp,'p',String(amb.size + 1), '+');
                     data.addSetStack(tmp,rightValue.value);
                     data.addExpression(tmp,tmp,'1','+');
@@ -118,7 +119,10 @@ export class Aritmetico extends Expression{
             data.addExpression(tmp, leftValue.value,rightValue.value, '*');
             result = {value : tmp, type : Type.NUMBER, esTmp : true};
         }else if(this.type == ArithmeticOption.POTENCIA){
-            //result = {value : (leftValue.value ** rightValue.value), type : Type.NUMBER};
+            let arrayExp:Expression[]=[this.left,this.right];
+            let llamada:Llamada = new Llamada('nativa_potencia', arrayExp, this.line, this.column);
+            let resp = llamada.execute(amb);
+            result = {value : resp.value, type : Type.NUMBER,esTmp:true};
         }
         else if(this.type == ArithmeticOption.MODULO){
             if(tipoDominante == Type.STRING || tipoDominante == Type.BOOLEAN)

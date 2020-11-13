@@ -40,10 +40,6 @@ export class Variable extends Expression{
                 data.addIf(temp, '1', '==', this.trueLabel);
                 data.addGoto(this.falseLabel);
                 return {value :temp, type : Type.BOOLEAN , trueLabel: this.trueLabel,esTmp:true,falseLabel:this.falseLabel};
-            }else if(sim.tipo == Type.STRING){
-                const tempAux2 = data.newTmp();
-                data.addGetStack(tempAux2,temp);
-                return {value: tempAux2,type: sim.tipo,esTmp:true};
             }
             
             return {value: temp,type: sim.tipo,esTmp:true};

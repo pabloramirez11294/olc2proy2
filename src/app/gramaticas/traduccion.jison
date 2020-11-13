@@ -19,6 +19,8 @@
     const {Switch} = require('../Instruccion/Switch');    
     const {Break,Continue,TipoEscape} = require('../Instruccion/BreakContinue');
     const {While,DoWhile} = require('../Instruccion/While');
+    const {For,ForOf} = require('../Instruccion/For');
+    const {InstrucUnaria} = require('../Instruccion/InstrucUnaria');
     //declaraciones
     const {Declaracion} = require('../Instruccion/Declaracion');
     //funciones
@@ -213,7 +215,7 @@ OpcionParam
 Instruc
         : 'CONSOLE' '(' Expre ')' ';'{ $$ = new Console($3, @1.first_line, @1.first_column); }
         | Sentencia_if {  $$ = $1; }
-        | 'FOR' '(' Declaracion Exp ';' Actualizacion ')' InstruccionesSent
+        | 'FOR' '(' Declaracion Exp ';' Actualizacion ')' InstruccionesSent { $$ = new For($3,$4,$6, $8,@1.first_line, @1.first_column);}
         | 'FOR' '(' DeclaForOF 'OF' Exp ')' InstruccionesSent
         | 'FOR' '(' DeclaForOF 'IN' Exp ')' InstruccionesSent
         | 'WHILE' '(' Exp ')' InstruccionesSent {$$ = new While($3,$5, @1.first_line, @1.first_column);}
@@ -222,7 +224,7 @@ Instruc
         | 'CONTINUE' ';'  { $$ = new Continue(@1.first_line, @1.first_column); }
         | Sent_switch { $$ = $1; }
         | Declaracion { $$ = $1; }
-        | Unario ';' 
+        | Unario ';'  {$$ = new InstrucUnaria($1,@1.first_line, @1.first_column);}
         | Llamada ';' { $$ = $1; }  
         | 'RETURN' Exp ';'{ $$ = new Return($2,@1.first_line, @1.first_column); }
         | 'RETURN' ';'  { $$ = new Return(undefined,@1.first_line, @1.first_column); }
@@ -282,8 +284,8 @@ Default
 
 //*********************** CICLOS
 Actualizacion
-            : Unario 
-            | ID '=' Exp ';'
+            : Unario { $$ = $1}
+            | ID '=' Exp ';' {$$ = new Declaracion($1,undefined,$3,true, @1.first_line, @1.first_column); }
 ;
 
 
@@ -373,7 +375,7 @@ Exp
     | Exp '&&' Exp {$$ = new Logica($1, $3,LogicaOpcion.AND, @1.first_line, @1.first_column);}
     | Exp '||' Exp { $$ = new Logica($1, $3,LogicaOpcion.OR, @1.first_line, @1.first_column);}
     | Exp '.' Exp
-    | Exp '?' Exp ':' Exp
+    | Exp '?' Exp ':' Exp {$$ = new Ternario($1, $3, $5, @1.first_line, @1.first_column);}
     | '!' Exp { $$ = new Logica($2,null,LogicaOpcion.NOT, @1.first_line, @1.first_column); }
     | '-' Exp %prec Umenos { $$ = new Aritmetico($2,null, ArithmeticOption.RESTA, @1.first_line,@1.first_column); }
     | '(' Exp ')' { $$ = $2; }
@@ -421,8 +423,8 @@ F
 ;
 
 Unario 
-    : ID '++'
-    | ID '--'
+    : ID '++' { $$ = new Unario($1,OperadorOpcion.INCRE,@1.first_line, @1.first_column);}
+    | ID '--' { $$ = new Unario($1,OperadorOpcion.DECRE,@1.first_line, @1.first_column);}
 ;
 
 TypesExp    
