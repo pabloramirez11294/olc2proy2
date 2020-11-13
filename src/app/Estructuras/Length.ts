@@ -20,6 +20,10 @@ export class Length extends Expression{
             const tmp = data.newTmp();
             data.addGetHeap(tmp,sim.value);
             res = {value:tmp,esTmp:true,type:Type.NUMBER};
+        }else if(sim.type == Type.ARREGLO){
+            const tmp = data.newTmp();
+            data.addGetHeap(tmp,sim.value);
+            res = {value:tmp,esTmp:true,type:Type.NUMBER};
         }
 
         /*const res:Arreglo = this.id.execute(amb).value;

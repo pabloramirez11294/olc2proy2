@@ -55,7 +55,13 @@ export class DecArreglo extends Instruction{
 
         }else{
             const valor = this.exp.execute(amb);
-            amb.guardarArr(this.id, valor.value, this.tipo,this.tipoArreglo, this.dim,this.line,this.column,this.constante);    
+            //declaracion
+            if(this.tipoArreglo==Type.NUMBER){           
+                
+                data.addSetStack(sim.valor,valor.value);
+                sim.tipoArreglo=this.tipoArreglo;
+                sim.dim=this.dim;
+            }
         }
         data.addComentario('DecArreglo Termina');
     }
