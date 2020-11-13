@@ -19,6 +19,7 @@
     const {Switch} = require('../Instruccion/Switch');    
     const {Break,Continue,TipoEscape} = require('../Instruccion/BreakContinue');
     const {While,DoWhile} = require('../Instruccion/While');
+    const {InstrucUnaria} = require('../Instruccion/InstrucUnaria');
     //declaraciones
     const {Declaracion} = require('../Instruccion/Declaracion');
     //funciones
@@ -222,7 +223,7 @@ Instruc
         | 'CONTINUE' ';'  { $$ = new Continue(@1.first_line, @1.first_column); }
         | Sent_switch { $$ = $1; }
         | Declaracion { $$ = $1; }
-        | Unario ';' 
+        | Unario ';'  {$$ = new InstrucUnaria($1,@1.first_line, @1.first_column);}
         | Llamada ';' { $$ = $1; }  
         | 'RETURN' Exp ';'{ $$ = new Return($2,@1.first_line, @1.first_column); }
         | 'RETURN' ';'  { $$ = new Return(undefined,@1.first_line, @1.first_column); }
@@ -282,8 +283,8 @@ Default
 
 //*********************** CICLOS
 Actualizacion
-            : Unario 
-            | ID '=' Exp ';'
+            : Unario { $$ = $1}
+            | ID '=' Exp ';' {$$ = new Declaracion($1,undefined,$3,true, @1.first_line, @1.first_column); }
 ;
 
 
@@ -421,8 +422,8 @@ F
 ;
 
 Unario 
-    : ID '++'
-    | ID '--'
+    : ID '++' { $$ = new Unario($1,OperadorOpcion.INCRE,@1.first_line, @1.first_column);}
+    | ID '--' { $$ = new Unario($1,OperadorOpcion.DECRE,@1.first_line, @1.first_column);}
 ;
 
 TypesExp    

@@ -146,6 +146,9 @@ break;
 case 30:
  this.$ = new Continue(_$[$0-1].first_line, _$[$0-1].first_column); 
 break;
+case 33:
+this.$ = new InstrucUnaria($$[$0-1],_$[$0-1].first_line, _$[$0-1].first_column);
+break;
 case 34: case 57: case 59: case 99:
  this.$ = $$[$0-1]; 
 break;
@@ -194,6 +197,12 @@ this.$.set($$[$0-2],$$[$0]);
 break;
 case 52:
  let a = new Map();  this.$ = a.set($$[$0-2],$$[$0]);
+break;
+case 55: case 100:
+ this.$ = $$[$0]
+break;
+case 56:
+this.$ = new Declaracion($$[$0-3],undefined,$$[$0-1],true, _$[$0-3].first_line, _$[$0-3].first_column); 
 break;
 case 58:
 this.$ = new Declaracion($$[$0-3],undefined,$$[$0-1],true, _$[$0-3].first_line, _$[$0-3].first_column);
@@ -289,9 +298,6 @@ break;
 case 98:
  this.$ = new Aritmetico($$[$0],null, ArithmeticOption.RESTA, _$[$0-1].first_line,_$[$0-1].first_column); 
 break;
-case 100:
- this.$ = $$[$0]
-break;
 case 106:
  this.$ = new Literal($$[$0], _$[$0].first_line, _$[$0].first_column, Type.NUMBER); 
 break;
@@ -339,6 +345,12 @@ case 117:
 break;
 case 118:
  this.$ = new Concat($$[$0-5],$$[$0-1],_$[$0-5].first_line, _$[$0-5].first_column);
+break;
+case 120:
+ this.$ = new Unario($$[$0-1],OperadorOpcion.INCRE,_$[$0-1].first_line, _$[$0-1].first_column);
+break;
+case 121:
+ this.$ = new Unario($$[$0-1],OperadorOpcion.DECRE,_$[$0-1].first_line, _$[$0-1].first_column);
 break;
 }
 },
@@ -611,6 +623,7 @@ _handle_error:
     const {Switch} = require('../Instruccion/Switch');    
     const {Break,Continue,TipoEscape} = require('../Instruccion/BreakContinue');
     const {While,DoWhile} = require('../Instruccion/While');
+    const {InstrucUnaria} = require('../Instruccion/InstrucUnaria');
     //declaraciones
     const {Declaracion} = require('../Instruccion/Declaracion');
     //funciones
