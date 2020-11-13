@@ -49,7 +49,7 @@ export class DecArreglo extends Instruction{
                 data.addGoto(label);
                 data.addLabel(label2);
                 data.addSetStack(sim.valor,tmepSize);
-                sim.tipoArreglo=this.tipo;
+                sim.tipoArreglo=this.tipoArreglo;
                 sim.dim=this.dim;
             }
 

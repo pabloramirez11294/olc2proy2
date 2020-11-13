@@ -14,6 +14,7 @@
     const {DecArreglo} = require('../Instruccion/DecArreglo');
     const {Arreglo} = require('../Estructuras/Arreglo');
     const {AccesoAsig} = require('../Estructuras/AccesoAsig');
+    const {Acceso} = require('../Estructuras/Acceso');
     //instrucciones
     const {Instrucciones} = require('../Instruccion/Instrucciones');
     //sentencias de control
