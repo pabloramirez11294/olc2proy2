@@ -134,6 +134,9 @@ break;
 case 23: case 101: case 103:
   this.$ = $$[$0]; 
 break;
+case 24:
+ this.$ = new For($$[$0-5],$$[$0-4],$$[$0-2], $$[$0],_$[$0-7].first_line, _$[$0-7].first_column);
+break;
 case 27:
 this.$ = new While($$[$0-2],$$[$0], _$[$0-4].first_line, _$[$0-4].first_column);
 break;
@@ -623,6 +626,7 @@ _handle_error:
     const {Switch} = require('../Instruccion/Switch');    
     const {Break,Continue,TipoEscape} = require('../Instruccion/BreakContinue');
     const {While,DoWhile} = require('../Instruccion/While');
+    const {For,ForOf} = require('../Instruccion/For');
     const {InstrucUnaria} = require('../Instruccion/InstrucUnaria');
     //declaraciones
     const {Declaracion} = require('../Instruccion/Declaracion');

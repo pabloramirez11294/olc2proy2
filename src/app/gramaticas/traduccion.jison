@@ -19,6 +19,7 @@
     const {Switch} = require('../Instruccion/Switch');    
     const {Break,Continue,TipoEscape} = require('../Instruccion/BreakContinue');
     const {While,DoWhile} = require('../Instruccion/While');
+    const {For,ForOf} = require('../Instruccion/For');
     const {InstrucUnaria} = require('../Instruccion/InstrucUnaria');
     //declaraciones
     const {Declaracion} = require('../Instruccion/Declaracion');
@@ -214,7 +215,7 @@ OpcionParam
 Instruc
         : 'CONSOLE' '(' Expre ')' ';'{ $$ = new Console($3, @1.first_line, @1.first_column); }
         | Sentencia_if {  $$ = $1; }
-        | 'FOR' '(' Declaracion Exp ';' Actualizacion ')' InstruccionesSent
+        | 'FOR' '(' Declaracion Exp ';' Actualizacion ')' InstruccionesSent { $$ = new For($3,$4,$6, $8,@1.first_line, @1.first_column);}
         | 'FOR' '(' DeclaForOF 'OF' Exp ')' InstruccionesSent
         | 'FOR' '(' DeclaForOF 'IN' Exp ')' InstruccionesSent
         | 'WHILE' '(' Exp ')' InstruccionesSent {$$ = new While($3,$5, @1.first_line, @1.first_column);}
