@@ -67,7 +67,7 @@ export class Aritmetico extends Expression{
             tipoDominante = this.tipoDominante(leftValue.type, rightValue.type,amb.getNombre());
         if(this.type == ArithmeticOption.SUMA){
             if(tipoDominante == Type.STRING){
-                if(leftValue.type==Type.STRING && rightValue.type==Type.NUMBER){
+                if(leftValue.type==Type.STRING && (rightValue.type==Type.NUMBER || rightValue.type==Type.BOOLEAN)){
                     data.addExpression(tmp,'p',String(amb.size + 1), '+');
                     data.addSetStack(tmp,leftValue.value);
                     data.addExpression(tmp,tmp,'1','+');
@@ -76,7 +76,7 @@ export class Aritmetico extends Expression{
                     data.addCallFunc('native_concatStringNumber');
                     data.addGetStack(tmp,'p');
                     data.addAntAmb(amb.size);
-                }else if(rightValue.type==Type.STRING && leftValue.type==Type.NUMBER){
+                }else if(rightValue.type==Type.STRING && (leftValue.type==Type.NUMBER || leftValue.type==Type.BOOLEAN)){
                     data.addExpression(tmp,'p',String(amb.size + 1), '+');
                     data.addSetStack(tmp,rightValue.value);
                     data.addExpression(tmp,tmp,'1','+');
