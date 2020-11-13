@@ -13,6 +13,7 @@
     const {AsigArreglo} = require('../Expresiones/AsigArreglo');
     const {DecArreglo} = require('../Instruccion/DecArreglo');
     const {Arreglo} = require('../Estructuras/Arreglo');
+    const {AccesoAsig} = require('../Estructuras/AccesoAsig');
     //instrucciones
     const {Instrucciones} = require('../Instruccion/Instrucciones');
     //sentencias de control
@@ -235,7 +236,7 @@ Instruc
         | Llamada ';' { $$ = $1; }  
         | 'RETURN' Exp ';'{ $$ = new Return($2,@1.first_line, @1.first_column); }
         | 'RETURN' ';'  { $$ = new Return(undefined,@1.first_line, @1.first_column); }
-        | ID AccesoAsig  '=' Exp ';'
+        | ID AccesoAsig  '=' Exp ';' {$$ =  new AccesoAsig($1,$2,$4,@1.first_line, @1.first_column);}
 
 ;
 

@@ -168,6 +168,9 @@ break;
 case 36:
  this.$ = new Return(undefined,_$[$0-1].first_line, _$[$0-1].first_column); 
 break;
+case 37:
+this.$ =  new AccesoAsig($$[$0-4],$$[$0-3],$$[$0-1],_$[$0-4].first_line, _$[$0-4].first_column);
+break;
 case 38:
 
             this.$.push($$[$0-1]);
@@ -663,6 +666,7 @@ _handle_error:
     const {AsigArreglo} = require('../Expresiones/AsigArreglo');
     const {DecArreglo} = require('../Instruccion/DecArreglo');
     const {Arreglo} = require('../Estructuras/Arreglo');
+    const {AccesoAsig} = require('../Estructuras/AccesoAsig');
     //instrucciones
     const {Instrucciones} = require('../Instruccion/Instrucciones');
     //sentencias de control
