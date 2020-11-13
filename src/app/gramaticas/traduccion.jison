@@ -375,7 +375,7 @@ Exp
     | Exp '&&' Exp {$$ = new Logica($1, $3,LogicaOpcion.AND, @1.first_line, @1.first_column);}
     | Exp '||' Exp { $$ = new Logica($1, $3,LogicaOpcion.OR, @1.first_line, @1.first_column);}
     | Exp '.' Exp
-    | Exp '?' Exp ':' Exp
+    | Exp '?' Exp ':' Exp {$$ = new Ternario($1, $3, $5, @1.first_line, @1.first_column);}
     | '!' Exp { $$ = new Logica($2,null,LogicaOpcion.NOT, @1.first_line, @1.first_column); }
     | '-' Exp %prec Umenos { $$ = new Aritmetico($2,null, ArithmeticOption.RESTA, @1.first_line,@1.first_column); }
     | '(' Exp ')' { $$ = $2; }

@@ -295,6 +295,9 @@ break;
 case 94:
  this.$ = new Logica($$[$0-2], $$[$0],LogicaOpcion.OR, _$[$0-2].first_line, _$[$0-2].first_column);
 break;
+case 96:
+this.$ = new Ternario($$[$0-4], $$[$0-2], $$[$0], _$[$0-4].first_line, _$[$0-4].first_column);
+break;
 case 97:
  this.$ = new Logica($$[$0],null,LogicaOpcion.NOT, _$[$0-1].first_line, _$[$0-1].first_column); 
 break;
