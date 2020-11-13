@@ -130,6 +130,7 @@ case 20:
         let sim=new Simbolo(undefined,$$[$0-3],Type.ARREGLO);
         sim.tipoArreglo=$$[$0-1];
         sim.dim = $$[$0];
+        this.$ = sim;
         
 break;
 case 21:

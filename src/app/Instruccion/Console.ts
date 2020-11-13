@@ -37,6 +37,9 @@ export class Console extends Instruction{
                     data.addCallFunc('nativa_printString');
                     data.addAntAmb(amb.size);
                 break;
+                case Type.NULL:
+                    data.addPrintf('d','-1');
+                    break;
                 default:
                     throw new Error_(this.line, this.column, "Semantico", "No se puede imprimir un valor de tipo: " + value.type,amb.getNombre());
             }

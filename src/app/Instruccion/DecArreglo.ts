@@ -18,7 +18,7 @@ export class DecArreglo extends Instruction{
         const sim:Simbolo = amb.guardar(this.id, this.tipo,this.line,this.column,this.constante);
 
         if(this.exp==undefined){
-            amb.guardarArr(this.id, undefined, this.tipo,this.tipoArreglo, this.dim,this.line,this.column,this.constante);
+           // amb.guardarArr(this.id, undefined, this.tipo,this.tipoArreglo, this.dim,this.line,this.column,this.constante);
         }else if(this.tamano){
              //newarrya
             const size = this.exp.execute(amb);
@@ -32,7 +32,7 @@ export class DecArreglo extends Instruction{
             data.addExpression('h','h',size.value,'+');
             data.nextHeap();
             //declaracion
-            if(this.tipoArreglo==Type.NUMBER){           
+            if(this.tipoArreglo==Type.NUMBER || this.tipoArreglo==Type.STRING){           
                 const newTemp = data.newTmp();
                 const label=data.newLabel() ,label2=data.newLabel();
                 data.addExpression(newTemp,tmepSize,'1','+')
@@ -41,6 +41,8 @@ export class DecArreglo extends Instruction{
                 if(this.dim>0){
                     if(this.tipoArreglo ==Type.NUMBER){
                         data.addSetHeap(newTemp,'0');
+                    }else if(this.tipoArreglo == Type.STRING){
+                        data.addSetHeap(newTemp,'-1');
                     }
                 }else{
                     data.addSetHeap(newTemp,'-1');
@@ -56,7 +58,7 @@ export class DecArreglo extends Instruction{
         }else{
             const valor = this.exp.execute(amb);
             //declaracion
-            if(this.tipoArreglo==Type.NUMBER){           
+            if(this.tipoArreglo==Type.NUMBER || this.tipoArreglo==Type.STRING){           
                 
                 data.addSetStack(sim.valor,valor.value);
                 sim.tipoArreglo=this.tipoArreglo;

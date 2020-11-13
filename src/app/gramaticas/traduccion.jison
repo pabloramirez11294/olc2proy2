@@ -216,6 +216,7 @@ OpcionParam
         let sim=new Simbolo(undefined,$1,Type.ARREGLO);
         sim.tipoArreglo=$3;
         sim.dim = $4;
+        $$ = sim;
         }
         | ID ':' Tipo { $$ = new Simbolo(undefined,$1,$3);}
 ;
