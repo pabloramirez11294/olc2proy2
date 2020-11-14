@@ -1,13 +1,16 @@
 export enum Type{
-    NUMBER,
-    STRING,
-    BOOLEAN,
-    NULL,
-    VOID,
-    ARREGLO
+    NUMBER='number',
+    STRING='string',
+    BOOLEAN='boolean',
+    NULL='null',
+    VOID='void',
+    ARREGLO='arreglo'
 }
 
 export type Retorno ={
-    value : any,
-    type : Type
+    value : string,
+    type : Type,
+    esTmp? : boolean,
+    trueLabel? : string,
+    falseLabel? : string
 }

@@ -5,6 +5,8 @@ import { Type } from "../Modelos/Retorno";
 import {Error_} from '../Reportes/Errores';
 import { Instrucciones } from './Instrucciones';
 import {TipoEscape,Break} from './BreakContinue';
+import { Data } from '../Data/Data';
+import { strict } from 'assert';
 
 export class Switch extends Instruction{
 
@@ -13,34 +15,41 @@ export class Switch extends Instruction{
         super(line, column);
     }
 
-    public execute(ent : Environment) {
-        const condicion = this.condicion.execute(ent);
-        let noBreak:boolean=false;
-        let defau:boolean=true;
+    public execute(amb : Environment) {
+        const condicion = this.condicion.execute(amb);
+        if(!condicion == null)
+            throw new Error_(this.line, this.column, 'Semantico', 'La expresion no regresa un temporal: ',amb.getNombre());
+        const data = Data.getInstance();
+        data.addComentario('SWITCH inicia');
+        let labels:Array<any> = new Array();
+
         for(var [clave, valor] of this.cases.entries()){
-            const con = clave.execute(ent);
-            if(condicion.type!=con.type)
-                throw new Error_(this.line, this.column, "Semantico", "Error en switch los valores deben de ser del mismo tipo.",ent.getNombre());
-            if(condicion.value==con.value || noBreak){   
-                defau=false;             
-                const val=valor.execute(ent);
-                if(val!=undefined && val.type==TipoEscape.BREAK){
-                    defau=false;
-                    break;
-                }else if(val!=undefined)
-                    return val;
-                else{
-                    noBreak=true;
-                    defau=true;
-                }
-            }
+            const label=data.newLabel();
+            const exp = clave.execute(amb);
+            labels.push(label);
+            data.addIf(condicion.value,exp.value,'==',label);
         }
-        if(defau){
-            const val=this.defaul.execute(ent);
-            if(val!=undefined)
-                    return val;
+        //default
+        const label=data.newLabel();
+        labels.push(label);
+        data.addGoto(label);
+        //label de salida y sentencia de escape        
+        const lblBreak=data.newLabel();
+        data.addGoto(lblBreak);
+        amb.break = lblBreak;
+        //agregar labels para las instrucciones
+        for(var [clave, valor] of this.cases.entries()){
+            data.addLabel(labels.shift());
+            valor.execute(amb);
         }
-      //  console.log(this.cases);
-        
+        //instrucciones default o label de salida
+        data.addLabel(labels.pop());
+        if(this.defaul != null){
+            const val=this.defaul.execute(amb);
+        }
+        //label break
+        data.addLabel(lblBreak);
+        data.addComentario('SWITCH termina');
+        return escape;
     }
 }

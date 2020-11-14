@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import Ejecucion from '../../gramaticas/ejecucion';
 import Traduccion from '../../gramaticas/traduccion';
 import {  Error_ ,errores} from '../../Reportes/Errores';
-import { Environment, Simbolo } from '../../Entornos/Environment';
+import { Environment, Simbolo, SimboloFunc } from '../../Entornos/Environment';
 import {TipoEscape} from '../../Instruccion/BreakContinue';
 import { Funcion } from '../../Instruccion/Funcion';
 import { txtConsola,reporte } from '../../Reportes/Consola';
@@ -11,7 +11,6 @@ import { wasmFolder } from "@hpcc-js/wasm";
 import { Instruction } from 'src/app/Modelos/Instruction';
 import { Console } from '../../Instruccion/Console';
 import { Literal } from 'src/app/Expresiones/Literal';
-import { ListDeclaracion } from 'src/app/Instruccion/ListDeclaracion';
 import { Declaracion } from 'src/app/Instruccion/Declaracion';
 import { Instrucciones } from 'src/app/Instruccion/Instrucciones';
 import { If } from 'src/app/Instruccion/If';
@@ -22,6 +21,7 @@ import { Return } from 'src/app/Instruccion/Return';
 import { While } from 'src/app/Instruccion/While';
 import { For } from 'src/app/Instruccion/For';
 import { Switch } from 'src/app/Instruccion/Switch';
+import { Data } from 'src/app/Data/Data';
 
 @Component({
   selector: 'app-inicio',
@@ -34,12 +34,11 @@ export class InicioComponent implements OnInit {
 
   ngOnInit(): void {
   }
-  title = 'olc2proy1';
   simbolos:Array<Array<string>>;
   repErrores:Array<Array<string>>;
   tipo_ts:string="";
-  editor = `console.log(3);
-  let a:number=1.99;
+  editor = `console.log(3+8*9/7-9+9);
+  /*let a:number=1.99;
   let b:string="hola mundo";
   let c:boolean=true;
   if(1000 < 20){
@@ -48,65 +47,18 @@ export class InicioComponent implements OnInit {
     console.log(2); 
   }else{
     console.log(3); 
-  }`;
+  }*/`;
   consola = '';
 
   traducir(){
     this.tipo_ts="Traducción";
+    Data.getInstance();      
+    Data.getInstance().clearCodigo();
     errores.length=0;
     reporte.simbolos.length=0;
     const entorno = new Environment(null, 'global');
     try {
-      const instrucciones = Traduccion.parse(this.editor);    
-      for(const instruc of instrucciones){
-        try {
-            if(instruc instanceof Error_){
-              errores.push(instruc);continue;
-            }else if(instruc instanceof Funcion)
-              instruc.execute(entorno);
-        } catch (error) {
-            errores.push(error);  
-        }
-      }
-      for (const instruc of instrucciones) {
-        if(instruc instanceof Error_ ||instruc instanceof Funcion)
-            continue;
-        try {          
-          if(instruc instanceof ListDeclaracion)
-              instruc.execute(entorno);
-             
-        } catch (error) {
-          //console.log(error)
-          if(error.ambito!=null){
-            error.ambito='global';
-            errores.push(error);  
-          }else
-            console.log(error);
-                    
-        }
-      }
-      
-
-    } catch (error) {
-      console.log(error)
-      if(error.ambito!=null){
-        error.ambito='';
-        errores.push(error);  
-      }else
-        errores.push(new Error_(error.lineNumber, 0, 'Lexico', error.message, ''));
-    }
-    //REPORTES    
-    this.simbolos=new Array<Array<string>>();
-    this.reportes(entorno);
-  }
-
-  ejecutar() {
-    this.tipo_ts="Ejecución";
-    errores.length=0;
-    reporte.simbolos.length=0;
-    const entorno = new Environment(null, 'global');
-    try {
-      const instrucciones = Ejecucion.parse(this.editor);    
+      const instrucciones = Traduccion.parse(this.editor+this.potencia);    
       for(const instruc of instrucciones){
         try {
             if(instruc instanceof Error_){
@@ -119,14 +71,10 @@ export class InicioComponent implements OnInit {
       }
 
       for (const instruc of instrucciones) {
-        if(instruc instanceof Error_ ||instruc instanceof Funcion)
+        if(instruc instanceof Error_)
             continue;
         try {          
-          const actual = instruc.execute(entorno);
-          this.setConsola();
-          if ((actual != null || actual != undefined)&& (actual.type==TipoEscape.BREAK || actual.type==TipoEscape.CONTINUE)) {
-            errores.push(new Error_(actual.line,actual.column,'Semantico',actual.type + ' fuera de un ciclo',''));
-          }         
+          const actual = instruc.execute(entorno);        
         } catch (error) {
           //console.log(error)
           if(error.ambito!=null){
@@ -146,6 +94,9 @@ export class InicioComponent implements OnInit {
         errores.push(new Error_(error.lineNumber, 0, 'Lexico', error.message, ''));
     }
     //REPORTES    
+    Data.getInstance().addEncabezado();
+    let codigo:string = Data.getInstance().getCodigo();
+    this.setConsola(codigo);
     this.simbolos=new Array<Array<string>>();
     this.reportes(entorno);    
     console.log('-----',this.simbolos);
@@ -167,8 +118,8 @@ export class InicioComponent implements OnInit {
     }
   }
 
-  setConsola() {
-    this.consola=txtConsola.consolatxt;
+  setConsola(codigo:string) {
+    this.consola=codigo;
   }
 
   limpiar(){
@@ -181,18 +132,18 @@ export class InicioComponent implements OnInit {
       this.simbolos.push(element);
     });
     for (var simbolo of tSimbolos.values()) {
-      const s:Array<string>=new Array<string>(simbolo.id,simbolo.valor,simbolo.tipo?.toString(),
+      const s:Array<string>=new Array<string>(simbolo.id,simbolo.valor.toString(),simbolo.tipo?.toString(),
                                                   simbolo.ambito,simbolo.linea,simbolo.columna);
       this.simbolos.push(s);
     }
   }
-  setTablaFunciones(simbolos:Map<string,Funcion>):void{
+  setTablaFunciones(simbolos:Map<string,SimboloFunc>):void{
     reporte.simbolos.forEach(element => {
       this.simbolos.push(element);
     });
     for (var func of simbolos.values()) {
       const s:Array<string>=new Array<string>("func_"+func.id,'',func.tipo?.toString(),
-                                                  '',func.line?.toString(),func.column?.toString());
+                                                  '',func.func.line?.toString(),func.func.column?.toString());
       this.simbolos.push(s);
     }
     console.log(this.simbolos);
@@ -253,12 +204,9 @@ export class InicioComponent implements OnInit {
       }else if(raiz instanceof Literal){
         this.cont++;      
         cuerpo += "\""+id+"_" + raiz.constructor.name + "\"->\""+this.cont+"_"+raiz.value+"\"";
-      }else if( raiz instanceof ListDeclaracion){
-        for(const hijos of raiz.lista){
+      }else if( raiz instanceof Declaracion){ //TODO revisar porque se quito listInstrucciones
           this.cont++;
-          cuerpo += "\""+id+"_" + raiz.constructor.name + "\"->\""+this.cont+"_"+hijos.constructor.name+"\"";
-          cuerpo += this.recorrerAST(hijos, this.cont); 
-        }
+          cuerpo += "\""+id+"_" + raiz.constructor.name + "\"->\""+this.cont+"_"+raiz.constructor.name+"\"";
       }else if(raiz instanceof Declaracion){
         this.cont++;      
         cuerpo += "\""+id+"_" + raiz.constructor.name + "\"->\""+this.cont+"_"+raiz.id+"\"";
@@ -314,13 +262,28 @@ export class InicioComponent implements OnInit {
     } catch (error) {
       console.log(error)
     }
-    
+    cuerpo.replace(Instrucciones.constructor.name,'Instrucciones').replace(Declaracion.constructor.name,'Declaracion').replace(Instrucciones.constructor.name,'Instrucciones')
+    .replace(If.constructor.name,'If').replace(Relacional.constructor.name,'Relacional').replace(Funcion.constructor.name,'Funcion').replace(Return.constructor.name,'Return')
+    .replace(While.constructor.name,'While').replace(For.constructor.name,'For').replace(Switch.constructor.name,'Switch');
     return cuerpo;
   }
 
   public cadena(id:number,raiz:string,cont:number,hijo:string):string{
     return "\""+id+"_" + raiz + "\"->\""+cont+"_"+hijo+"\"";
   }
+
+
+  private potencia:string = ` 
+function nativa_potencia(x:number, y:number):number{
+  if( y == 0){
+      return 1;
+  }else if (y >= 1){
+      return x * nativa_potencia(x, y - 1);
+  }
+}
+  
+  
+  `;
 
 
 }

@@ -3,6 +3,8 @@ import { Environment, Simbolo } from "../Entornos/Environment";
 import { Expression } from '../Modelos/Expression';
 import { Retorno, Type } from '../Modelos/Retorno';
 import { Arreglo } from './Arreglo';
+import { Error_ } from "../Reportes/Errores";
+import { Data } from "../Data/Data";
 
 export class AccesoAsig extends Instruction{
 
@@ -13,6 +15,21 @@ export class AccesoAsig extends Instruction{
 
     public execute(amb: Environment) {
         const sim:Simbolo= amb.getVar(this.id);
+        if(sim==null)
+            throw new Error_(this.line, this.column, 'Semantico',
+                    'Asignacion Arreglo: no existe el arreglo:'+this.id,amb.getNombre());
+        const data = Data.getInstance();
+        data.addComentario('AsigArreglo Inicia');
+        const valor = this.val.execute(amb);  
+        const indice = this.indice[0].execute(amb); 
+        const pos= data.newTmp(),tm1 = data.newTmp();
+        data.addExpression(pos,String(sim.valor+1));
+        data.addExpression(tm1,pos,indice.value,'+');
+        data.addSetHeap(tm1,valor.value);
+
+
+        data.addComentario('AsigArreglo Termina');
+      /*  const sim:Simbolo= amb.getVar(this.id);
         const arr:Arreglo = sim.valor;
         const val = this.val.execute(amb);
         //TODO ver validaciones de tipo y rango
@@ -27,7 +44,7 @@ export class AccesoAsig extends Instruction{
 
         if(sim.tipoArreglo==Type.ARREGLO)
             sim.tipoArreglo=val.type;
-        res.arr[Number(indi.value)]=val.value;
+        res.arr[Number(indi.value)]=val.value;*/
     }
 
 

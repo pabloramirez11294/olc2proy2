@@ -12,12 +12,23 @@ export class Instrucciones extends Instruction{
         const newEnv = new Environment(env,env.getNombre());
         for(const instr of this.code){
             try {
-                const element = instr.execute(newEnv);
-                if(element != undefined || element != null)
-                    return element;        
+                instr.execute(newEnv);      
             } catch (error) {
                 errores.push(error);
             }
         }
+        //TODO quitar return
+        return undefined;
+    }
+    public executeF(env : Environment) {
+        for(const instr of this.code){
+            try {
+                instr.execute(env);      
+            } catch (error) {
+                errores.push(error);
+            }
+        }
+        //TODO quitar return
+        return undefined;
     }
 }

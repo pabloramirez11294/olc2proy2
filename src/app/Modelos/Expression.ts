@@ -6,6 +6,8 @@ export abstract class Expression {
 
     public line: number;
     public column: number;
+    public trueLabel : string='';
+    public falseLabel : string='';
 
     constructor(line: number, column: number) {
         this.line = line;
@@ -27,7 +29,7 @@ export abstract class Expression {
         }
     }
 
-    public tipoDominante(tipo1 : number, tipo2 : number,nombreAmb:string) : Type{
+    public tipoDominante(tipo1 : string, tipo2 : string,nombreAmb:string) : Type{
         if(tipo1 == Type.NULL || tipo2 == Type.NULL)
             return Type.NULL;
         else if(tipo1 == Type.STRING || tipo2 == Type.STRING)
@@ -36,6 +38,8 @@ export abstract class Expression {
             return Type.NUMBER;
         else if((tipo1 == Type.BOOLEAN && tipo2 == Type.STRING) || (tipo2 == Type.BOOLEAN && tipo1 == Type.STRING))
             return Type.STRING;
+        else if((tipo1 == Type.BOOLEAN && tipo2 == Type.NUMBER) || (tipo2 == Type.BOOLEAN && tipo1 == Type.NUMBER))
+            return Type.NUMBER;
         else if(tipo1 == Type.BOOLEAN && tipo2 == Type.BOOLEAN)
             return Type.BOOLEAN;
         else{
