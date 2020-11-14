@@ -23,8 +23,9 @@ export class Acceso extends Expression{
             const data = Data.getInstance();
             data.addComentario('AccesoArreglo Inicia');
             const indice = this.indice.execute(amb); 
-            const pos= data.newTmp(),tm1 = data.newTmp(),tm2 = data.newTmp();;
-            data.addExpression(pos,String(sim.valor+1));
+            const pos= data.newTmp(),tm1 = data.newTmp(),tm2 = data.newTmp();
+            data.addGetStack(pos,sim.valor);
+            data.addExpression(pos,pos,'1','+');
             data.addExpression(tm1,pos,indice.value,'+');
             data.addGetHeap(tm2,tm1);
 

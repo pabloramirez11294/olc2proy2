@@ -23,7 +23,7 @@
     const {Switch} = require('../Instruccion/Switch');    
     const {Break,Continue,TipoEscape} = require('../Instruccion/BreakContinue');
     const {While,DoWhile} = require('../Instruccion/While');
-    const {For,ForOf} = require('../Instruccion/For');
+    const {For,ForOf,ForIn} = require('../Instruccion/For');
     const {InstrucUnaria} = require('../Instruccion/InstrucUnaria');
     //declaraciones
     const {Declaracion} = require('../Instruccion/Declaracion');
@@ -227,7 +227,7 @@ Instruc
         | Sentencia_if {  $$ = $1; }
         | 'FOR' '(' Declaracion Exp ';' Actualizacion ')' InstruccionesSent { $$ = new For($3,$4,$6, $8,@1.first_line, @1.first_column);}
         | 'FOR' '(' DeclaForOF 'OF' Exp ')' InstruccionesSent { $$ = new ForOf($3,$5,$7,@1.first_line, @1.first_column);}
-        | 'FOR' '(' DeclaForOF 'IN' Exp ')' InstruccionesSent { $$ = new ForOf($3,$5,$7,@1.first_line, @1.first_column);}
+        | 'FOR' '(' DeclaForOF 'IN' Exp ')' InstruccionesSent { $$ = new ForIn($3,$5,$7,@1.first_line, @1.first_column);}
         | 'WHILE' '(' Exp ')' InstruccionesSent {$$ = new While($3,$5, @1.first_line, @1.first_column);}
         | 'DO'  InstruccionesSent 'WHILE' '(' Exp ')' ';' {$$ = new DoWhile($5,$2, @1.first_line, @1.first_column);}
         | 'BREAK' ';' { $$ = new Break(@1.first_line, @1.first_column); }

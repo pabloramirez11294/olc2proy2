@@ -145,8 +145,11 @@ break;
 case 24:
  this.$ = new For($$[$0-5],$$[$0-4],$$[$0-2], $$[$0],_$[$0-7].first_line, _$[$0-7].first_column);
 break;
-case 25: case 26:
+case 25:
  this.$ = new ForOf($$[$0-4],$$[$0-2],$$[$0],_$[$0-6].first_line, _$[$0-6].first_column);
+break;
+case 26:
+ this.$ = new ForIn($$[$0-4],$$[$0-2],$$[$0],_$[$0-6].first_line, _$[$0-6].first_column);
 break;
 case 27:
 this.$ = new While($$[$0-2],$$[$0], _$[$0-4].first_line, _$[$0-4].first_column);
@@ -680,7 +683,7 @@ _handle_error:
     const {Switch} = require('../Instruccion/Switch');    
     const {Break,Continue,TipoEscape} = require('../Instruccion/BreakContinue');
     const {While,DoWhile} = require('../Instruccion/While');
-    const {For,ForOf} = require('../Instruccion/For');
+    const {For,ForOf,ForIn} = require('../Instruccion/For');
     const {InstrucUnaria} = require('../Instruccion/InstrucUnaria');
     //declaraciones
     const {Declaracion} = require('../Instruccion/Declaracion');

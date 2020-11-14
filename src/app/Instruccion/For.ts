@@ -89,31 +89,55 @@ export class ForOf extends Instruction{
         data.addGoto(lblFor);
         data.addLabel(falseLabl);
         data.addComentario('ForOf termina');
-        //TODO arreglo
-       /* const arr:Arreglo=this.arr.execute(amb).value;
+       
+    }
+    
+}
 
-        //for
-        while(cont < arr.length()){
-            //val
-            const val=arr.getVal(cont);
-            cont++;
-            //asign
-            let sim:Simbolo=ambFor.getVar(this.declaracion.id);   
-            sim.valor=val;
-            sim.tipo=arr.tipoArreglo;
-            //codigo
-            const code = this.code.execute(ambFor);
-            if(code != null || code != undefined){
-                if(code.type == TipoEscape.BREAK)
-                    break;
-                else if(code.type == TipoEscape.CONTINUE)
-                    continue;
-                else
-                    return code;
-            }
-            
-        }
-        */
+
+export class ForIn extends Instruction{
+
+    constructor(private declaracion:string,private arr : Expression, private code : Instrucciones, line : number, column : number){
+        super(line, column);
+    }
+
+    public execute(amb : Environment) {
+        const data = Data.getInstance();
+        const lblFor = data.newLabel();
+        data.addComentario('ForOf inicia');
+        const ambFor:Environment=new Environment(amb,amb.getNombre()+"_for");
+         
+        const vari:Declaracion = new Declaracion(this.declaracion,Type.NUMBER,undefined,false,this.line,this.column);
+        vari.execute(ambFor);
+        const sim = ambFor.getVar(this.declaracion);
+        //arreglo
+        const arr = this.arr.execute(amb);
+        const tmepSize = data.newTmp();
+        const cont=data.newTmp() ,verdaLabl=data.newLabel(),falseLabl=data.newLabel();
+        ambFor.continue = verdaLabl;
+        ambFor.break = falseLabl;
+        data.addGetHeap(tmepSize,arr.value);
+       
+        data.addExpression(cont,'0');
+
+
+        data.addLabel(lblFor);
+        
+        data.addIf(cont,tmepSize,'<',verdaLabl);
+        data.addGoto(falseLabl);
+        data.addLabel(verdaLabl);
+        
+        
+        
+        
+        data.addSetStack(sim.valor,cont);
+        data.addExpression(cont,cont,'1','+');
+        this.code.execute(ambFor);
+
+        data.addGoto(lblFor);
+        data.addLabel(falseLabl);
+        data.addComentario('ForOf termina');
+       
     }
     
 }
