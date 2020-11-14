@@ -145,6 +145,9 @@ break;
 case 24:
  this.$ = new For($$[$0-5],$$[$0-4],$$[$0-2], $$[$0],_$[$0-7].first_line, _$[$0-7].first_column);
 break;
+case 25: case 26:
+ this.$ = new ForOf($$[$0-4],$$[$0-2],$$[$0],_$[$0-6].first_line, _$[$0-6].first_column);
+break;
 case 27:
 this.$ = new While($$[$0-2],$$[$0], _$[$0-4].first_line, _$[$0-4].first_column);
 break;
@@ -182,11 +185,11 @@ case 39:
             this.$ =[$$[$0-1]]
         
 break;
+case 40: case 41: case 43: case 44:
+ this.$ = $$[$0];
+break;
 case 42:
  this.$ = new If($$[$0-3], $$[$0-1], $$[$0], _$[$0-5].first_line, _$[$0-5].first_column);
-break;
-case 43: case 44:
- this.$ = $$[$0];
 break;
 case 45:
  this.$ = null;

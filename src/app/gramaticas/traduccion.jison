@@ -226,8 +226,8 @@ Instruc
         : 'CONSOLE' '(' Expre ')' ';'{ $$ = new Console($3, @1.first_line, @1.first_column); }
         | Sentencia_if {  $$ = $1; }
         | 'FOR' '(' Declaracion Exp ';' Actualizacion ')' InstruccionesSent { $$ = new For($3,$4,$6, $8,@1.first_line, @1.first_column);}
-        | 'FOR' '(' DeclaForOF 'OF' Exp ')' InstruccionesSent
-        | 'FOR' '(' DeclaForOF 'IN' Exp ')' InstruccionesSent
+        | 'FOR' '(' DeclaForOF 'OF' Exp ')' InstruccionesSent { $$ = new ForOf($3,$5,$7,@1.first_line, @1.first_column);}
+        | 'FOR' '(' DeclaForOF 'IN' Exp ')' InstruccionesSent { $$ = new ForOf($3,$5,$7,@1.first_line, @1.first_column);}
         | 'WHILE' '(' Exp ')' InstruccionesSent {$$ = new While($3,$5, @1.first_line, @1.first_column);}
         | 'DO'  InstruccionesSent 'WHILE' '(' Exp ')' ';' {$$ = new DoWhile($5,$2, @1.first_line, @1.first_column);}
         | 'BREAK' ';' { $$ = new Break(@1.first_line, @1.first_column); }
@@ -253,8 +253,8 @@ AccesoAsig
 ;
 
 DeclaForOF
-        : 'LET' ID
-        | 'CONST' ID
+        : 'LET' ID { $$ = $2;}
+        | 'CONST' ID { $$ = $2;}
 ;
 
 //*********************SENTENCIAS DE CONTROL
