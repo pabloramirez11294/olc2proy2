@@ -125,6 +125,14 @@ case 19:
             this.$ = [$$[$0]];
         
 break;
+case 20:
+
+        let sim=new Simbolo(undefined,$$[$0-3],Type.ARREGLO);
+        sim.tipoArreglo=$$[$0-1];
+        sim.dim = $$[$0];
+        this.$ = sim;
+        
+break;
 case 21:
  this.$ = new Simbolo(undefined,$$[$0-2],$$[$0]);
 break;
@@ -136,6 +144,9 @@ case 23: case 101: case 103:
 break;
 case 24:
  this.$ = new For($$[$0-5],$$[$0-4],$$[$0-2], $$[$0],_$[$0-7].first_line, _$[$0-7].first_column);
+break;
+case 25: case 26:
+ this.$ = new ForOf($$[$0-4],$$[$0-2],$$[$0],_$[$0-6].first_line, _$[$0-6].first_column);
 break;
 case 27:
 this.$ = new While($$[$0-2],$$[$0], _$[$0-4].first_line, _$[$0-4].first_column);
@@ -161,6 +172,9 @@ break;
 case 36:
  this.$ = new Return(undefined,_$[$0-1].first_line, _$[$0-1].first_column); 
 break;
+case 37:
+this.$ =  new AccesoAsig($$[$0-4],$$[$0-3],$$[$0-1],_$[$0-4].first_line, _$[$0-4].first_column);
+break;
 case 38:
 
             this.$.push($$[$0-1]);
@@ -171,11 +185,11 @@ case 39:
             this.$ =[$$[$0-1]]
         
 break;
+case 40: case 41: case 43: case 44:
+ this.$ = $$[$0];
+break;
 case 42:
  this.$ = new If($$[$0-3], $$[$0-1], $$[$0], _$[$0-5].first_line, _$[$0-5].first_column);
-break;
-case 43: case 44:
- this.$ = $$[$0];
 break;
 case 45:
  this.$ = null;
@@ -216,8 +230,29 @@ break;
 case 61:
 this.$ = new Declaracion($$[$0-2],$$[$0],undefined,false, _$[$0-2].first_line, _$[$0-2].first_column);
 break;
+case 62:
+this.$ = new DecArreglo($$[$0-5],Type.ARREGLO,$$[$0-3],$$[$0-2],$$[$0],false,_$[$0-5].first_line, _$[$0-5].first_column);
+break;
+case 63:
+  this.$ = new DecArreglo($$[$0-3],Type.ARREGLO,$$[$0-1],$$[$0],undefined,false,_$[$0-3].first_line, _$[$0-3].first_column);
+break;
+case 64:
+
+                    let vaArreglo = new DecArreglo($$[$0-9],Type.ARREGLO,$$[$0-7],$$[$0-6],$$[$0-1],false,_$[$0-9].first_line, _$[$0-9].first_column);
+                    vaArreglo.tamano=true;
+                    this.$ = vaArreglo; 
+break;
 case 65:
 this.$ = new Declaracion($$[$0-4],$$[$0-2],$$[$0],false, _$[$0-4].first_line, _$[$0-4].first_column); this.$.constante=true;
+break;
+case 66:
+this.$ = new DecArreglo($$[$0-5],Type.ARREGLO,$$[$0-3],$$[$0-2],$$[$0],true,_$[$0-5].first_line, _$[$0-5].first_column);
+break;
+case 67:
+
+                    let vaArreglo2 = new DecArreglo($$[$0-9],Type.ARREGLO,$$[$0-7],$$[$0-6],$$[$0-1],true,_$[$0-9].first_line, _$[$0-9].first_column);
+                    vaArreglo2.tamano=true;
+                    this.$ = vaArreglo2; 
 break;
 case 68:
 
@@ -228,6 +263,12 @@ case 69:
 
                 this.$ =1;
             
+break;
+case 70:
+this.$ = new AsigArreglo(null,Type.ARREGLO,_$[$0-1].first_line,_$[$0-1].first_column);
+break;
+case 71:
+this.$ = new AsigArreglo($$[$0-1],Type.ARREGLO,_$[$0-2].first_line,_$[$0-2].first_column);
 break;
 case 72:
 this.$ = new Llamada($$[$0-2], [], _$[$0-2].first_line, _$[$0-2].first_column);
@@ -303,6 +344,12 @@ case 97:
 break;
 case 98:
  this.$ = new Aritmetico($$[$0],null, ArithmeticOption.RESTA, _$[$0-1].first_line,_$[$0-1].first_column); 
+break;
+case 104:
+this.$= new Acceso(undefined,$$[$0-1],$$[$0-3],_$[$0-3].first_line, _$[$0-3].first_column);
+break;
+case 105:
+this.$ = new Acceso($$[$0-3],$$[$0-1],null,_$[$0-3].first_line, _$[$0-3].first_column);
 break;
 case 106:
  this.$ = new Literal($$[$0], _$[$0].first_line, _$[$0].first_column, Type.NUMBER); 
@@ -621,6 +668,10 @@ _handle_error:
     const {Unario,OperadorOpcion} = require('../Expresiones/Unario');
     const {Ternario} = require('../Expresiones/Ternario');
     const {AsigArreglo} = require('../Expresiones/AsigArreglo');
+    const {DecArreglo} = require('../Instruccion/DecArreglo');
+    const {Arreglo} = require('../Estructuras/Arreglo');
+    const {AccesoAsig} = require('../Estructuras/AccesoAsig');
+    const {Acceso} = require('../Estructuras/Acceso');
     //instrucciones
     const {Instrucciones} = require('../Instruccion/Instrucciones');
     //sentencias de control

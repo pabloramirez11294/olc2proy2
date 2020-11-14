@@ -11,6 +11,10 @@
     const {Unario,OperadorOpcion} = require('../Expresiones/Unario');
     const {Ternario} = require('../Expresiones/Ternario');
     const {AsigArreglo} = require('../Expresiones/AsigArreglo');
+    const {DecArreglo} = require('../Instruccion/DecArreglo');
+    const {Arreglo} = require('../Estructuras/Arreglo');
+    const {AccesoAsig} = require('../Estructuras/AccesoAsig');
+    const {Acceso} = require('../Estructuras/Acceso');
     //instrucciones
     const {Instrucciones} = require('../Instruccion/Instrucciones');
     //sentencias de control
@@ -207,7 +211,13 @@ Parametros
         }
 ;
 OpcionParam
-            :  ID ':' Tipo Dim  
+        :  ID ':' Tipo Dim  
+        {
+        let sim=new Simbolo(undefined,$1,Type.ARREGLO);
+        sim.tipoArreglo=$3;
+        sim.dim = $4;
+        $$ = sim;
+        }
         | ID ':' Tipo { $$ = new Simbolo(undefined,$1,$3);}
 ;
 
@@ -216,8 +226,8 @@ Instruc
         : 'CONSOLE' '(' Expre ')' ';'{ $$ = new Console($3, @1.first_line, @1.first_column); }
         | Sentencia_if {  $$ = $1; }
         | 'FOR' '(' Declaracion Exp ';' Actualizacion ')' InstruccionesSent { $$ = new For($3,$4,$6, $8,@1.first_line, @1.first_column);}
-        | 'FOR' '(' DeclaForOF 'OF' Exp ')' InstruccionesSent
-        | 'FOR' '(' DeclaForOF 'IN' Exp ')' InstruccionesSent
+        | 'FOR' '(' DeclaForOF 'OF' Exp ')' InstruccionesSent { $$ = new ForOf($3,$5,$7,@1.first_line, @1.first_column);}
+        | 'FOR' '(' DeclaForOF 'IN' Exp ')' InstruccionesSent { $$ = new ForOf($3,$5,$7,@1.first_line, @1.first_column);}
         | 'WHILE' '(' Exp ')' InstruccionesSent {$$ = new While($3,$5, @1.first_line, @1.first_column);}
         | 'DO'  InstruccionesSent 'WHILE' '(' Exp ')' ';' {$$ = new DoWhile($5,$2, @1.first_line, @1.first_column);}
         | 'BREAK' ';' { $$ = new Break(@1.first_line, @1.first_column); }
@@ -228,7 +238,7 @@ Instruc
         | Llamada ';' { $$ = $1; }  
         | 'RETURN' Exp ';'{ $$ = new Return($2,@1.first_line, @1.first_column); }
         | 'RETURN' ';'  { $$ = new Return(undefined,@1.first_line, @1.first_column); }
-        | ID AccesoAsig  '=' Exp ';'
+        | ID AccesoAsig  '=' Exp ';' {$$ =  new AccesoAsig($1,$2,$4,@1.first_line, @1.first_column);}
 
 ;
 
@@ -243,8 +253,8 @@ AccesoAsig
 ;
 
 DeclaForOF
-        : 'LET' ID
-        | 'CONST' ID
+        : 'LET' ID { $$ = $2;}
+        | 'CONST' ID { $$ = $2;}
 ;
 
 //*********************SENTENCIAS DE CONTROL
@@ -302,14 +312,20 @@ Declaracion
 OpcionDeclaracion
                 : ID ':' Tipo '=' Exp {$$ = new Declaracion($1,$3,$5,false, @1.first_line, @1.first_column);}
                 | ID ':' Tipo {$$ = new Declaracion($1,$3,undefined,false, @1.first_line, @1.first_column);}
-                | ID ':' Tipo Dim '=' Exp            
-                | ID ':' Tipo Dim  
-                | ID ':' Tipo Dim '=' 'NEW' 'ARRAY' '(' Exp ')'
+                | ID ':' Tipo Dim '=' Exp  {$$ = new DecArreglo($1,Type.ARREGLO,$3,$4,$6,false,@1.first_line, @1.first_column);}       
+                | ID ':' Tipo Dim  {  $$ = new DecArreglo($1,Type.ARREGLO,$3,$4,undefined,false,@1.first_line, @1.first_column);}
+                | ID ':' Tipo Dim '=' 'NEW' 'ARRAY' '(' Exp ')' {
+                    let vaArreglo = new DecArreglo($1,Type.ARREGLO,$3,$4,$9,false,@1.first_line, @1.first_column);
+                    vaArreglo.tamano=true;
+                    $$ = vaArreglo; }  
 ;
 OpcionDeclaracionConst
                 : ID ':' Tipo '=' Exp {$$ = new Declaracion($1,$3,$5,false, @1.first_line, @1.first_column); $$.constante=true;}
-                | ID ':' Tipo Dim '=' Exp 
-                | ID ':' Tipo Dim '=' 'NEW' 'ARRAY' '(' Exp ')'
+                | ID ':' Tipo Dim '=' Exp  {$$ = new DecArreglo($1,Type.ARREGLO,$3,$4,$6,true,@1.first_line, @1.first_column);}   
+                | ID ':' Tipo Dim '=' 'NEW' 'ARRAY' '(' Exp ')' {
+                    let vaArreglo2 = new DecArreglo($1,Type.ARREGLO,$3,$4,$9,true,@1.first_line, @1.first_column);
+                    vaArreglo2.tamano=true;
+                    $$ = vaArreglo2; } 
 
 ;
 
@@ -325,8 +341,8 @@ Dim
 ;
 
 Dimensiones
-            : '['  ']' 
-            | '[' Expre ']'
+            : '['  ']' {$$ = new AsigArreglo(null,Type.ARREGLO,@1.first_line,@1.first_column);}
+            | '[' Expre ']' {$$ = new AsigArreglo($2,Type.ARREGLO,@1.first_line,@1.first_column);}
 ;
 
 
@@ -386,8 +402,8 @@ Exp
 ;
 
 AccesoArr
-        : AccesoArr '[' Exp ']'
-        | ID '[' Exp ']' 
+        : AccesoArr '[' Exp ']'{$$= new Acceso(undefined,$3,$1,@1.first_line, @1.first_column);}
+        | ID '[' Exp ']' {$$ = new Acceso($1,$3,null,@1.first_line, @1.first_column);}
 ;
 
 F

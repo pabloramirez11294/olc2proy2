@@ -4,6 +4,7 @@ import { Environment, Simbolo } from "../Entornos/Environment";
 import {Type} from "../Modelos/Retorno";
 import {Error_} from '../Reportes/Errores';
 import { Data } from '../Data/Data';
+import { dependenciesFromGlobalMetadata } from "@angular/compiler/src/render3/r3_factory";
 export class Funcion extends Instruction{
     private pasada;
     constructor(public id: string, public parametros : Array<Simbolo>, public tipo: Type,
@@ -33,7 +34,11 @@ export class Funcion extends Instruction{
 
         nuevoAmb.setAmbFuncion(this.id,sim,returnLbl);
         this.parametros.forEach((param)=>{
-            nuevoAmb.guardar(param.id,param.tipo,Number(param.linea),Number(param.columna),false);
+            const simb =nuevoAmb.guardar(param.id,param.tipo,Number(param.linea),Number(param.columna),false);
+            if(param.tipo==Type.ARREGLO){
+                simb.tipoArreglo=param.tipoArreglo;
+                simb.dim = param.dim;
+            }
         });
         data.clearListTmp();
         data.addEncabezadoFunc(sim.idUnico);
