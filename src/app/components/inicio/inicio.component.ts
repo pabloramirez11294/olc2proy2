@@ -262,7 +262,9 @@ export class InicioComponent implements OnInit {
     } catch (error) {
       console.log(error)
     }
-    
+    cuerpo.replace(Instrucciones.constructor.name,'Instrucciones').replace(Declaracion.constructor.name,'Declaracion').replace(Instrucciones.constructor.name,'Instrucciones')
+    .replace(If.constructor.name,'If').replace(Relacional.constructor.name,'Relacional').replace(Funcion.constructor.name,'Funcion').replace(Return.constructor.name,'Return')
+    .replace(While.constructor.name,'While').replace(For.constructor.name,'For').replace(Switch.constructor.name,'Switch');
     return cuerpo;
   }
 

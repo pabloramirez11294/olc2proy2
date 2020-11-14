@@ -40,40 +40,7 @@
   </div>
 </div>
 
-
-
-
-<div class="container-fluid">
-  <div class="row">
-
-<div class="col-12 col-md-6 p-4">
-  <h3>Tabla de Símbolos: {{tipo_ts}}</h3>
-  <table class="table table-borderless table-dark">
-      <thead>
-        <tr>
-          <th scope="col">ID</th>
-          <th scope="col">Valor</th>
-          <th scope="col">Tipo</th>
-          <th scope="col">Ambito</th>
-          <th scope="col">Linea</th>
-          <th scope="col">Columna</th>
-        </tr>
-      </thead>
-      <tbody *ngFor="let sim of simbolos">
-        <tr>
-          <th scope="row"> {{sim[0]}}</th>
-          <td> {{sim[1]}}</td>
-          <td> {{sim[2]}}</td>
-          <td> {{sim[3]}}</td>
-          <td> {{sim[4]}}</td>
-          <td> {{sim[5]}}</td>
-        </tr>
-       
-    </table>
-</div>
-
-
-<div class="col-18 col-md-6 p-4">
+<div class="col-18 col-md-10 p-4">
   <h3>Tabla de Errores</h3>
   <table class="table table-borderless table-dark">
       <thead>
@@ -94,7 +61,34 @@
        
     </table>
 </div>
-</div>
+
+
+
+<div class="col-12 col-md-10 p-4">
+  <h3>Tabla de Símbolos: {{tipo_ts}}</h3>
+  <table class="table table-borderless table-dark">
+      <thead>
+        <tr>
+          <th scope="col">ID</th>
+          <th scope="col">Posición</th>
+          <th scope="col">Tipo</th>
+          <th scope="col">Ambito</th>
+          <th scope="col">Linea</th>
+          <th scope="col">Columna</th>
+        </tr>
+      </thead>
+      <tbody *ngFor="let sim of simbolos">
+        <tr>
+          <th scope="row"> {{sim[0]}}</th>
+          <td> {{sim[1]}}</td>
+          <td> {{sim[2]}}</td>
+          <td> {{sim[3]}}</td>
+          <td> {{sim[4]}}</td>
+          <td> {{sim[5]}}</td>
+        </tr>
+       
+    </table>
+
 
 <div style="text-align:center">
   <h1>AST  </h1>
